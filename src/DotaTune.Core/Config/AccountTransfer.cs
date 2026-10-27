@@ -76,8 +76,24 @@ public static class TransferFiles
 
     public const string HotkeysPath = "remote/cfg/dotakeys_personal.lst";
 
+    private const string GuidesFolder = "remote/guides/";
+
     private static readonly string[] Convars = ["remote/user_convars.vcfg", "local/cfg/user_convars_0_slot0.vcfg", "local/cfg/user_convars_0_slot0.vcfg_lastclouded"];
     private static readonly string[] Keys = ["remote/user_keys.vcfg", "local/cfg/user_keys_0_slot0.vcfg", "local/cfg/user_keys_0_slot0.vcfg_lastclouded"];
+
+    /// <summary>Console binds of the other slots: the game keeps them empty, they go as they are.</summary>
+    private static readonly string[] KeySlots =
+    [
+        .. new[] { 1, 2, 3 }.SelectMany(slot => new[]
+        {
+            string.Create(CultureInfo.InvariantCulture, $"local/cfg/user_keys_0_slot{slot}.vcfg"),
+            string.Create(CultureInfo.InvariantCulture, $"local/cfg/user_keys_0_slot{slot}.vcfg_lastclouded"),
+        }),
+    ];
+
+    private static readonly string[] BuildFiles = ["remote/cfg/herobuilds.cfg", "remote/cfg/hero_facet_config.cfg"];
+    private static readonly string[] MiscFiles = ["remote/scripts/item_suggest_preference.txt", "remote/scripts/control_groups.txt", "remote/cfg/chat.cfg", "remote/scripts/lobby_settings.txt"];
+    private static readonly string[] GraphicsFiles = ["local/cfg/video.txt", "local/cfg/machine_convars.vcfg"];
 
     private static readonly JsonSerializerOptions GridJson = new() { WriteIndented = true, Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping };
 
@@ -85,7 +101,48 @@ public static class TransferFiles
 
     /// <summary>Files to write into the target folder, with their contents; paths with forward slashes.</summary>
     /// <exception cref="InvalidDataException">A hero grid file is not the JSON the game writes.</exception>
-    public static IReadOnlyList<(string Path, byte[] Content)> Plan(string sourceFolder, string targetFolder, IEnumerable<TransferGroup> groups)
+    public static IReadOnlyList<(string Path, byte[] Content)> Plan(string sourceFolder, string targetFolder, IEnumerable<TransferGroup> groups) =>
+        Gather(sourceFolder, targetFolder, groups);
+
+    /// <summary>Files of the groups as they are in the folder, hero grids unmerged; for a copy of the account's own settings.</summary>
+    public static IReadOnlyList<(string Path, byte[] Content)> Collect(string folder, IEnumerable<TransferGroup> groups) =>
+        Gather(folder, null, groups);
+
+    /// <summary>The group that carries a file of the game folder; null for a file no group carries.</summary>
+    /// <param name="relativePath">A path under userdata\&lt;id&gt;\570, with forward slashes.</param>
+    public static TransferGroup? GroupOf(string relativePath)
+    {
+        ArgumentNullException.ThrowIfNull(relativePath);
+        return relativePath switch
+        {
+            HotkeysPath => TransferGroup.Hotkeys,
+            HeroGridPath => TransferGroup.HeroGrids,
+            _ when Convars.Contains(relativePath) => TransferGroup.GameSettings,
+            _ when Keys.Contains(relativePath) || KeySlots.Contains(relativePath) => TransferGroup.ConsoleBinds,
+            _ when BuildFiles.Contains(relativePath) || IsGuide(relativePath) => TransferGroup.Builds,
+            _ when MiscFiles.Contains(relativePath) => TransferGroup.Misc,
+            _ when GraphicsFiles.Contains(relativePath) => TransferGroup.Graphics,
+            _ => null,
+        };
+    }
+
+    /// <summary>A guide straight in remote\guides: a plain file name ending in .build.</summary>
+    private static bool IsGuide(string relativePath)
+    {
+        if (!relativePath.StartsWith(GuidesFolder, StringComparison.Ordinal))
+        {
+            return false;
+        }
+
+        // Without a separator the name cannot leave the folder.
+        string name = relativePath[GuidesFolder.Length..];
+        return name.Length > ".build".Length
+            && name.EndsWith(".build", StringComparison.OrdinalIgnoreCase)
+            && name.IndexOfAny([.. Path.GetInvalidFileNameChars(), '/', '\\', ':']) < 0;
+    }
+
+    /// <param name="targetFolder">Null: hero grids are taken as they are instead of merged into the target's.</param>
+    private static List<(string Path, byte[] Content)> Gather(string sourceFolder, string? targetFolder, IEnumerable<TransferGroup> groups)
     {
         var files = new List<(string, byte[])>();
         foreach (TransferGroup group in groups.Distinct())
@@ -100,15 +157,18 @@ public static class TransferFiles
                     break;
                 case TransferGroup.ConsoleBinds:
                     Copies(Keys);
-                    foreach (int slot in new[] { 1, 2, 3 })
+                    foreach (string slot in KeySlots)
                     {
-                        Plain(string.Create(CultureInfo.InvariantCulture, $"local/cfg/user_keys_0_slot{slot}.vcfg"));
-                        Plain(string.Create(CultureInfo.InvariantCulture, $"local/cfg/user_keys_0_slot{slot}.vcfg_lastclouded"));
+                        Plain(slot);
                     }
 
                     break;
                 case TransferGroup.HeroGrids:
-                    if (File.Exists(Full(sourceFolder, HeroGridPath)))
+                    if (targetFolder is null)
+                    {
+                        Plain(HeroGridPath);
+                    }
+                    else if (File.Exists(Full(sourceFolder, HeroGridPath)))
                     {
                         string target = Full(targetFolder, HeroGridPath);
                         files.Add((HeroGridPath, MergeHeroGrids(
@@ -118,27 +178,34 @@ public static class TransferFiles
 
                     break;
                 case TransferGroup.Builds:
-                    Plain("remote/cfg/herobuilds.cfg");
-                    Plain("remote/cfg/hero_facet_config.cfg");
-                    string guides = Full(sourceFolder, "remote/guides");
+                    foreach (string file in BuildFiles)
+                    {
+                        Plain(file);
+                    }
+
+                    string guides = Full(sourceFolder, GuidesFolder);
                     if (Directory.Exists(guides))
                     {
                         foreach (string guide in Directory.EnumerateFiles(guides, "*.build").Order(StringComparer.OrdinalIgnoreCase))
                         {
-                            Plain("remote/guides/" + Path.GetFileName(guide));
+                            Plain(GuidesFolder + Path.GetFileName(guide));
                         }
                     }
 
                     break;
                 case TransferGroup.Misc:
-                    Plain("remote/scripts/item_suggest_preference.txt");
-                    Plain("remote/scripts/control_groups.txt");
-                    Plain("remote/cfg/chat.cfg");
-                    Plain("remote/scripts/lobby_settings.txt");
+                    foreach (string file in MiscFiles)
+                    {
+                        Plain(file);
+                    }
+
                     break;
                 case TransferGroup.Graphics:
-                    Plain("local/cfg/video.txt");
-                    Plain("local/cfg/machine_convars.vcfg");
+                    foreach (string file in GraphicsFiles)
+                    {
+                        Plain(file);
+                    }
+
                     break;
                 case TransferGroup.LaunchOptions:
                     // Not a file of the game folder: the service writes it into localconfig.vdf.
@@ -643,7 +710,8 @@ public sealed class TransferService(TransferBackupStore store, FileLog log)
         return new TransferResult(kept.Count > 0 ? TransferRefusal.ChangedSince : null, restored);
     }
 
-    private static void WriteFile(string file, byte[] content)
+    /// <summary>Writes through a temporary file next to it, so a cut write leaves the old file whole.</summary>
+    internal static void WriteFile(string file, byte[] content)
     {
         Directory.CreateDirectory(Path.GetDirectoryName(file)!);
         string temp = file + ".dotatune.tmp";

@@ -9,22 +9,27 @@ using DotaTune.Resources;
 
 namespace DotaTune.ViewModels;
 
+/// <summary>Which lines of a loaded choice go onto the pages.</summary>
+internal sealed record PresetChoiceParts(bool Effects, bool Config, bool Launch);
+
 /// <summary>
 /// Presets on the "Config and launch" page: the choice goes out as a DT1- code or a .dotatune
-/// file, files only in the file. Loading shows what changes before anything is applied.
+/// file, files only in the file. Loading shows what changes, line by line with a switch each,
+/// before anything is applied.
 /// </summary>
 public sealed partial class PresetBlockViewModel : ObservableObject
 {
     private readonly AppServices _services;
     private readonly Func<Func<string?>, string, Task<string?>> _run;
     private readonly Func<PresetChoice> _currentChoice;
-    private readonly Action<PresetReview> _applyChoice;
+    private readonly Action<PresetReview, PresetChoiceParts> _applyChoice;
     private PresetReview? _review;
 
     /// <param name="run">Runs a change off the UI thread, reads the page again and returns the change's message.</param>
     /// <param name="currentChoice">The choice of the program now, for export.</param>
-    /// <param name="applyChoice">Puts a loaded choice on the pages.</param>
-    internal PresetBlockViewModel(AppServices services, Func<Func<string?>, string, Task<string?>> run, Func<PresetChoice> currentChoice, Action<PresetReview> applyChoice)
+    /// <param name="applyChoice">Puts the chosen lines of a loaded choice on the pages.</param>
+    internal PresetBlockViewModel(
+        AppServices services, Func<Func<string?>, string, Task<string?>> run, Func<PresetChoice> currentChoice, Action<PresetReview, PresetChoiceParts> applyChoice)
     {
         _services = services;
         _run = run;
@@ -64,23 +69,42 @@ public sealed partial class PresetBlockViewModel : ObservableObject
     [NotifyCanExecuteChangedFor(nameof(ApplyCommand))]
     private PresetPackage? _pending;
 
+    /// <summary>What the preset does to the effect groups; each line of the choice has its own switch.</summary>
     [ObservableProperty]
-    private IReadOnlyList<string> _changes = [];
+    private string? _effectsChange;
+
+    [ObservableProperty]
+    private string? _configChange;
+
+    [ObservableProperty]
+    private string? _launchChange;
 
     /// <summary>Names this version does not know; they are not applied.</summary>
     [ObservableProperty]
     private string? _unknown;
 
     [ObservableProperty]
-    private bool _applyChoicePart = true;
+    [NotifyCanExecuteChangedFor(nameof(ApplyCommand))]
+    private bool _applyEffects = true;
 
     [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(ApplyCommand))]
+    private bool _applyConfig = true;
+
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(ApplyCommand))]
+    private bool _applyLaunch = true;
+
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(ApplyCommand))]
     private bool _applyHeroGrids = true;
 
     [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(ApplyCommand))]
     private bool _applyHotkeys = true;
 
     [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(ApplyCommand))]
     private bool _applyGameSettings = true;
 
     [ObservableProperty]
@@ -103,7 +127,9 @@ public sealed partial class PresetBlockViewModel : ObservableObject
 
     private bool CanLoadCode => !string.IsNullOrWhiteSpace(ImportText);
 
-    private bool CanApply => Pending is not null && !IsBusy;
+    /// <summary>A preset is loaded and at least one of its lines is switched on.</summary>
+    private bool CanApply => Pending is not null && !IsBusy
+        && (ApplyEffects || ApplyConfig || ApplyLaunch || (HasHeroGrids && ApplyHeroGrids) || (HasHotkeys && ApplyHotkeys) || (HasGameSettings && ApplyGameSettings));
 
     /// <summary>Saves the current choice and the ticked files of the signed-in account.</summary>
     internal async Task SaveToAsync(string path)
@@ -218,7 +244,7 @@ public sealed partial class PresetBlockViewModel : ObservableObject
     {
         PresetPackage package = Pending!;
         PresetReview review = _review!;
-        bool choice = ApplyChoicePart;
+        var choice = new PresetChoiceParts(ApplyEffects, ApplyConfig, ApplyLaunch);
         var parts = package.Parts
             .Where(p => p.Key switch
             {
@@ -252,13 +278,12 @@ public sealed partial class PresetBlockViewModel : ObservableObject
 
         if (done)
         {
-            if (choice)
+            if (choice.Effects || choice.Config || choice.Launch)
             {
-                _applyChoice(review);
+                _applyChoice(review, choice);
             }
 
             Pending = null;
-            Changes = [];
             Unknown = null;
             // No result: nothing of the preset was chosen to write.
             message = applied is null
@@ -273,7 +298,6 @@ public sealed partial class PresetBlockViewModel : ObservableObject
     private void Cancel()
     {
         Pending = null;
-        Changes = [];
         Unknown = null;
         Note = null;
     }
@@ -295,21 +319,17 @@ public sealed partial class PresetBlockViewModel : ObservableObject
     {
         PresetReview review = PresetReview.Of(package.Choice);
         _review = review;
-        var changes = new List<string>
-        {
-            review.Effects is null ? Strings.PresetEffectsAll
-                : review.Effects.Count == 0 ? Strings.PresetEffectsNone
-                : string.Format(CultureInfo.CurrentCulture, Strings.PresetEffectsFormat, string.Join(", ", review.Effects.Select(EffectTitle))),
-        };
+        EffectsChange = review.Effects is null ? Strings.PresetEffectsAll
+            : review.Effects.Count == 0 ? Strings.PresetEffectsNone
+            : string.Format(CultureInfo.CurrentCulture, Strings.PresetEffectsFormat, string.Join(", ", review.Effects.Select(EffectTitle)));
         List<string> config = ConfigWords((review.Config ?? new GameConfig()).Sanitized());
-        changes.Add(config.Count == 0 ? Strings.PresetConfigNone
-            : string.Format(CultureInfo.CurrentCulture, Strings.PresetConfigFormat, string.Join(", ", config)));
-        changes.Add(review.Launch.Count == 0 ? Strings.PresetLaunchNone
-            : string.Format(CultureInfo.CurrentCulture, Strings.PresetLaunchFormat, string.Join(' ', review.Launch)));
-        Changes = changes;
+        ConfigChange = config.Count == 0 ? Strings.PresetConfigNone
+            : string.Format(CultureInfo.CurrentCulture, Strings.PresetConfigFormat, string.Join(", ", config));
+        LaunchChange = review.Launch.Count == 0 ? Strings.PresetLaunchNone
+            : string.Format(CultureInfo.CurrentCulture, Strings.PresetLaunchFormat, string.Join(' ', review.Launch));
         List<string> unknown = [.. review.UnknownEffects, .. review.UnknownLaunch];
         Unknown = unknown.Count == 0 ? null : string.Format(CultureInfo.CurrentCulture, Strings.PresetUnknownFormat, string.Join(", ", unknown));
-        ApplyChoicePart = ApplyHeroGrids = ApplyHotkeys = ApplyGameSettings = true;
+        ApplyEffects = ApplyConfig = ApplyLaunch = ApplyHeroGrids = ApplyHotkeys = ApplyGameSettings = true;
         Pending = package;
         Note = null;
     }

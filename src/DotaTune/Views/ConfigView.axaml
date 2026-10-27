@@ -17,6 +17,51 @@
     <TextBlock Classes="title" Text="{Binding Title}" />
     <TextBlock Classes="lead" Text="{Binding Description}" />
 
+    <!-- First on the page: the copy is taken before anything else is changed. -->
+    <StackPanel Spacing="14" DataContext="{Binding Backup}" x:DataType="vm:BackupBlockViewModel">
+      <TextBlock Classes="group" Text="{x:Static res:Strings.ConfigBackupGroup}" Margin="0,18,0,0" />
+      <TextBlock Classes="muted" Text="{x:Static res:Strings.BackupNote}" TextWrapping="Wrap" />
+      <WrapPanel Orientation="Horizontal">
+        <Button Classes="pill" Content="{x:Static res:Strings.BackupSave}" Command="{Binding SaveCommand}" Margin="0,0,12,12" />
+        <Button Classes="pill" Content="{x:Static res:Strings.BackupRestoreLast}" Command="{Binding RestoreLastCommand}"
+                IsVisible="{Binding HasLastCopy}" Margin="0,0,12,12" />
+        <Button Classes="pill" Content="{x:Static res:Strings.BackupOpenFile}" Command="{Binding OpenFileCommand}" Margin="0,0,12,12" />
+        <Button Classes="pill" Content="{x:Static res:Strings.BackupUndo}" Command="{Binding UndoCommand}"
+                IsVisible="{Binding CanUndo}" Margin="0,0,12,12" />
+      </WrapPanel>
+      <TextBlock Classes="muted" Text="{Binding LastCopyText}" TextWrapping="Wrap"
+                 IsVisible="{Binding LastCopyText, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
+
+      <Border Classes="verdict" IsVisible="{Binding HasPending}">
+        <StackPanel Spacing="10">
+          <TextBlock Classes="label" Text="{Binding PendingTitle}" TextWrapping="Wrap" />
+          <ItemsControl ItemsSource="{Binding Rows}">
+            <ItemsControl.ItemTemplate>
+              <DataTemplate x:DataType="vm:BackupPartRow">
+                <Grid ColumnDefinitions="*,Auto" Margin="0,6">
+                  <StackPanel Spacing="2">
+                    <TextBlock Text="{Binding Title}" TextWrapping="Wrap" />
+                    <TextBlock Classes="muted" Text="{Binding Description}" TextWrapping="Wrap" />
+                  </StackPanel>
+                  <ToggleButton Grid.Column="1" Classes="switch" IsChecked="{Binding IsChecked}" Margin="32,0,0,0"
+                                AutomationProperties.Name="{Binding Title}" VerticalAlignment="Center" />
+                </Grid>
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+          <WrapPanel Orientation="Horizontal" Margin="0,6,0,0">
+            <Button Classes="pill accent" Content="{Binding ApplyText}" Command="{Binding ApplyCommand}" Margin="0,0,12,0" />
+            <Button Classes="pill" Content="{x:Static res:Strings.PresetCancel}" Command="{Binding CancelCommand}" />
+          </WrapPanel>
+        </StackPanel>
+      </Border>
+
+      <TextBlock Classes="muted" Text="{Binding Note}" TextWrapping="Wrap"
+                 IsVisible="{Binding Note, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
+      <TextBlock Classes="label" Text="{Binding CloudHint}" TextWrapping="Wrap"
+                 IsVisible="{Binding CloudHint, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
+    </StackPanel>
+
     <!-- The minimap colours of this block are on the colours page. -->
     <TextBlock Classes="group" Text="{x:Static res:Strings.ConfigCommandsGroup}" Margin="0,18,0,0" />
     <Grid ColumnDefinitions="*,Auto" Margin="0,10">
@@ -214,20 +259,24 @@
       <Border Classes="verdict" IsVisible="{Binding HasPending}">
         <StackPanel Spacing="10">
           <TextBlock Classes="label" Text="{x:Static res:Strings.PresetChangesTitle}" />
-          <ItemsControl ItemsSource="{Binding Changes}">
-            <ItemsControl.ItemTemplate>
-              <DataTemplate x:DataType="x:String">
-                <TextBlock Text="{Binding}" TextWrapping="Wrap" Margin="0,2" />
-              </DataTemplate>
-            </ItemsControl.ItemTemplate>
-          </ItemsControl>
+          <!-- Every line has its own switch: off leaves that line of the page as it is. -->
+          <Grid ColumnDefinitions="*,Auto">
+            <TextBlock Text="{Binding EffectsChange}" TextWrapping="Wrap" VerticalAlignment="Center" />
+            <ToggleButton Grid.Column="1" Classes="switch" IsChecked="{Binding ApplyEffects}" Margin="32,0,0,0"
+                          AutomationProperties.Name="{Binding EffectsChange}" VerticalAlignment="Center" />
+          </Grid>
+          <Grid ColumnDefinitions="*,Auto">
+            <TextBlock Text="{Binding ConfigChange}" TextWrapping="Wrap" VerticalAlignment="Center" />
+            <ToggleButton Grid.Column="1" Classes="switch" IsChecked="{Binding ApplyConfig}" Margin="32,0,0,0"
+                          AutomationProperties.Name="{Binding ConfigChange}" VerticalAlignment="Center" />
+          </Grid>
+          <Grid ColumnDefinitions="*,Auto">
+            <TextBlock Text="{Binding LaunchChange}" TextWrapping="Wrap" VerticalAlignment="Center" />
+            <ToggleButton Grid.Column="1" Classes="switch" IsChecked="{Binding ApplyLaunch}" Margin="32,0,0,0"
+                          AutomationProperties.Name="{Binding LaunchChange}" VerticalAlignment="Center" />
+          </Grid>
           <TextBlock Classes="muted" Text="{Binding Unknown}" TextWrapping="Wrap"
                      IsVisible="{Binding Unknown, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
-          <Grid ColumnDefinitions="*,Auto">
-            <TextBlock Text="{x:Static res:Strings.PresetApplyChoice}" TextWrapping="Wrap" VerticalAlignment="Center" />
-            <ToggleButton Grid.Column="1" Classes="switch" IsChecked="{Binding ApplyChoicePart}" Margin="32,0,0,0"
-                          AutomationProperties.Name="{x:Static res:Strings.PresetApplyChoice}" VerticalAlignment="Center" />
-          </Grid>
           <Grid ColumnDefinitions="*,Auto" IsVisible="{Binding HasHeroGrids}">
             <TextBlock Text="{x:Static res:Strings.TransferHeroGrids}" TextWrapping="Wrap" VerticalAlignment="Center" />
             <ToggleButton Grid.Column="1" Classes="switch" IsChecked="{Binding ApplyHeroGrids}" Margin="32,0,0,0"

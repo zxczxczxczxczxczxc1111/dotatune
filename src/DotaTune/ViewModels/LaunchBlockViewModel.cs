@@ -133,32 +133,33 @@ public sealed partial class LaunchBlockViewModel : ObservableObject
     {
         string planned = Planned;
         Note = _steamRunning ? Strings.LaunchSteamClosing : Note;
-        Note = await _run(() => WithSteamClosed(game => RefusalText(_services.Launch.Apply(game, planned)) ?? Strings.LaunchWritten), Strings.LaunchErrorFormat);
+        Note = await _run(() => WithSteamClosed(_services, game => RefusalText(_services.Launch.Apply(game, planned)) ?? Strings.LaunchWritten, Strings.LaunchDotaRunning), Strings.LaunchErrorFormat);
     }
 
     [RelayCommand(CanExecute = nameof(CanRestore))]
     private async Task RestoreAsync()
     {
         Note = _steamRunning ? Strings.LaunchSteamClosing : Note;
-        Note = await _run(() => WithSteamClosed(game => RefusalText(_services.Launch.Restore(game)) ?? Strings.LaunchRestored), Strings.LaunchErrorFormat);
+        Note = await _run(() => WithSteamClosed(_services, game => RefusalText(_services.Launch.Restore(game)) ?? Strings.LaunchRestored, Strings.LaunchDotaRunning), Strings.LaunchErrorFormat);
     }
 
     /// <summary>
     /// Makes the change on the game as read now. A running Steam is closed for it and started
     /// again, and the change goes only to the account that was signed in before.
     /// </summary>
-    private string WithSteamClosed(Func<GameState, string> change)
+    /// <param name="dotaRunning">What to say when a running game keeps Steam from closing.</param>
+    internal static string WithSteamClosed(AppServices services, Func<GameState, string> change, string dotaRunning)
     {
-        GameState game = _services.ReadGame();
+        GameState game = services.ReadGame();
         if (!game.SteamRunning)
         {
             return change(game);
         }
 
         uint? account = game.Steam?.Account?.AccountId;
-        SteamRestartResult<string> restart = _services.SteamRestart.Around(game, () =>
+        SteamRestartResult<string> restart = services.SteamRestart.Around(game, () =>
         {
-            GameState closed = _services.ReadGame();
+            GameState closed = services.ReadGame();
             return closed.Steam?.Account?.AccountId == account ? change(closed) : Strings.ProblemNoAccount;
         });
         return restart.Problem switch
@@ -166,7 +167,7 @@ public sealed partial class LaunchBlockViewModel : ObservableObject
             null => $"{restart.Result} {Strings.LaunchSteamStarting}",
             SteamRestartProblem.DidNotStart => $"{restart.Result} {Strings.LaunchSteamDidNotStart}",
             SteamRestartProblem.DidNotClose => Strings.LaunchSteamDidNotClose,
-            SteamRestartProblem.DotaRunning => Strings.LaunchDotaRunning,
+            SteamRestartProblem.DotaRunning => dotaRunning,
             _ => Strings.ProblemSteamNotFound,
         };
     }

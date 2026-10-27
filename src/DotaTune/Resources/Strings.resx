@@ -657,9 +657,6 @@
   <data name="PresetUnknownFormat" xml:space="preserve">
     <value>Not applied, this version does not know: {0}</value>
   </data>
-  <data name="PresetApplyChoice" xml:space="preserve">
-    <value>Effects, config and launch options</value>
-  </data>
   <data name="PresetApply" xml:space="preserve">
     <value>Apply preset</value>
   </data>
@@ -1070,5 +1067,107 @@
   </data>
   <data name="AutoAcceptNotReplaced" xml:space="preserve">
     <value>The delay in the pack did not change, the log has the reason.</value>
+  </data>
+  <data name="ConfigBackupGroup" xml:space="preserve">
+    <value>Settings copy</value>
+  </data>
+  <data name="BackupNote" xml:space="preserve">
+    <value>Graphics, hotkeys, binds, game settings, launch options and your own autoexec.cfg of the account in one file. It brings them back after a reset or sets them up on another computer</value>
+  </data>
+  <data name="BackupSave" xml:space="preserve">
+    <value>Save a copy</value>
+  </data>
+  <data name="BackupRestoreLast" xml:space="preserve">
+    <value>Restore the last copy</value>
+  </data>
+  <data name="BackupOpenFile" xml:space="preserve">
+    <value>Restore from a file</value>
+  </data>
+  <data name="BackupUndo" xml:space="preserve">
+    <value>Undo the restore</value>
+  </data>
+  <data name="BackupLastFormat" xml:space="preserve">
+    <value>Last copy: {0}, {1}</value>
+  </data>
+  <data name="BackupFileType" xml:space="preserve">
+    <value>DotaTune settings copy</value>
+  </data>
+  <data name="BackupFileNameFormat" xml:space="preserve">
+    <value>Dota settings {0}</value>
+  </data>
+  <data name="BackupSavedFormat" xml:space="preserve">
+    <value>Copy saved: {0}. Inside: {1}.</value>
+  </data>
+  <data name="BackupNothing" xml:space="preserve">
+    <value>The account has nothing to save yet: Dota has not been started on it.</value>
+  </data>
+  <data name="BackupFromFormat" xml:space="preserve">
+    <value>Copy of {0} from {1}</value>
+  </data>
+  <data name="BackupFromDateFormat" xml:space="preserve">
+    <value>Copy from {0}</value>
+  </data>
+  <data name="BackupAutoexec" xml:space="preserve">
+    <value>Own autoexec.cfg</value>
+  </data>
+  <data name="BackupAutoexecFormat" xml:space="preserve">
+    <value>Lines: {0}</value>
+  </data>
+  <data name="BackupLaunchEmpty" xml:space="preserve">
+    <value>Empty line</value>
+  </data>
+  <data name="BackupGraphicsOther" xml:space="preserve">
+    <value>The copy is from another computer: its resolution and monitor come with it</value>
+  </data>
+  <data name="BackupHeroGridsDescription" xml:space="preserve">
+    <value>Replace the grids of the account</value>
+  </data>
+  <data name="BackupApply" xml:space="preserve">
+    <value>Restore</value>
+  </data>
+  <data name="BackupApplyRestart" xml:space="preserve">
+    <value>Restart Steam and restore</value>
+  </data>
+  <data name="BackupRestoredFormat" xml:space="preserve">
+    <value>Settings are back, files written: {0}.</value>
+  </data>
+  <data name="BackupAlreadySame" xml:space="preserve">
+    <value>Everything already matches the copy, nothing is written.</value>
+  </data>
+  <data name="BackupUndoneFormat" xml:space="preserve">
+    <value>The restore is undone, files written: {0}.</value>
+  </data>
+  <data name="BackupDotaRunning" xml:space="preserve">
+    <value>Dota is running. Settings can be restored after you quit the game.</value>
+  </data>
+  <data name="BackupSteamRunning" xml:space="preserve">
+    <value>Steam is running, and launch options are written only while it is closed: switch them off or close Steam.</value>
+  </data>
+  <data name="BackupNoGameFolder" xml:space="preserve">
+    <value>Dota has not been started on this account on this computer yet. Start it once, quit and restore the copy.</value>
+  </data>
+  <data name="BackupNothingChosen" xml:space="preserve">
+    <value>Nothing is chosen.</value>
+  </data>
+  <data name="BackupNothingToUndo" xml:space="preserve">
+    <value>There is nothing to undo.</value>
+  </data>
+  <data name="BackupGridsNotSeen" xml:space="preserve">
+    <value>Hero grids are not restored: the game does not see the grid file of this account yet. Save any grid of your own in the game, quit and restore the copy again.</value>
+  </data>
+  <data name="BackupNotACopy" xml:space="preserve">
+    <value>This is not a DotaTune settings copy.</value>
+  </data>
+  <data name="BackupNewer" xml:space="preserve">
+    <value>The copy is from a newer DotaTune. Update the program to restore it.</value>
+  </data>
+  <data name="BackupDamaged" xml:space="preserve">
+    <value>The copy is damaged: the file is broken.</value>
+  </data>
+  <data name="BackupTooLarge" xml:space="preserve">
+    <value>The copy is too large.</value>
+  </data>
+  <data name="BackupErrorFormat" xml:space="preserve">
+    <value>The copy did not work: {0}</value>
   </data>
 </root>

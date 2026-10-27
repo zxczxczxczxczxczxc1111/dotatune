@@ -657,9 +657,6 @@
   <data name="PresetUnknownFormat" xml:space="preserve">
     <value>Не ставится, этой версии неизвестно: {0}</value>
   </data>
-  <data name="PresetApplyChoice" xml:space="preserve">
-    <value>Эффекты, конфиг и параметры запуска</value>
-  </data>
   <data name="PresetApply" xml:space="preserve">
     <value>Применить набор</value>
   </data>
@@ -1070,5 +1067,107 @@
   </data>
   <data name="AutoAcceptNotReplaced" xml:space="preserve">
     <value>Задержка в паке не сменилась, причина в журнале.</value>
+  </data>
+  <data name="ConfigBackupGroup" xml:space="preserve">
+    <value>Копия настроек</value>
+  </data>
+  <data name="BackupNote" xml:space="preserve">
+    <value>Графика, клавиши, бинды, настройки игры, параметры запуска и свой autoexec.cfg аккаунта в одном файле. Из него всё возвращается после сброса или ставится на другом компьютере</value>
+  </data>
+  <data name="BackupSave" xml:space="preserve">
+    <value>Сохранить копию</value>
+  </data>
+  <data name="BackupRestoreLast" xml:space="preserve">
+    <value>Вернуть последнюю копию</value>
+  </data>
+  <data name="BackupOpenFile" xml:space="preserve">
+    <value>Вернуть из файла</value>
+  </data>
+  <data name="BackupUndo" xml:space="preserve">
+    <value>Отменить возврат</value>
+  </data>
+  <data name="BackupLastFormat" xml:space="preserve">
+    <value>Последняя копия: {0}, {1}</value>
+  </data>
+  <data name="BackupFileType" xml:space="preserve">
+    <value>Копия настроек DotaTune</value>
+  </data>
+  <data name="BackupFileNameFormat" xml:space="preserve">
+    <value>Настройки Dota {0}</value>
+  </data>
+  <data name="BackupSavedFormat" xml:space="preserve">
+    <value>Копия сохранена: {0}. Внутри: {1}.</value>
+  </data>
+  <data name="BackupNothing" xml:space="preserve">
+    <value>У аккаунта пока нечего сохранить: Dota на нём ещё не запускалась.</value>
+  </data>
+  <data name="BackupFromFormat" xml:space="preserve">
+    <value>Копия {0} от {1}</value>
+  </data>
+  <data name="BackupFromDateFormat" xml:space="preserve">
+    <value>Копия от {0}</value>
+  </data>
+  <data name="BackupAutoexec" xml:space="preserve">
+    <value>Свой autoexec.cfg</value>
+  </data>
+  <data name="BackupAutoexecFormat" xml:space="preserve">
+    <value>Строк: {0}</value>
+  </data>
+  <data name="BackupLaunchEmpty" xml:space="preserve">
+    <value>Пустая строка</value>
+  </data>
+  <data name="BackupGraphicsOther" xml:space="preserve">
+    <value>Копия с другого компьютера: разрешение и монитор тоже придут оттуда</value>
+  </data>
+  <data name="BackupHeroGridsDescription" xml:space="preserve">
+    <value>Заменят сетки аккаунта</value>
+  </data>
+  <data name="BackupApply" xml:space="preserve">
+    <value>Вернуть</value>
+  </data>
+  <data name="BackupApplyRestart" xml:space="preserve">
+    <value>Перезапустить Steam и вернуть</value>
+  </data>
+  <data name="BackupRestoredFormat" xml:space="preserve">
+    <value>Настройки возвращены, записано файлов: {0}.</value>
+  </data>
+  <data name="BackupAlreadySame" xml:space="preserve">
+    <value>Всё и так как в копии, ничего не записано.</value>
+  </data>
+  <data name="BackupUndoneFormat" xml:space="preserve">
+    <value>Возврат отменён, записано файлов: {0}.</value>
+  </data>
+  <data name="BackupDotaRunning" xml:space="preserve">
+    <value>Dota запущена. Вернуть настройки получится после выхода из игры.</value>
+  </data>
+  <data name="BackupSteamRunning" xml:space="preserve">
+    <value>Steam запущен, а параметры запуска пишутся только при закрытом Steam: выключи их или закрой Steam.</value>
+  </data>
+  <data name="BackupNoGameFolder" xml:space="preserve">
+    <value>На этом компьютере Dota на этом аккаунте ещё не запускалась. Запусти её один раз, выйди и верни копию.</value>
+  </data>
+  <data name="BackupNothingChosen" xml:space="preserve">
+    <value>Ничего не выбрано.</value>
+  </data>
+  <data name="BackupNothingToUndo" xml:space="preserve">
+    <value>Отменять нечего.</value>
+  </data>
+  <data name="BackupGridsNotSeen" xml:space="preserve">
+    <value>Сетки героев не вернулись: игра пока не видит файл сеток этого аккаунта. Сохрани в игре любую свою сетку, выйди и верни копию снова.</value>
+  </data>
+  <data name="BackupNotACopy" xml:space="preserve">
+    <value>Это не копия настроек DotaTune.</value>
+  </data>
+  <data name="BackupNewer" xml:space="preserve">
+    <value>Копия из более новой версии DotaTune. Чтобы её вернуть, обнови программу.</value>
+  </data>
+  <data name="BackupDamaged" xml:space="preserve">
+    <value>Копия повреждена: файл испорчен.</value>
+  </data>
+  <data name="BackupTooLarge" xml:space="preserve">
+    <value>Копия слишком большая.</value>
+  </data>
+  <data name="BackupErrorFormat" xml:space="preserve">
+    <value>С копией не вышло: {0}</value>
   </data>
 </root>

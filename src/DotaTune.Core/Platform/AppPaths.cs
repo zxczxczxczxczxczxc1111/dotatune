@@ -42,6 +42,9 @@ public sealed class AppPaths
 
     public string TransferBackupRoot => Path.Combine(DataRoot, "transfer");
 
+    /// <summary>What the last restore of a settings copy replaced, for undoing it.</summary>
+    public string BackupUndoFile => Path.Combine(DataRoot, "before-restore.zip");
+
     /// <summary>Accounts whose hero grids have DotaTune layouts; their copies are in <see cref="HeroGridFolder"/>.</summary>
     public string HeroGridStateFile => Path.Combine(DataRoot, "herogrids.json");
 

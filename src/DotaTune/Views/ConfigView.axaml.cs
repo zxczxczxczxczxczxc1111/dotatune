@@ -11,28 +11,62 @@ namespace DotaTune.Views;
 public partial class ConfigView : UserControl
 {
     private static readonly FilePickerFileType PresetType = new(Strings.PresetFileType) { Patterns = ["*" + PresetFile.Extension] };
+    private static readonly FilePickerFileType BackupType = new(Strings.BackupFileType) { Patterns = ["*" + SettingsBackupFile.Extension] };
 
     public ConfigView() => InitializeComponent();
 
     protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
     {
         base.OnAttachedToVisualTree(e);
-        ConnectPresets();
+        ConnectDialogs();
     }
 
     protected override void OnDataContextChanged(EventArgs e)
     {
         base.OnDataContextChanged(e);
-        ConnectPresets();
+        ConnectDialogs();
     }
 
-    /// <summary>Gives the presets block the dialogs and the clipboard of the window it is shown in.</summary>
-    private void ConnectPresets()
+    /// <summary>Gives the copy and presets blocks the dialogs and the clipboard of the window they are shown in.</summary>
+    private void ConnectDialogs()
     {
-        if (DataContext is not ConfigViewModel { Presets: var presets })
+        if (DataContext is not ConfigViewModel { Presets: var presets, Backup: var backup })
         {
             return;
         }
+
+        // The copy is offered for the desktop: it is easy to find there after a reset or to carry away.
+        backup.PickSavePath = async name =>
+        {
+            if (TopLevel.GetTopLevel(this) is not { } top)
+            {
+                return null;
+            }
+
+            IStorageFile? file = await top.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
+            {
+                SuggestedFileName = name,
+                DefaultExtension = SettingsBackupFile.Extension,
+                FileTypeChoices = [BackupType],
+                SuggestedStartLocation = await top.StorageProvider.TryGetWellKnownFolderAsync(WellKnownFolder.Desktop),
+            });
+            return file?.TryGetLocalPath();
+        };
+        backup.PickOpenPath = async () =>
+        {
+            if (TopLevel.GetTopLevel(this) is not { } top)
+            {
+                return null;
+            }
+
+            IReadOnlyList<IStorageFile> files = await top.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
+            {
+                AllowMultiple = false,
+                FileTypeFilter = [BackupType],
+                SuggestedStartLocation = await top.StorageProvider.TryGetWellKnownFolderAsync(WellKnownFolder.Desktop),
+            });
+            return files.Count == 0 ? null : files[0].TryGetLocalPath();
+        };
 
         presets.PickSavePath = async () =>
         {

@@ -333,13 +333,17 @@ public class ConfigPageTests
         presets.LoadCodeCommand.Execute(null);
         Assert.True(presets.HasPending);
         Assert.False(presets.HasHotkeys);
-        Assert.Equal(3, presets.Changes.Count);
-        Assert.Contains($"{Strings.ConfigCreepScale} {string.Format(System.Globalization.CultureInfo.CurrentCulture, Strings.ConfigTimesFormat, 1.75)}", presets.Changes[1], StringComparison.Ordinal);
-        Assert.DoesNotContain("dota_", presets.Changes[1], StringComparison.Ordinal);
+        Assert.Contains($"{Strings.ConfigCreepScale} {string.Format(System.Globalization.CultureInfo.CurrentCulture, Strings.ConfigTimesFormat, 1.75)}", presets.ConfigChange, StringComparison.Ordinal);
+        Assert.DoesNotContain("dota_", presets.ConfigChange, StringComparison.Ordinal);
+        Assert.Contains("-novid", presets.LaunchChange, StringComparison.Ordinal);
         Assert.Contains("RainOfFrogs", presets.Unknown!, StringComparison.Ordinal);
         Assert.Contains("-autoconfig", presets.Unknown!, StringComparison.Ordinal);
         Snapshot(window, $"{language}-Config-preset.png", scrollToEnd: true);
 
+        // A code carries no files: with every line switched off there is nothing to apply.
+        presets.ApplyEffects = presets.ApplyConfig = presets.ApplyLaunch = false;
+        Assert.False(presets.ApplyCommand.CanExecute(null));
+        presets.ApplyEffects = presets.ApplyConfig = true;
         presets.ApplyCommand.Execute(null);
         Settle(page);
         Assert.False(presets.HasPending);
@@ -348,8 +352,8 @@ public class ConfigPageTests
         Assert.Equal("#FF8C00", page.Colors[1].Hex);
         Assert.Equal(1.75, page.CreepScale.Value);
         Assert.Equal(new Rgb(255, 140, 0), App.Services.Settings.Load().Config!.EnemyColor);
-        Assert.True(page.Launch.NoVideo);
-        Assert.Equal("-high -novid", page.Launch.Planned);
+        Assert.False(page.Launch.NoVideo);
+        Assert.Equal("-high", page.Launch.Planned);
         Assert.Equal(string.Format(System.Globalization.CultureInfo.CurrentCulture, Strings.PresetAppliedFormat, 0), presets.Note);
 
         presets.ImportText = "DT9-AAAA";
@@ -377,7 +381,7 @@ public class ConfigPageTests
 
         Wait(presets.OpenFromAsync(file));
         Assert.True(presets.HasHotkeys);
-        presets.ApplyChoicePart = false;
+        presets.ApplyEffects = presets.ApplyConfig = presets.ApplyLaunch = false;
         presets.ApplyCommand.Execute(null);
         Settle(page);
         Assert.Contains("\"мои\"", File.ReadAllText(keys), StringComparison.Ordinal);
@@ -388,6 +392,97 @@ public class ConfigPageTests
         Settle(page);
         Assert.Contains("\"другие\"", File.ReadAllText(keys), StringComparison.Ordinal);
         Assert.False(page.Transfer.CanRestoreNow);
+        window.Close();
+    }
+
+    [AvaloniaTheory]
+    [InlineData("ru")]
+    [InlineData("en")]
+    public void Settings_copy_is_saved_restored_part_by_part_and_undone(string language)
+    {
+        using var folder = new CyrillicTempFolder();
+        using var steam = new FakeSteam();
+        steam.SetLaunchOptions("-novid");
+        string keys = steam.WriteGameFile(FakeSteam.AccountId, "remote/cfg/dotakeys_personal.lst", "keys mine");
+        string video = steam.WriteGameFile(FakeSteam.AccountId, "local/cfg/video.txt", "video mine");
+        (MainWindow window, ConfigViewModel page) = Open(folder, steam, language);
+        BackupBlockViewModel backup = page.Backup;
+        string file = Path.Combine(folder.Path, "копия.zip");
+        Assert.False(backup.HasLastCopy);
+
+        Wait(backup.SaveToAsync(file));
+        Settle(page);
+        string inside = string.Join(", ", new[] { Strings.TransferGraphics, Strings.TransferHotkeys, Strings.TransferLaunchOptions }
+            .Select(t => t.ToLower(System.Globalization.CultureInfo.CurrentCulture)));
+        Assert.Equal(string.Format(System.Globalization.CultureInfo.CurrentCulture, Strings.BackupSavedFormat, "копия.zip", inside), backup.Note);
+        Assert.True(backup.HasLastCopy);
+        Assert.Contains("копия.zip", backup.LastCopyText, StringComparison.Ordinal);
+        File.WriteAllText(keys, "keys changed");
+        File.WriteAllText(video, "video changed");
+
+        Wait(backup.RestoreLastCommand.ExecuteAsync(null));
+        Assert.True(backup.HasPending);
+        Assert.Equal([Core.Presets.BackupPart.Graphics, Core.Presets.BackupPart.Hotkeys, Core.Presets.BackupPart.LaunchOptions], backup.Rows.Select(r => r.Part));
+        Assert.All(backup.Rows, r => Assert.True(r.IsChecked));
+        Assert.Equal("-novid", backup.Rows[2].Description);
+        Assert.Equal(Strings.BackupApply, backup.ApplyText);
+        backup.Rows[0].IsChecked = false;
+        Snapshot(window, $"{language}-Config-backup.png");
+
+        backup.ApplyCommand.Execute(null);
+        Settle(page);
+        Assert.False(backup.HasPending);
+        Assert.Equal("keys mine", File.ReadAllText(keys));
+        Assert.Equal("video changed", File.ReadAllText(video));
+        Assert.Equal(string.Format(System.Globalization.CultureInfo.CurrentCulture, Strings.BackupRestoredFormat, 1), backup.Note);
+        Assert.True(backup.CanUndo);
+
+        backup.UndoCommand.Execute(null);
+        Settle(page);
+        Assert.Equal("keys changed", File.ReadAllText(keys));
+        Assert.Equal(string.Format(System.Globalization.CultureInfo.CurrentCulture, Strings.BackupUndoneFormat, 1), backup.Note);
+        Assert.False(backup.CanUndo);
+
+        File.WriteAllText(file, "not a zip");
+        Wait(backup.OpenFromAsync(file));
+        Assert.Equal(Strings.BackupNotACopy, backup.Note);
+        Assert.False(backup.HasPending);
+        window.Close();
+    }
+
+    [AvaloniaFact]
+    public void Copy_from_another_computer_leaves_graphics_off_and_restarts_steam_for_the_launch_line()
+    {
+        using var folder = new CyrillicTempFolder();
+        using var steam = new FakeSteam();
+        steam.SetLaunchOptions("-high");
+        string video = steam.WriteGameFile(FakeSteam.AccountId, "local/cfg/video.txt", "video here");
+        steam.Running.Add("steam");
+        var client = new FakeSteamClient(steam);
+        App.Services = AppServices.Create(
+            new AppPaths(Path.Combine(folder.Path, "Иван"), Path.Combine(folder.Path, "work")), steam.Read, steamRestart: log => SteamRestartTests.Restart(steam, client, log));
+        (MainWindow window, ConfigViewModel page) = Open(folder, steam, "ru", keepServices: true);
+        BackupBlockViewModel backup = page.Backup;
+        string file = Path.Combine(folder.Path, "с другого.zip");
+        var manifest = new Core.Presets.BackupManifest(
+            Core.Presets.SettingsBackupFile.FormatVersion, Core.Presets.SettingsBackupFile.Kind, "0.1.0", null, DateTimeOffset.Now, "другой", "0000", "-novid");
+        Core.Presets.SettingsBackupFile.Write(file, new Core.Presets.SettingsBackup(
+            manifest, new Dictionary<string, byte[]> { ["local/cfg/video.txt"] = System.Text.Encoding.UTF8.GetBytes("video there") }, null));
+
+        Wait(backup.OpenFromAsync(file));
+        Assert.False(backup.Rows[0].IsChecked);
+        Assert.Equal(Strings.BackupGraphicsOther, backup.Rows[0].Description);
+        Assert.Equal(Strings.BackupApplyRestart, backup.ApplyText);
+        backup.Rows[1].IsChecked = false;
+        Assert.False(backup.ApplyCommand.CanExecute(null));
+        backup.Rows[1].IsChecked = true;
+
+        backup.ApplyCommand.Execute(null);
+        Settle(page);
+        Assert.Equal("-novid", Core.Steam.LaunchOptions.Read(steam.SteamRoot, FakeSteam.AccountId));
+        Assert.Equal("video here", File.ReadAllText(video));
+        Assert.Equal($"{string.Format(System.Globalization.CultureInfo.CurrentCulture, Strings.BackupRestoredFormat, 1)} {Strings.LaunchSteamStarting}", backup.Note);
+        Assert.Equal(["-shutdown", ""], client.Starts.Select(s => string.Join(' ', s.Skip(1))));
         window.Close();
     }
 

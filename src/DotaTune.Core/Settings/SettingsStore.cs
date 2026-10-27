@@ -33,6 +33,9 @@ public sealed record AppSettings
 
     /// <summary>Seconds before the match is accepted; null for the default. Kept while the switch is off.</summary>
     public int? AutoAcceptDelay { get; init; }
+
+    /// <summary>The settings copy saved last, offered for a restore without picking a file.</summary>
+    public string? LastBackup { get; init; }
 }
 
 /// <summary>

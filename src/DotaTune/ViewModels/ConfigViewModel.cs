@@ -242,10 +242,13 @@ public sealed partial class ConfigViewModel : ObservableObject, IActivatedPage
         _hideFrontpageVideo = saved.HideFrontpageVideo;
         _noParticleLights = saved.NoParticleLights;
         _minimalism = saved.Minimalism;
+        Backup = new BackupBlockViewModel(services, RunAsync);
         Launch = new LaunchBlockViewModel(services, RunAsync);
         Transfer = new TransferBlockViewModel(services, RunAsync);
         Presets = new PresetBlockViewModel(services, RunAsync, CurrentPresetChoice, ApplyPreset);
     }
+
+    public BackupBlockViewModel Backup { get; }
 
     public LaunchBlockViewModel Launch { get; }
 
@@ -366,6 +369,7 @@ public sealed partial class ConfigViewModel : ObservableObject, IActivatedPage
 
     partial void OnIsBusyChanged(bool value)
     {
+        Backup.IsBusy = value;
         Launch.IsBusy = value;
         Transfer.IsBusy = value;
         Presets.IsBusy = value;
@@ -376,26 +380,37 @@ public sealed partial class ConfigViewModel : ObservableObject, IActivatedPage
         PresetReview.Choice(_services.Settings.Load().EffectGroups, Choice(), _game?.LaunchOptions);
 
     /// <summary>
-    /// A loaded preset: effect groups are saved for the effects page and the next pack, the
-    /// config goes on this page and the launch options onto their switches; writing stays with the buttons.
+    /// The chosen lines of a loaded preset: effect groups are saved for the effects page and the
+    /// next pack, the config goes on this page and the launch options onto their switches;
+    /// writing stays with the buttons.
     /// </summary>
-    private void ApplyPreset(PresetReview review)
+    private void ApplyPreset(PresetReview review, PresetChoiceParts parts)
     {
-        try
+        if (parts.Effects)
         {
-            _services.Settings.Save(_services.Settings.Load() with
+            try
             {
-                EffectGroups = review.Effects is { } groups && groups.Count == EffectRules.All.Count ? null : review.Effects,
-            });
-        }
-        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
-        {
-            _services.Log.Error("Could not save the effect groups of a preset", ex);
+                _services.Settings.Save(_services.Settings.Load() with
+                {
+                    EffectGroups = review.Effects is { } groups && groups.Count == EffectRules.All.Count ? null : review.Effects,
+                });
+            }
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+            {
+                _services.Log.Error("Could not save the effect groups of a preset", ex);
+            }
         }
 
-        SetChoice(review.Config ?? new GameConfig());
-        Launch.NoVideo = review.Launch.Contains(LaunchOptionsEditor.NoVideo);
-        Launch.NoJoystick = review.Launch.Contains(LaunchOptionsEditor.NoJoystick);
+        if (parts.Config)
+        {
+            SetChoice(review.Config ?? new GameConfig());
+        }
+
+        if (parts.Launch)
+        {
+            Launch.NoVideo = review.Launch.Contains(LaunchOptionsEditor.NoVideo);
+            Launch.NoJoystick = review.Launch.Contains(LaunchOptionsEditor.NoJoystick);
+        }
     }
 
     private async Task Change(Func<ConfigRefusal?> change)
@@ -450,6 +465,7 @@ public sealed partial class ConfigViewModel : ObservableObject, IActivatedPage
             (_game, _written, _health) = (state.Game, state.Written, state.Health);
             Note = BaseNote;
             Show();
+            Backup.Update(_game);
             Launch.Update(_game, state.Launch);
             Transfer.Update(_game, state.Accounts, state.Restorable);
         }

@@ -215,6 +215,87 @@ public sealed class AutoexecService(AutoexecStateStore store, FileLog log)
         return null;
     }
 
+    /// <summary>The person's own lines of autoexec.cfg, without the DotaTune block; null when there are none.</summary>
+    /// <exception cref="InvalidDataException">A DotaTune mark is missing or doubled.</exception>
+    public byte[]? OwnText(GameState game)
+    {
+        ArgumentNullException.ThrowIfNull(game);
+        if (game.Dota is null || ReadText(PathIn(game.Dota.GameRoot)) is not string text)
+        {
+            return null;
+        }
+
+        string own = AutoexecText.WithoutBlock(text, store.Load()?.AddedLineBreak == true);
+        return own.Trim().Length == 0 ? null : AutoexecText.Encoding.GetBytes(own);
+    }
+
+    /// <summary>A DotaTune mark in the game's autoexec.cfg is missing or doubled.</summary>
+    public bool MarksBroken(GameState game)
+    {
+        ArgumentNullException.ThrowIfNull(game);
+        return game.Dota is not null && !MarksAreSound(ReadText(PathIn(game.Dota.GameRoot)));
+    }
+
+    /// <summary>
+    /// Puts own lines in place of the person's current ones. The DotaTune block stays, after them;
+    /// null own lines leave only the block, or no file when there is no block. Null when done.
+    /// </summary>
+    public ConfigRefusal? ReplaceOwnText(GameState game, byte[]? own)
+    {
+        ArgumentNullException.ThrowIfNull(game);
+        if (game.DotaRunning)
+        {
+            return ConfigRefusal.DotaRunning;
+        }
+
+        if (game.Dota is null)
+        {
+            return ConfigRefusal.NoGame;
+        }
+
+        string path = PathIn(game.Dota.GameRoot);
+        string? text = ReadText(path);
+        (int Start, int End)? block;
+        try
+        {
+            block = AutoexecText.FindBlock(text ?? string.Empty);
+        }
+        catch (InvalidDataException)
+        {
+            return ConfigRefusal.BrokenMarks;
+        }
+
+        string ownText = own is null ? string.Empty : AutoexecText.Encoding.GetString(own);
+        if (block is not (int start, int end))
+        {
+            if (ownText.Length > 0)
+            {
+                Directory.CreateDirectory(Path.GetDirectoryName(path)!);
+                WriteText(path, ownText);
+            }
+            else if (text is not null)
+            {
+                File.Delete(path);
+            }
+
+            log.Info($"Own lines of {path} replaced, {ownText.Length} characters");
+            return null;
+        }
+
+        string newline = text!.Contains("\r\n", StringComparison.Ordinal) ? "\r\n" : "\n";
+        bool addedBreak = ownText.Length > 0 && !ownText.EndsWith('\n');
+        WriteText(path, ownText + (addedBreak ? newline : string.Empty) + text[start..end]);
+
+        // The block now follows these lines, so taking it out drops the break added before it.
+        if (store.Load() is { } state && state.AddedLineBreak != addedBreak)
+        {
+            store.Save(state with { AddedLineBreak = addedBreak });
+        }
+
+        log.Info($"Own lines of {path} replaced, {ownText.Length} characters, the DotaTune block kept");
+        return null;
+    }
+
     public AutoexecHealth Check()
     {
         AutoexecState? state = store.Load();

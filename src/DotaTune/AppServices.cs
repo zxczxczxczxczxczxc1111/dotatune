@@ -10,6 +10,7 @@ using DotaTune.Core.Menu;
 using DotaTune.Core.Mmr;
 using DotaTune.Core.Pack;
 using DotaTune.Core.Platform;
+using DotaTune.Core.Presets;
 using DotaTune.Core.Reset;
 using DotaTune.Core.Settings;
 using DotaTune.Core.Steam;
@@ -33,6 +34,7 @@ internal sealed class AppServices
         Autoexec = new AutoexecService(new AutoexecStateStore(paths.AutoexecStateFile, log), log);
         Launch = new LaunchService(new LaunchChangeStore(paths.LaunchStateFile, log), log);
         Transfer = new TransferService(new TransferBackupStore(paths.TransferStateFile, paths.TransferBackupRoot, log), log);
+        Backup = new SettingsBackupService(paths.BackupUndoFile, Autoexec, log);
         Launcher = launcher;
         MenuPictures = new MenuPictures(paths.MenuPictureFolder, log);
         Mmr = new MmrService(new MmrHistoryStore(paths.MmrHistoryFile, log), Packs, log);
@@ -55,6 +57,9 @@ internal sealed class AppServices
     public LaunchService Launch { get; }
 
     public TransferService Transfer { get; }
+
+    /// <summary>Copies of the account's own settings in a file, and putting them back.</summary>
+    public SettingsBackupService Backup { get; }
 
     public GameLauncher Launcher { get; }
 
