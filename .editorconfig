@@ -1,0 +1,21 @@
+root = true
+
+[*]
+charset = utf-8
+end_of_line = crlf
+insert_final_newline = true
+indent_style = space
+indent_size = 4
+
+[*.{props,targets,csproj,slnx,axaml,xml,resx,json,yml}]
+indent_size = 2
+
+[*.cs]
+# Culture and string comparison: a file written on a Russian machine must read back
+# on an English one, so every culture-sensitive call states its culture explicitly.
+dotnet_diagnostic.CA1304.severity = error
+dotnet_diagnostic.CA1305.severity = error
+dotnet_diagnostic.CA1307.severity = error
+dotnet_diagnostic.CA1309.severity = error
+dotnet_diagnostic.CA1310.severity = error
+dotnet_diagnostic.CA1311.severity = error

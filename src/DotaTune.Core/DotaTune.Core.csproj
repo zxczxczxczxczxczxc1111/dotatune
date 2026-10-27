@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>DotaTune.Core</RootNamespace>
+    <!-- LibraryImport generates marshalling stubs that need unsafe blocks. -->
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="ValveKeyValue" />
+    <PackageReference Include="ValvePak" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Ready-made hero grid layouts for use without the internet, MIT, with their license. -->
+    <EmbeddedResource Include="HeroGrids\precompiled-grids.json" LogicalName="DotaTune.HeroGrids.precompiled-grids.json" />
+    <None Include="HeroGrids\precompiled-grids.LICENSE.txt" CopyToOutputDirectory="PreserveNewest" />
+    <!-- Art grids picked on gridstudio.me. -->
+    <EmbeddedResource Include="HeroGrids\art-grids.json" LogicalName="DotaTune.HeroGrids.art-grids.json" />
+    <!-- The menu script of the MMR line, compiled from Mmr\Panorama by build\panorama.ps1. -->
+    <EmbeddedResource Include="Mmr\Panorama\compiled\*_c" LogicalName="DotaTune.Mmr.%(Filename)%(Extension)" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="DotaTune.Tests" />
+  </ItemGroup>
+
+</Project>

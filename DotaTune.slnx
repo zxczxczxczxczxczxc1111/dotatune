@@ -1,0 +1,10 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/DotaTune.Core/DotaTune.Core.csproj" />
+    <Project Path="src/DotaTune/DotaTune.csproj" />
+    <Project Path="src/DotaTune.Setup/DotaTune.Setup.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/DotaTune.Tests/DotaTune.Tests.csproj" />
+  </Folder>
+</Solution>

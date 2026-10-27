@@ -1,0 +1,257 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:DotaTune.ViewModels"
+             xmlns:res="using:DotaTune.Resources"
+             x:Class="DotaTune.Views.ConfigView"
+             x:DataType="vm:ConfigViewModel">
+  <UserControl.DataTemplates>
+    <DataTemplate DataType="vm:NumberOption">
+      <TextBlock Text="{Binding Text}" />
+    </DataTemplate>
+    <DataTemplate DataType="vm:AccountOption">
+      <TextBlock Text="{Binding Text}" />
+    </DataTemplate>
+  </UserControl.DataTemplates>
+
+  <StackPanel Spacing="14" MaxWidth="820" HorizontalAlignment="Left">
+    <TextBlock Classes="title" Text="{Binding Title}" />
+    <TextBlock Classes="lead" Text="{Binding Description}" />
+
+    <!-- The minimap colours of this block are on the colours page. -->
+    <TextBlock Classes="group" Text="{x:Static res:Strings.ConfigCommandsGroup}" Margin="0,18,0,0" />
+    <Grid ColumnDefinitions="*,Auto" Margin="0,10">
+      <StackPanel Spacing="2">
+        <TextBlock Text="{x:Static res:Strings.ConfigMinimalism}" FontSize="16" TextWrapping="Wrap" />
+        <TextBlock Classes="muted" Text="{x:Static res:Strings.ConfigMinimalismDescription}" />
+      </StackPanel>
+      <ToggleButton Grid.Column="1" Classes="switch" IsChecked="{Binding Minimalism}" Margin="32,0,0,0"
+                    AutomationProperties.Name="{x:Static res:Strings.ConfigMinimalism}" VerticalAlignment="Center" />
+    </Grid>
+    <Grid ColumnDefinitions="*,Auto" Margin="0,10">
+      <StackPanel Spacing="2">
+        <TextBlock Text="{x:Static res:Strings.ConfigCreepScale}" FontSize="16" TextWrapping="Wrap" />
+        <TextBlock Classes="muted" Text="{x:Static res:Strings.ConfigCreepScaleDescription}" />
+      </StackPanel>
+      <ComboBox Grid.Column="1" ItemsSource="{Binding CreepScales}" SelectedItem="{Binding CreepScale}" MinWidth="150"
+                Margin="32,0,0,0" VerticalAlignment="Center" AutomationProperties.Name="{x:Static res:Strings.ConfigCreepScale}" />
+    </Grid>
+    <Grid ColumnDefinitions="*,Auto" Margin="0,10">
+      <StackPanel Spacing="2">
+        <TextBlock Text="{x:Static res:Strings.ConfigHideVideo}" FontSize="16" TextWrapping="Wrap" />
+        <TextBlock Classes="muted" Text="{x:Static res:Strings.ConfigHideVideoDescription}" />
+      </StackPanel>
+      <ToggleButton Grid.Column="1" Classes="switch" IsChecked="{Binding HideFrontpageVideo}" Margin="32,0,0,0"
+                    AutomationProperties.Name="{x:Static res:Strings.ConfigHideVideo}" VerticalAlignment="Center" />
+    </Grid>
+    <Grid ColumnDefinitions="*,Auto" Margin="0,10">
+      <StackPanel Spacing="2">
+        <TextBlock Text="{x:Static res:Strings.ConfigMenuFps}" FontSize="16" TextWrapping="Wrap" />
+        <TextBlock Classes="muted" Text="{x:Static res:Strings.ConfigMenuFpsDescription}" />
+      </StackPanel>
+      <ComboBox Grid.Column="1" ItemsSource="{Binding MenuFpsLimits}" SelectedItem="{Binding MenuFps}" MinWidth="150"
+                Margin="32,0,0,0" VerticalAlignment="Center" AutomationProperties.Name="{x:Static res:Strings.ConfigMenuFps}" />
+    </Grid>
+    <Grid ColumnDefinitions="*,Auto" Margin="0,10">
+      <StackPanel Spacing="2">
+        <TextBlock Text="{x:Static res:Strings.ConfigNoParticleLights}" FontSize="16" TextWrapping="Wrap" />
+        <TextBlock Classes="muted" Text="{x:Static res:Strings.ConfigNoParticleLightsDescription}" />
+      </StackPanel>
+      <ToggleButton Grid.Column="1" Classes="switch" IsChecked="{Binding NoParticleLights}" Margin="32,0,0,0"
+                    AutomationProperties.Name="{x:Static res:Strings.ConfigNoParticleLights}" VerticalAlignment="Center" />
+    </Grid>
+
+    <Border Classes="verdict" Classes.ok="{Binding IsOk}" Classes.attention="{Binding IsAttention}" Margin="0,14,0,0"
+            IsVisible="{Binding Summary, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
+      <Grid ColumnDefinitions="Auto,*">
+        <Ellipse Classes="mark" Width="8" Height="8" VerticalAlignment="Top" Margin="0,8,12,0" />
+        <StackPanel Grid.Column="1" Spacing="8">
+          <TextBlock Classes="label" Text="{Binding Summary}" TextWrapping="Wrap" />
+          <TextBlock Classes="muted" Text="{Binding Note}" IsVisible="{Binding Note, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
+        </StackPanel>
+      </Grid>
+    </Border>
+
+    <WrapPanel Orientation="Horizontal" Margin="0,10,0,0">
+      <Button Classes="pill accent" Content="{x:Static res:Strings.ConfigWrite}" Command="{Binding WriteCommand}"
+              IsVisible="{Binding CanWriteNow}" Margin="0,0,12,12" />
+      <Button Classes="pill" Content="{x:Static res:Strings.ConfigRemove}" Command="{Binding RemoveCommand}"
+              IsVisible="{Binding CanRemoveNow}" Margin="0,0,12,12" />
+    </WrapPanel>
+
+    <StackPanel Spacing="14" DataContext="{Binding Launch}" x:DataType="vm:LaunchBlockViewModel">
+      <TextBlock Classes="group" Text="{x:Static res:Strings.ConfigLaunchGroup}" Margin="0,18,0,0" />
+      <SelectableTextBlock Classes="muted" Text="{Binding Current}" TextWrapping="Wrap" />
+      <StackPanel Spacing="14" IsVisible="{Binding IsAvailable}">
+        <Grid ColumnDefinitions="*,Auto" Margin="0,10">
+          <StackPanel Spacing="2">
+            <TextBlock Text="{x:Static res:Strings.LaunchNoVideo}" FontSize="16" TextWrapping="Wrap" />
+            <TextBlock Classes="muted" Text="{x:Static res:Strings.LaunchNoVideoDescription}" />
+          </StackPanel>
+          <ToggleButton Grid.Column="1" Classes="switch" IsChecked="{Binding NoVideo}" Margin="32,0,0,0"
+                        AutomationProperties.Name="{x:Static res:Strings.LaunchNoVideo}" VerticalAlignment="Center" />
+        </Grid>
+        <Grid ColumnDefinitions="*,Auto" Margin="0,10">
+          <StackPanel Spacing="2">
+            <TextBlock Text="{x:Static res:Strings.LaunchNoJoystick}" FontSize="16" TextWrapping="Wrap" />
+            <TextBlock Classes="muted" Text="{x:Static res:Strings.LaunchNoJoystickDescription}" />
+          </StackPanel>
+          <ToggleButton Grid.Column="1" Classes="switch" IsChecked="{Binding NoJoystick}" Margin="32,0,0,0"
+                        AutomationProperties.Name="{x:Static res:Strings.LaunchNoJoystick}" VerticalAlignment="Center" />
+        </Grid>
+        <Grid ColumnDefinitions="*,Auto" Margin="0,10">
+          <StackPanel Spacing="2">
+            <TextBlock Text="{x:Static res:Strings.LaunchConsoleLog}" FontSize="16" TextWrapping="Wrap" />
+            <TextBlock Classes="muted" Text="{x:Static res:Strings.LaunchConsoleLogDescription}" />
+          </StackPanel>
+          <ToggleButton Grid.Column="1" Classes="switch" IsChecked="{Binding ConsoleLog}" Margin="32,0,0,0"
+                        AutomationProperties.Name="{x:Static res:Strings.LaunchConsoleLog}" VerticalAlignment="Center" />
+        </Grid>
+        <Grid ColumnDefinitions="*,Auto" Margin="0,10"
+              IsVisible="{Binding DeadOptions, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
+          <StackPanel Spacing="2">
+            <TextBlock Text="{x:Static res:Strings.LaunchRemoveDead}" FontSize="16" TextWrapping="Wrap" />
+            <TextBlock Classes="muted" Text="{Binding DeadOptions}" />
+          </StackPanel>
+          <ToggleButton Grid.Column="1" Classes="switch" IsChecked="{Binding RemoveDead}" Margin="32,0,0,0"
+                        AutomationProperties.Name="{x:Static res:Strings.LaunchRemoveDead}" VerticalAlignment="Center" />
+        </Grid>
+      </StackPanel>
+      <SelectableTextBlock Classes="label" Text="{Binding Result}" TextWrapping="Wrap"
+                           IsVisible="{Binding Result, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
+      <TextBlock Classes="muted" Text="{Binding Note}" IsVisible="{Binding Note, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
+      <WrapPanel Orientation="Horizontal">
+        <Button Classes="pill" Content="{Binding WriteText}" Command="{Binding WriteCommand}"
+                IsVisible="{Binding CanWriteNow}" Margin="0,0,12,12" />
+        <Button Classes="pill" Content="{Binding RestoreText}" Command="{Binding RestoreCommand}"
+                IsVisible="{Binding CanRestoreNow}" Margin="0,0,12,12" />
+      </WrapPanel>
+    </StackPanel>
+
+    <StackPanel Spacing="14" DataContext="{Binding Transfer}" x:DataType="vm:TransferBlockViewModel">
+      <TextBlock Classes="group" Text="{x:Static res:Strings.ConfigTransferGroup}" Margin="0,18,0,0" />
+      <StackPanel Spacing="14" IsVisible="{Binding IsAvailable}">
+        <Grid ColumnDefinitions="*,Auto" Margin="0,10">
+          <TextBlock Text="{x:Static res:Strings.TransferFrom}" FontSize="16" VerticalAlignment="Center" />
+          <ComboBox Grid.Column="1" ItemsSource="{Binding Accounts}" SelectedItem="{Binding Source}" MinWidth="240"
+                    Margin="32,0,0,0" VerticalAlignment="Center" AutomationProperties.Name="{x:Static res:Strings.TransferFrom}" />
+        </Grid>
+        <Grid ColumnDefinitions="*,Auto" Margin="0,10">
+          <TextBlock Text="{x:Static res:Strings.TransferTo}" FontSize="16" VerticalAlignment="Center" />
+          <ComboBox Grid.Column="1" ItemsSource="{Binding Accounts}" SelectedItem="{Binding Target}" MinWidth="240"
+                    Margin="32,0,0,0" VerticalAlignment="Center" AutomationProperties.Name="{x:Static res:Strings.TransferTo}" />
+        </Grid>
+        <ItemsControl ItemsSource="{Binding Groups}">
+          <ItemsControl.ItemTemplate>
+            <DataTemplate x:DataType="vm:TransferGroupRow">
+              <Grid ColumnDefinitions="*,Auto" Margin="0,10">
+                <StackPanel Spacing="2">
+                  <TextBlock Text="{Binding Title}" FontSize="16" TextWrapping="Wrap" />
+                  <TextBlock Classes="muted" Text="{Binding Description}" TextWrapping="Wrap" />
+                </StackPanel>
+                <ToggleButton Grid.Column="1" Classes="switch" IsChecked="{Binding IsChecked}" Margin="32,0,0,0"
+                              AutomationProperties.Name="{Binding Title}" VerticalAlignment="Center" />
+              </Grid>
+            </DataTemplate>
+          </ItemsControl.ItemTemplate>
+        </ItemsControl>
+      </StackPanel>
+      <TextBlock Classes="muted" Text="{Binding Note}" TextWrapping="Wrap"
+                 IsVisible="{Binding Note, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
+      <TextBlock Classes="label" Text="{Binding CloudHint}" TextWrapping="Wrap"
+                 IsVisible="{Binding CloudHint, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
+      <WrapPanel Orientation="Horizontal">
+        <Button Classes="pill" Content="{x:Static res:Strings.TransferRun}" Command="{Binding TransferCommand}"
+                IsVisible="{Binding CanTransferNow}" Margin="0,0,12,12" />
+        <Button Classes="pill" Content="{x:Static res:Strings.TransferRestore}" Command="{Binding RestoreCommand}"
+                IsVisible="{Binding CanRestoreNow}" Margin="0,0,12,12" />
+      </WrapPanel>
+    </StackPanel>
+
+    <StackPanel Spacing="14" DataContext="{Binding Presets}" x:DataType="vm:PresetBlockViewModel">
+      <TextBlock Classes="group" Text="{x:Static res:Strings.ConfigPresetGroup}" Margin="0,18,0,0" />
+      <TextBlock Classes="muted" Text="{x:Static res:Strings.PresetExportNote}" TextWrapping="Wrap" />
+      <Grid ColumnDefinitions="*,Auto" Margin="0,10">
+        <StackPanel Spacing="2">
+          <TextBlock Text="{x:Static res:Strings.TransferHeroGrids}" FontSize="16" TextWrapping="Wrap" />
+          <TextBlock Classes="muted" Text="{x:Static res:Strings.PresetFileOnly}" />
+        </StackPanel>
+        <ToggleButton Grid.Column="1" Classes="switch" IsChecked="{Binding WithHeroGrids}" Margin="32,0,0,0"
+                      AutomationProperties.Name="{x:Static res:Strings.TransferHeroGrids}" VerticalAlignment="Center" />
+      </Grid>
+      <Grid ColumnDefinitions="*,Auto" Margin="0,10">
+        <StackPanel Spacing="2">
+          <TextBlock Text="{x:Static res:Strings.TransferHotkeys}" FontSize="16" TextWrapping="Wrap" />
+          <TextBlock Classes="muted" Text="{x:Static res:Strings.PresetFileOnly}" />
+        </StackPanel>
+        <ToggleButton Grid.Column="1" Classes="switch" IsChecked="{Binding WithHotkeys}" Margin="32,0,0,0"
+                      AutomationProperties.Name="{x:Static res:Strings.TransferHotkeys}" VerticalAlignment="Center" />
+      </Grid>
+      <Grid ColumnDefinitions="*,Auto" Margin="0,10">
+        <StackPanel Spacing="2">
+          <TextBlock Text="{x:Static res:Strings.TransferGameSettings}" FontSize="16" TextWrapping="Wrap" />
+          <TextBlock Classes="muted" Text="{x:Static res:Strings.PresetFileOnly}" />
+        </StackPanel>
+        <ToggleButton Grid.Column="1" Classes="switch" IsChecked="{Binding WithGameSettings}" Margin="32,0,0,0"
+                      AutomationProperties.Name="{x:Static res:Strings.TransferGameSettings}" VerticalAlignment="Center" />
+      </Grid>
+      <WrapPanel Orientation="Horizontal">
+        <Button Classes="pill" Content="{x:Static res:Strings.PresetCopyCode}" Command="{Binding CopyCodeCommand}" Margin="0,0,12,12" />
+        <Button Classes="pill" Content="{x:Static res:Strings.PresetSaveFile}" Command="{Binding SaveFileCommand}" Margin="0,0,12,12" />
+      </WrapPanel>
+      <SelectableTextBlock Classes="muted" Text="{Binding Code}" TextWrapping="Wrap"
+                           IsVisible="{Binding Code, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
+
+      <Grid ColumnDefinitions="*,Auto" Margin="0,10,0,0">
+        <TextBox Classes="code" Text="{Binding ImportText}" PlaceholderText="{x:Static res:Strings.PresetCodeWatermark}"
+                 AutomationProperties.Name="{x:Static res:Strings.PresetCodeWatermark}" />
+        <Button Grid.Column="1" Classes="pill" Content="{x:Static res:Strings.PresetLoadCode}" Command="{Binding LoadCodeCommand}"
+                Margin="12,0,0,0" VerticalAlignment="Center" />
+      </Grid>
+      <WrapPanel Orientation="Horizontal">
+        <Button Classes="pill" Content="{x:Static res:Strings.PresetOpenFile}" Command="{Binding OpenFileCommand}" Margin="0,0,12,12" />
+      </WrapPanel>
+
+      <Border Classes="verdict" IsVisible="{Binding HasPending}">
+        <StackPanel Spacing="10">
+          <TextBlock Classes="label" Text="{x:Static res:Strings.PresetChangesTitle}" />
+          <ItemsControl ItemsSource="{Binding Changes}">
+            <ItemsControl.ItemTemplate>
+              <DataTemplate x:DataType="x:String">
+                <TextBlock Text="{Binding}" TextWrapping="Wrap" Margin="0,2" />
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+          <TextBlock Classes="muted" Text="{Binding Unknown}" TextWrapping="Wrap"
+                     IsVisible="{Binding Unknown, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
+          <Grid ColumnDefinitions="*,Auto">
+            <TextBlock Text="{x:Static res:Strings.PresetApplyChoice}" TextWrapping="Wrap" VerticalAlignment="Center" />
+            <ToggleButton Grid.Column="1" Classes="switch" IsChecked="{Binding ApplyChoicePart}" Margin="32,0,0,0"
+                          AutomationProperties.Name="{x:Static res:Strings.PresetApplyChoice}" VerticalAlignment="Center" />
+          </Grid>
+          <Grid ColumnDefinitions="*,Auto" IsVisible="{Binding HasHeroGrids}">
+            <TextBlock Text="{x:Static res:Strings.TransferHeroGrids}" TextWrapping="Wrap" VerticalAlignment="Center" />
+            <ToggleButton Grid.Column="1" Classes="switch" IsChecked="{Binding ApplyHeroGrids}" Margin="32,0,0,0"
+                          AutomationProperties.Name="{x:Static res:Strings.TransferHeroGrids}" VerticalAlignment="Center" />
+          </Grid>
+          <Grid ColumnDefinitions="*,Auto" IsVisible="{Binding HasHotkeys}">
+            <TextBlock Text="{x:Static res:Strings.TransferHotkeys}" TextWrapping="Wrap" VerticalAlignment="Center" />
+            <ToggleButton Grid.Column="1" Classes="switch" IsChecked="{Binding ApplyHotkeys}" Margin="32,0,0,0"
+                          AutomationProperties.Name="{x:Static res:Strings.TransferHotkeys}" VerticalAlignment="Center" />
+          </Grid>
+          <Grid ColumnDefinitions="*,Auto" IsVisible="{Binding HasGameSettings}">
+            <TextBlock Text="{x:Static res:Strings.TransferGameSettings}" TextWrapping="Wrap" VerticalAlignment="Center" />
+            <ToggleButton Grid.Column="1" Classes="switch" IsChecked="{Binding ApplyGameSettings}" Margin="32,0,0,0"
+                          AutomationProperties.Name="{x:Static res:Strings.TransferGameSettings}" VerticalAlignment="Center" />
+          </Grid>
+          <WrapPanel Orientation="Horizontal" Margin="0,6,0,0">
+            <Button Classes="pill accent" Content="{x:Static res:Strings.PresetApply}" Command="{Binding ApplyCommand}" Margin="0,0,12,0" />
+            <Button Classes="pill" Content="{x:Static res:Strings.PresetCancel}" Command="{Binding CancelCommand}" />
+          </WrapPanel>
+        </StackPanel>
+      </Border>
+
+      <TextBlock Classes="muted" Text="{Binding Note}" TextWrapping="Wrap"
+                 IsVisible="{Binding Note, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
+    </StackPanel>
+  </StackPanel>
+</UserControl>

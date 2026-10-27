@@ -1,0 +1,1074 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="NavGameState" xml:space="preserve">
+    <value>Game status</value>
+  </data>
+  <data name="NavEffects" xml:space="preserve">
+    <value>Effects</value>
+  </data>
+  <data name="NavClicks" xml:space="preserve">
+    <value>Colours</value>
+  </data>
+  <data name="NavMenuBackground" xml:space="preserve">
+    <value>Menu background</value>
+  </data>
+  <data name="NavHeroGrid" xml:space="preserve">
+    <value>Hero grid</value>
+  </data>
+  <data name="NavConfig" xml:space="preserve">
+    <value>Config and launch</value>
+  </data>
+  <data name="NavReset" xml:space="preserve">
+    <value>Reset</value>
+  </data>
+  <data name="NavSettings" xml:space="preserve">
+    <value>Settings</value>
+  </data>
+  <data name="GameStateDescription" xml:space="preserve">
+    <value>Where the game is and whether the DotaTune pack is in place.</value>
+  </data>
+  <data name="EffectsDescription" xml:space="preserve">
+    <value>Removes effects that cost frames and tell you nothing about the game. Abilities and sounds stay.</value>
+  </data>
+  <data name="ClicksDescription" xml:space="preserve">
+    <value>Your own colours for clicks, selection and the minimap.</value>
+  </data>
+  <data name="MenuBackgroundDescription" xml:space="preserve">
+    <value>A black background or your own picture instead of the 3D scene in the menu. Easier on the video card.</value>
+  </data>
+  <data name="HeroGridDescription" xml:space="preserve">
+    <value>Ready-made hero layouts by position for the grid on the pick screen.</value>
+  </data>
+  <data name="ConfigDescription" xml:space="preserve">
+    <value>Commands the game runs at start and the Steam launch options.</value>
+  </data>
+  <data name="ResetDescription" xml:space="preserve">
+    <value>Takes everything DotaTune put in out of the game.</value>
+  </data>
+  <data name="LanguageLabel" xml:space="preserve">
+    <value>Interface language</value>
+  </data>
+  <data name="LanguageSystem" xml:space="preserve">
+    <value>Same as Windows</value>
+  </data>
+  <data name="LanguageRussian" xml:space="preserve">
+    <value>Русский</value>
+  </data>
+  <data name="LanguageEnglish" xml:space="preserve">
+    <value>English</value>
+  </data>
+  <data name="LanguageHint" xml:space="preserve">
+    <value>The language of the game and of Windows stays as it is.</value>
+  </data>
+  <data name="DataFolderLabel" xml:space="preserve">
+    <value>Settings and log</value>
+  </data>
+  <data name="OpenFolder" xml:space="preserve">
+    <value>Open folder</value>
+  </data>
+  <data name="VersionFormat" xml:space="preserve">
+    <value>Version {0}</value>
+  </data>
+  <data name="Refresh" xml:space="preserve">
+    <value>Refresh</value>
+  </data>
+  <data name="ReadingGame" xml:space="preserve">
+    <value>Reading game files…</value>
+  </data>
+  <data name="ActionUseVoiceFolder" xml:space="preserve">
+    <value>The pack goes next to the game files, game settings stay as they are.</value>
+  </data>
+  <data name="ActionSwitchToCarrier" xml:space="preserve">
+    <value>DotaTune switches the voice language to {0} so the game loads the pack. Voices stay English, the game text does not change.</value>
+  </data>
+  <data name="ActionUseLaunchLanguageFolder" xml:space="preserve">
+    <value>The pack goes where the -language {0} launch option points.</value>
+  </data>
+  <data name="ActionOfferRemoveEnglishOverride" xml:space="preserve">
+    <value>The -language english launch option keeps the game from loading mods. Remove it in Steam and choose English text in the game settings.</value>
+  </data>
+  <data name="ActionOfferRemoveForeignOverride" xml:space="preserve">
+    <value>The launch options still have -language {0}, usually left from Minify. With it the game shows text in that language.</value>
+  </data>
+  <data name="ActionNoCarrier" xml:space="preserve">
+    <value>The pack cannot go in without changing the voices in the game, so DotaTune installs nothing.</value>
+  </data>
+  <data name="ActionStartGameOnce" xml:space="preserve">
+    <value>Start the game once, quit it and refresh this page.</value>
+  </data>
+  <data name="ActionUnknownBootFormat" xml:space="preserve">
+    <value>The game seems to work differently after an update. DotaTune writes nothing to it for now.</value>
+  </data>
+  <data name="ProblemSteamNotFound" xml:space="preserve">
+    <value>Steam not found.</value>
+  </data>
+  <data name="ProblemDotaNotFound" xml:space="preserve">
+    <value>Dota 2 is not in any Steam library.</value>
+  </data>
+  <data name="ProblemNoAccount" xml:space="preserve">
+    <value>Cannot tell which account is signed in to Steam. Start Steam and refresh the page.</value>
+  </data>
+  <data name="ProblemUnreadableFormat" xml:space="preserve">
+    <value>Could not read {0}.</value>
+  </data>
+  <data name="DotaRunningNote" xml:space="preserve">
+    <value>Dota is running. The pack can be installed or removed after you quit the game.</value>
+  </data>
+  <data name="GroupGame" xml:space="preserve">
+    <value>Game</value>
+  </data>
+  <data name="GroupSteam" xml:space="preserve">
+    <value>Steam</value>
+  </data>
+  <data name="FactGameFolder" xml:space="preserve">
+    <value>Game folder</value>
+  </data>
+  <data name="FactBuild" xml:space="preserve">
+    <value>Game version</value>
+  </data>
+  <data name="FactDotaNow" xml:space="preserve">
+    <value>Dota now</value>
+  </data>
+  <data name="FactVoiceLanguage" xml:space="preserve">
+    <value>Voice language</value>
+  </data>
+  <data name="FactSteamFolder" xml:space="preserve">
+    <value>Steam folder</value>
+  </data>
+  <data name="FactAccount" xml:space="preserve">
+    <value>Account</value>
+  </data>
+  <data name="FactLaunchOptions" xml:space="preserve">
+    <value>Launch options</value>
+  </data>
+  <data name="ValueRunning" xml:space="preserve">
+    <value>Running</value>
+  </data>
+  <data name="ValueClosed" xml:space="preserve">
+    <value>Closed</value>
+  </data>
+  <data name="ValueNone" xml:space="preserve">
+    <value>None</value>
+  </data>
+  <data name="ValueUnknown" xml:space="preserve">
+    <value>Unknown</value>
+  </data>
+  <data name="AccountNowFormat" xml:space="preserve">
+    <value>{0}, in Steam now</value>
+  </data>
+  <data name="AccountLastFormat" xml:space="preserve">
+    <value>{0}, signed in last</value>
+  </data>
+  <data name="InstallPack" xml:space="preserve">
+    <value>Install pack</value>
+  </data>
+  <data name="RemovePack" xml:space="preserve">
+    <value>Remove pack</value>
+  </data>
+  <data name="HealthMissing" xml:space="preserve">
+    <value>The DotaTune pack is gone, usually after Steam verified the game files. Install it again.</value>
+  </data>
+  <data name="HealthChanged" xml:space="preserve">
+    <value>The pack file was replaced, DotaTune leaves it alone. Install the pack again.</value>
+  </data>
+  <data name="HealthFolderNotLoaded" xml:space="preserve">
+    <value>The voice language changed and the game no longer sees the pack. Install it again.</value>
+  </data>
+  <data name="HealthOtherBuild" xml:space="preserve">
+    <value>The game was updated, install the pack again.</value>
+  </data>
+  <data name="RefusedNoFreeSlot" xml:space="preserve">
+    <value>There is no room for the pack: other mods took every free place.</value>
+  </data>
+  <data name="RefusedWrittenFileDiffers" xml:space="preserve">
+    <value>The pack was written with an error and taken out. Check free space on the game disk.</value>
+  </data>
+  <data name="PackErrorFormat" xml:space="preserve">
+    <value>The pack was not changed: {0}</value>
+  </data>
+  <data name="Play" xml:space="preserve">
+    <value>Play</value>
+  </data>
+  <data name="PlayWaiting" xml:space="preserve">
+    <value>Starting the game and waiting for it to load the pack…</value>
+  </data>
+  <data name="PlayStarted" xml:space="preserve">
+    <value>The game is starting.</value>
+  </data>
+  <data name="PlayDidNotStart" xml:space="preserve">
+    <value>The game did not start within three minutes. Look at Steam: it may be waiting for sign-in or updating the game.</value>
+  </data>
+  <data name="PlayClosedEarly" xml:space="preserve">
+    <value>The game closed before it showed whether the pack was loaded.</value>
+  </data>
+  <data name="PlayNoSearchPaths" xml:space="preserve">
+    <value>The game is running, but the pack could not be checked.</value>
+  </data>
+  <data name="PlayAlreadyRunning" xml:space="preserve">
+    <value>Dota is already running.</value>
+  </data>
+  <data name="PlayErrorFormat" xml:space="preserve">
+    <value>The game did not start: {0}</value>
+  </data>
+  <data name="EffectWeather" xml:space="preserve">
+    <value>Weather</value>
+  </data>
+  <data name="EffectWeatherDescription" xml:space="preserve">
+    <value>Rain, snow and other weather from the map and from cosmetics.</value>
+  </data>
+  <data name="EffectMapAmbience" xml:space="preserve">
+    <value>Map ambience</value>
+  </data>
+  <data name="EffectMapAmbienceDescription" xml:space="preserve">
+    <value>Critters, lights, smoke and lava on the terrain.</value>
+  </data>
+  <data name="EffectEventCosmetics" xml:space="preserve">
+    <value>Event cosmetics</value>
+  </data>
+  <data name="EffectEventCosmeticsDescription" xml:space="preserve">
+    <value>Emblems, hat effects, kill banners and fireworks from events.</value>
+  </data>
+  <data name="EffectSprays" xml:space="preserve">
+    <value>Sprays</value>
+  </data>
+  <data name="EffectSpraysDescription" xml:space="preserve">
+    <value>Pictures players leave on the map.</value>
+  </data>
+  <data name="EffectCosmeticWards" xml:space="preserve">
+    <value>Ward cosmetics</value>
+  </data>
+  <data name="EffectCosmeticWardsDescription" xml:space="preserve">
+    <value>Glow and particles of cosmetic wards. The ward itself is seen as usual.</value>
+  </data>
+  <data name="EffectAttackFlashes" xml:space="preserve">
+    <value>Attack flashes</value>
+  </data>
+  <data name="EffectAttackFlashesDescription" xml:space="preserve">
+    <value>Flashes, trails and hits of hero attack projectiles. The projectile itself still flies.</value>
+  </data>
+  <data name="EffectBuildingAmbience" xml:space="preserve">
+    <value>Building glow</value>
+  </data>
+  <data name="EffectBuildingAmbienceDescription" xml:space="preserve">
+    <value>Lights of barracks, statues, the fountain, base gates and tower lamps. Destruction, shrines, teleports and portals look as usual.</value>
+  </data>
+  <data name="EffectFogMist" xml:space="preserve">
+    <value>Fog of war haze</value>
+  </data>
+  <data name="EffectFogMistDescription" xml:space="preserve">
+    <value>The drifting veil over ground out of sight. The darkening stays, so the edge of vision is still clear.</value>
+  </data>
+  <data name="EffectCosmeticAmbience" xml:space="preserve">
+    <value>Cosmetic glow</value>
+  </data>
+  <data name="EffectCosmeticAmbienceDescription" xml:space="preserve">
+    <value>Sparks, smoke and glow that hero and courier items wear all the time. The items themselves and their look in spells stay.</value>
+  </data>
+  <data name="EffectsSaveErrorFormat" xml:space="preserve">
+    <value>The choice is not saved: {0}</value>
+  </data>
+  <data name="EffectsNoPack" xml:space="preserve">
+    <value>No pack yet. The empty effects go in with it.</value>
+  </data>
+  <data name="EffectsPackMatches" xml:space="preserve">
+    <value>The pack is installed with these groups.</value>
+  </data>
+  <data name="EffectsPackDiffers" xml:space="preserve">
+    <value>The pack was built with other groups.</value>
+  </data>
+  <data name="RebuildPack" xml:space="preserve">
+    <value>Rebuild pack</value>
+  </data>
+  <data name="ConfigMinimapGroup" xml:space="preserve">
+    <value>Minimap</value>
+  </data>
+  <data name="ConfigFriendly" xml:space="preserve">
+    <value>Allies</value>
+  </data>
+  <data name="ConfigFriendlyDescription" xml:space="preserve">
+    <value>Creeps and buildings of your side</value>
+  </data>
+  <data name="ConfigEnemy" xml:space="preserve">
+    <value>Enemies</value>
+  </data>
+  <data name="ConfigEnemyDescription" xml:space="preserve">
+    <value>Creeps and buildings of the other side</value>
+  </data>
+  <data name="ConfigNeutral" xml:space="preserve">
+    <value>Neutrals</value>
+  </data>
+  <data name="ConfigNeutralDescription" xml:space="preserve">
+    <value>Neutral creeps and Roshan</value>
+  </data>
+  <data name="ConfigColorCode" xml:space="preserve">
+    <value>Colour code</value>
+  </data>
+  <data name="ColorPick" xml:space="preserve">
+    <value>Own colour</value>
+  </data>
+  <data name="ColorPickShade" xml:space="preserve">
+    <value>Saturation and brightness</value>
+  </data>
+  <data name="ColorPickHue" xml:space="preserve">
+    <value>Hue</value>
+  </data>
+  <data name="ConfigCreepScale" xml:space="preserve">
+    <value>Creep size</value>
+  </data>
+  <data name="ConfigCreepScaleDescription" xml:space="preserve">
+    <value>Creep dots on the minimap</value>
+  </data>
+  <data name="ConfigAsInGame" xml:space="preserve">
+    <value>As in the game</value>
+  </data>
+  <data name="ConfigTimesFormat" xml:space="preserve">
+    <value>{0}×</value>
+  </data>
+  <data name="ConfigCommandsGroup" xml:space="preserve">
+    <value>Game commands</value>
+  </data>
+  <data name="ConfigHideVideo" xml:space="preserve">
+    <value>No video on the main page</value>
+  </data>
+  <data name="ConfigHideVideoDescription" xml:space="preserve">
+    <value>The main menu page does not play its video</value>
+  </data>
+  <data name="ConfigMenuFps" xml:space="preserve">
+    <value>FPS in menus</value>
+  </data>
+  <data name="ConfigMenuFpsDescription" xml:space="preserve">
+    <value>Frame limit outside a match, the match itself is not affected</value>
+  </data>
+  <data name="ConfigNoParticleLights" xml:space="preserve">
+    <value>No light from effects</value>
+  </data>
+  <data name="ConfigNoParticleLightsDescription" xml:space="preserve">
+    <value>Fights are easier on the graphics card, effects look dimmer</value>
+  </data>
+  <data name="ConfigMinimalism" xml:space="preserve">
+    <value>minimalism</value>
+  </data>
+  <data name="ConfigMinimalismDescription" xml:space="preserve">
+    <value>The popular config: no colour correction on the map, no blood, simpler particles and shadows</value>
+  </data>
+  <data name="ConfigWrite" xml:space="preserve">
+    <value>Write to autoexec.cfg</value>
+  </data>
+  <data name="ConfigRemove" xml:space="preserve">
+    <value>Remove from autoexec.cfg</value>
+  </data>
+  <data name="ConfigNothingWritten" xml:space="preserve">
+    <value>DotaTune has nothing in autoexec.cfg.</value>
+  </data>
+  <data name="ConfigNotWrittenYet" xml:space="preserve">
+    <value>The choice is not in autoexec.cfg yet.</value>
+  </data>
+  <data name="ConfigWritten" xml:space="preserve">
+    <value>Written to autoexec.cfg. The game takes it at the next start.</value>
+  </data>
+  <data name="ConfigDiffers" xml:space="preserve">
+    <value>autoexec.cfg holds another choice.</value>
+  </data>
+  <data name="ConfigMissing" xml:space="preserve">
+    <value>The DotaTune lines are gone from autoexec.cfg.</value>
+  </data>
+  <data name="ConfigChanged" xml:space="preserve">
+    <value>The DotaTune lines in autoexec.cfg were edited by hand.</value>
+  </data>
+  <data name="ConfigDotaRunning" xml:space="preserve">
+    <value>Dota is running. DotaTune writes and removes its lines after you leave the game.</value>
+  </data>
+  <data name="ConfigBrokenMarksFormat" xml:space="preserve">
+    <value>The DotaTune marks in autoexec.cfg are broken. Fix the file by hand: {0}</value>
+  </data>
+  <data name="ConfigErrorFormat" xml:space="preserve">
+    <value>autoexec.cfg is not changed: {0}</value>
+  </data>
+  <data name="ConfigSaveErrorFormat" xml:space="preserve">
+    <value>The choice was not saved: {0}</value>
+  </data>
+  <data name="ColorGreen" xml:space="preserve">
+    <value>Green</value>
+  </data>
+  <data name="ColorRed" xml:space="preserve">
+    <value>Red</value>
+  </data>
+  <data name="ColorWhite" xml:space="preserve">
+    <value>White</value>
+  </data>
+  <data name="ColorCyan" xml:space="preserve">
+    <value>Cyan</value>
+  </data>
+  <data name="ColorMagenta" xml:space="preserve">
+    <value>Magenta</value>
+  </data>
+  <data name="ColorYellow" xml:space="preserve">
+    <value>Yellow</value>
+  </data>
+  <data name="ColorBlue" xml:space="preserve">
+    <value>Blue</value>
+  </data>
+  <data name="ColorOrange" xml:space="preserve">
+    <value>Orange</value>
+  </data>
+  <data name="ColorPurple" xml:space="preserve">
+    <value>Purple</value>
+  </data>
+  <data name="ConfigLaunchGroup" xml:space="preserve">
+    <value>Launch options</value>
+  </data>
+  <data name="LaunchCurrentFormat" xml:space="preserve">
+    <value>Now: {0}</value>
+  </data>
+  <data name="LaunchCurrentNone" xml:space="preserve">
+    <value>No launch options now</value>
+  </data>
+  <data name="LaunchResultFormat" xml:space="preserve">
+    <value>Will be: {0}</value>
+  </data>
+  <data name="LaunchResultNone" xml:space="preserve">
+    <value>Will be: no options</value>
+  </data>
+  <data name="LaunchNoVideo" xml:space="preserve">
+    <value>No intro video</value>
+  </data>
+  <data name="LaunchNoVideoDescription" xml:space="preserve">
+    <value>-novid, the game starts without the Valve video</value>
+  </data>
+  <data name="LaunchNoJoystick" xml:space="preserve">
+    <value>No joystick polling</value>
+  </data>
+  <data name="LaunchNoJoystickDescription" xml:space="preserve">
+    <value>-nojoy, a slightly faster start, FPS is not affected</value>
+  </data>
+  <data name="LaunchRemoveDead" xml:space="preserve">
+    <value>Remove what the game no longer has</value>
+  </data>
+  <data name="LaunchWrite" xml:space="preserve">
+    <value>Write launch options</value>
+  </data>
+  <data name="LaunchRestore" xml:space="preserve">
+    <value>Put back as it was</value>
+  </data>
+  <data name="LaunchWritten" xml:space="preserve">
+    <value>Launch options are written. Steam takes them at the next start of the game.</value>
+  </data>
+  <data name="LaunchSteamRunning" xml:space="preserve">
+    <value>Steam is running. Launch options can be written only while Steam is closed.</value>
+  </data>
+  <data name="LaunchNoDotaBlock" xml:space="preserve">
+    <value>Dota has not been started on this account yet, so there is nowhere to write the options.</value>
+  </data>
+  <data name="LaunchErrorFormat" xml:space="preserve">
+    <value>Launch options are not changed: {0}</value>
+  </data>
+  <data name="LaunchRestored" xml:space="preserve">
+    <value>Launch options are put back as they were.</value>
+  </data>
+  <data name="LaunchChangedInSteam" xml:space="preserve">
+    <value>The line was changed in Steam after DotaTune wrote it, so it stays as it is.</value>
+  </data>
+  <data name="LaunchRestartAndWrite" xml:space="preserve">
+    <value>Restart Steam and write</value>
+  </data>
+  <data name="LaunchRestartAndRestore" xml:space="preserve">
+    <value>Restart Steam and put back</value>
+  </data>
+  <data name="LaunchSteamStarting" xml:space="preserve">
+    <value>Steam is starting again.</value>
+  </data>
+  <data name="LaunchSteamDidNotClose" xml:space="preserve">
+    <value>Steam did not close within a minute, nothing is written. If it closes later, start it yourself.</value>
+  </data>
+  <data name="LaunchSteamClosing" xml:space="preserve">
+    <value>Steam is closing, this can take up to a minute.</value>
+  </data>
+  <data name="LaunchSteamDidNotStart" xml:space="preserve">
+    <value>Steam did not start, open it yourself.</value>
+  </data>
+  <data name="LaunchDotaRunning" xml:space="preserve">
+    <value>Dota is running. Launch options can be written after you quit the game.</value>
+  </data>
+  <data name="ConfigTransferGroup" xml:space="preserve">
+    <value>Transfer between accounts</value>
+  </data>
+  <data name="TransferFrom" xml:space="preserve">
+    <value>From</value>
+  </data>
+  <data name="TransferTo" xml:space="preserve">
+    <value>To</value>
+  </data>
+  <data name="TransferAccountFormat" xml:space="preserve">
+    <value>{0} ({1})</value>
+  </data>
+  <data name="TransferHotkeys" xml:space="preserve">
+    <value>Hotkeys</value>
+  </data>
+  <data name="TransferHotkeysDescription" xml:space="preserve">
+    <value>Ability, item and camera keys</value>
+  </data>
+  <data name="TransferGameSettings" xml:space="preserve">
+    <value>Game settings</value>
+  </data>
+  <data name="TransferGameSettingsDescription" xml:space="preserve">
+    <value>Interface, chat wheel, minimap</value>
+  </data>
+  <data name="TransferConsoleBinds" xml:space="preserve">
+    <value>Console binds</value>
+  </data>
+  <data name="TransferConsoleBindsDescription" xml:space="preserve">
+    <value>Keys bound with the bind command</value>
+  </data>
+  <data name="TransferHeroGrids" xml:space="preserve">
+    <value>Hero grids</value>
+  </data>
+  <data name="TransferHeroGridsDescription" xml:space="preserve">
+    <value>Added next to the account's own grids, tagged #DotaTune</value>
+  </data>
+  <data name="TransferBuilds" xml:space="preserve">
+    <value>Builds and guides</value>
+  </data>
+  <data name="TransferBuildsDescription" xml:space="preserve">
+    <value>Item builds, hero facets, guides</value>
+  </data>
+  <data name="TransferMisc" xml:space="preserve">
+    <value>Items, groups and chat</value>
+  </data>
+  <data name="TransferMiscDescription" xml:space="preserve">
+    <value>Item suggestions, unit groups, chat, lobby</value>
+  </data>
+  <data name="TransferGraphics" xml:space="preserve">
+    <value>Graphics</value>
+  </data>
+  <data name="TransferGraphicsDescription" xml:space="preserve">
+    <value>Video settings of this computer</value>
+  </data>
+  <data name="TransferLaunchOptions" xml:space="preserve">
+    <value>Launch options</value>
+  </data>
+  <data name="TransferLaunchOptionsDescription" xml:space="preserve">
+    <value>Only while Steam is closed</value>
+  </data>
+  <data name="TransferRun" xml:space="preserve">
+    <value>Transfer</value>
+  </data>
+  <data name="TransferRestore" xml:space="preserve">
+    <value>Put back as it was</value>
+  </data>
+  <data name="TransferDoneFormat" xml:space="preserve">
+    <value>Transferred, files written: {0}.</value>
+  </data>
+  <data name="TransferRestored" xml:space="preserve">
+    <value>The account is put back as it was before the transfer.</value>
+  </data>
+  <data name="TransferChangedSince" xml:space="preserve">
+    <value>Put back, except what changed after the transfer: those files stay as they are.</value>
+  </data>
+  <data name="TransferCloudHintFormat" xml:space="preserve">
+    <value>Steam Cloud is on for {0}. If Steam shows a sync conflict at the next start, pick the files on this computer, or it brings the old ones back.</value>
+  </data>
+  <data name="TransferDotaRunning" xml:space="preserve">
+    <value>Dota is running. Settings can be transferred after you exit the game.</value>
+  </data>
+  <data name="TransferSteamRunning" xml:space="preserve">
+    <value>Steam is running. Launch options are transferred only while Steam is closed: untick them or close Steam.</value>
+  </data>
+  <data name="TransferSameAccount" xml:space="preserve">
+    <value>Choose two different accounts.</value>
+  </data>
+  <data name="TransferNothing" xml:space="preserve">
+    <value>The source account has none of the chosen settings.</value>
+  </data>
+  <data name="TransferNoSuchAccount" xml:space="preserve">
+    <value>One of the accounts no longer has its Dota folder.</value>
+  </data>
+  <data name="TransferOneAccount" xml:space="preserve">
+    <value>Dota has been started on only one account of this computer.</value>
+  </data>
+  <data name="TransferErrorFormat" xml:space="preserve">
+    <value>Transfer failed: {0}</value>
+  </data>
+  <data name="ConfigPresetGroup" xml:space="preserve">
+    <value>Presets</value>
+  </data>
+  <data name="PresetExportNote" xml:space="preserve">
+    <value>The code carries the effects, config and launch options. Hero grids, hotkeys and game settings go only in a file</value>
+  </data>
+  <data name="PresetFileOnly" xml:space="preserve">
+    <value>Only in a file</value>
+  </data>
+  <data name="PresetCopyCode" xml:space="preserve">
+    <value>Copy code</value>
+  </data>
+  <data name="PresetSaveFile" xml:space="preserve">
+    <value>Save to file</value>
+  </data>
+  <data name="PresetCodeCopiedFormat" xml:space="preserve">
+    <value>The code is copied, {0} characters.</value>
+  </data>
+  <data name="PresetSavedFormat" xml:space="preserve">
+    <value>The preset is saved: {0}.</value>
+  </data>
+  <data name="PresetCodeWatermark" xml:space="preserve">
+    <value>Preset code, DT1-</value>
+  </data>
+  <data name="PresetLoadCode" xml:space="preserve">
+    <value>Load code</value>
+  </data>
+  <data name="PresetOpenFile" xml:space="preserve">
+    <value>Open file</value>
+  </data>
+  <data name="PresetChangesTitle" xml:space="preserve">
+    <value>What changes</value>
+  </data>
+  <data name="PresetEffectsFormat" xml:space="preserve">
+    <value>Effects: {0}</value>
+  </data>
+  <data name="PresetEffectsAll" xml:space="preserve">
+    <value>Effects: every group</value>
+  </data>
+  <data name="PresetEffectsNone" xml:space="preserve">
+    <value>Effects: none</value>
+  </data>
+  <data name="PresetConfigFormat" xml:space="preserve">
+    <value>Config: {0}</value>
+  </data>
+  <data name="PresetConfigNone" xml:space="preserve">
+    <value>Config: as in the game</value>
+  </data>
+  <data name="PresetLaunchFormat" xml:space="preserve">
+    <value>Launch options: {0}</value>
+  </data>
+  <data name="PresetLaunchNone" xml:space="preserve">
+    <value>Launch options: without -novid and -nojoy</value>
+  </data>
+  <data name="PresetUnknownFormat" xml:space="preserve">
+    <value>Not applied, this version does not know: {0}</value>
+  </data>
+  <data name="PresetApplyChoice" xml:space="preserve">
+    <value>Effects, config and launch options</value>
+  </data>
+  <data name="PresetApply" xml:space="preserve">
+    <value>Apply preset</value>
+  </data>
+  <data name="PresetCancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="PresetAppliedFormat" xml:space="preserve">
+    <value>The preset is applied: the choice is on the pages, files written: {0}.</value>
+  </data>
+  <data name="PresetNotAPreset" xml:space="preserve">
+    <value>This is not a DotaTune preset.</value>
+  </data>
+  <data name="PresetNewer" xml:space="preserve">
+    <value>The preset comes from a newer DotaTune. Update the program to load it.</value>
+  </data>
+  <data name="PresetDamaged" xml:space="preserve">
+    <value>The preset is damaged: the code is cut or changed, or the file is broken.</value>
+  </data>
+  <data name="PresetTooLarge" xml:space="preserve">
+    <value>The preset is too large.</value>
+  </data>
+  <data name="PresetErrorFormat" xml:space="preserve">
+    <value>The preset did not work: {0}</value>
+  </data>
+  <data name="PresetFileType" xml:space="preserve">
+    <value>DotaTune preset</value>
+  </data>
+  <data name="PresetCopyFailed" xml:space="preserve">
+    <value>The clipboard is busy with another program. The code is shown above, it can be selected and copied by hand.</value>
+  </data>
+  <data name="GridAccountFormat" xml:space="preserve">
+    <value>Hero grids of {0}</value>
+  </data>
+  <data name="GridMarkHint" xml:space="preserve">
+    <value>In the grid editor DotaTune layouts carry the #DotaTune-Import tag. Your own grids stay as they are.</value>
+  </data>
+  <data name="GridSourceGroup" xml:space="preserve">
+    <value>Where the layouts come from</value>
+  </data>
+  <data name="GridCatalogBuiltInFormat" xml:space="preserve">
+    <value>Layouts from Stratz and Spectral statistics, built into the program, from {0}.</value>
+  </data>
+  <data name="GridCatalogDownloadedFormat" xml:space="preserve">
+    <value>Layouts from Stratz and Spectral statistics, downloaded {0}. They are rebuilt once a day.</value>
+  </data>
+  <data name="GridDownloading" xml:space="preserve">
+    <value>Downloading fresh layouts</value>
+  </data>
+  <data name="GridDownloadFailedFormat" xml:space="preserve">
+    <value>Fresh ones did not download: {0}</value>
+  </data>
+  <data name="GridDownload" xml:space="preserve">
+    <value>Refresh layouts</value>
+  </data>
+  <data name="GridApply" xml:space="preserve">
+    <value>Write to the game</value>
+  </data>
+  <data name="GridRemoveAll" xml:space="preserve">
+    <value>Take all out</value>
+  </data>
+  <data name="GridAddFile" xml:space="preserve">
+    <value>Add from a file</value>
+  </data>
+  <data name="GridFileType" xml:space="preserve">
+    <value>Dota hero grids</value>
+  </data>
+  <data name="GridFileAddedFormat" xml:space="preserve">
+    <value>Layouts taken from {1}: {0}. They are on; write them to the game.</value>
+  </data>
+  <data name="GridFileProblemFormat" xml:space="preserve">
+    <value>The file has no hero grids the game would show: {0}</value>
+  </data>
+  <data name="GridFromFileFormat" xml:space="preserve">
+    <value>From {0}: {1}</value>
+  </data>
+  <data name="GridInGameFormat" xml:space="preserve">
+    <value>Already in the game: {0}</value>
+  </data>
+  <data name="GridInGame" xml:space="preserve">
+    <value>Already in the game</value>
+  </data>
+  <data name="GridNoneInGame" xml:space="preserve">
+    <value>No DotaTune layouts in the game</value>
+  </data>
+  <data name="GridMatches" xml:space="preserve">
+    <value>The chosen layouts are in the game</value>
+  </data>
+  <data name="GridNewer" xml:space="preserve">
+    <value>A fresh version of the layouts in the game is here</value>
+  </data>
+  <data name="GridDiffers" xml:space="preserve">
+    <value>The choice is not written to the game yet</value>
+  </data>
+  <data name="GridDotaRunning" xml:space="preserve">
+    <value>Dota is running. Grids can be changed after you quit the game.</value>
+  </data>
+  <data name="GridNoAccount" xml:space="preserve">
+    <value>Cannot tell which account is signed in to Steam, or Dota was never started on it. Start Steam and open the page again.</value>
+  </data>
+  <data name="GridBrokenFormat" xml:space="preserve">
+    <value>The hero grid file is broken, DotaTune leaves it alone. {0}</value>
+  </data>
+  <data name="GridDoneFormat" xml:space="preserve">
+    <value>Done: {0} added, {1} taken out. The grid editor shows the change from the next start of the game.</value>
+  </data>
+  <data name="GridErrorFormat" xml:space="preserve">
+    <value>Hero grids failed: {0}</value>
+  </data>
+  <data name="GridNotStarted" xml:space="preserve">
+    <value>This account has not started Dota yet, the game has no settings folder for it.</value>
+  </data>
+  <data name="GridPicture" xml:space="preserve">
+    <value>A picture drawn with labels</value>
+  </data>
+  <data name="GridArtGroup" xml:space="preserve">
+    <value>Art grids</value>
+  </data>
+  <data name="GridNotSeen" xml:space="preserve">
+    <value>The game does not see this account's grid file yet. Save any grid of your own on the Heroes page in the game, quit and write again.</value>
+  </data>
+  <data name="TransferGridsNotSeen" xml:space="preserve">
+    <value>Hero grids were not written: the game does not see this account's grid file yet. Save any grid of your own on the Heroes page in the game, quit and transfer again.</value>
+  </data>
+  <data name="MenuGame" xml:space="preserve">
+    <value>Default background</value>
+  </data>
+  <data name="MenuBlack" xml:space="preserve">
+    <value>Black background</value>
+  </data>
+  <data name="MenuSample" xml:space="preserve">
+    <value>Sample background</value>
+  </data>
+  <data name="MenuOwnPicture" xml:space="preserve">
+    <value>Your picture</value>
+  </data>
+  <data name="MenuAddPicture" xml:space="preserve">
+    <value>Add a picture</value>
+  </data>
+  <data name="MenuRemovePicture" xml:space="preserve">
+    <value>Remove the picture</value>
+  </data>
+  <data name="MenuPictureHint" xml:space="preserve">
+    <value>The picture is cropped around the centre to fit the screen.</value>
+  </data>
+  <data name="MenuPictureFileType" xml:space="preserve">
+    <value>Pictures</value>
+  </data>
+  <data name="MenuNoPack" xml:space="preserve">
+    <value>No pack yet. The menu background goes in with it.</value>
+  </data>
+  <data name="MenuPackMatches" xml:space="preserve">
+    <value>The pack is installed with this background. Dota shows it from its next start.</value>
+  </data>
+  <data name="MenuPackDiffers" xml:space="preserve">
+    <value>The pack was built with another background.</value>
+  </data>
+  <data name="MenuNotApplied" xml:space="preserve">
+    <value>The background did not go into the pack, the reason is in the log.</value>
+  </data>
+  <data name="MenuNotSupported" xml:space="preserve">
+    <value>DotaTune cannot change the menu background in this game version.</value>
+  </data>
+  <data name="MenuPictureNotSupported" xml:space="preserve">
+    <value>This game version cannot show a picture in the menu; the default and black backgrounds still work.</value>
+  </data>
+  <data name="MenuPictureUnreadable" xml:space="preserve">
+    <value>This file did not open as a picture, or it is too large.</value>
+  </data>
+  <data name="MenuPictureErrorFormat" xml:space="preserve">
+    <value>The picture was not added: {0}</value>
+  </data>
+  <data name="MenuRemoveErrorFormat" xml:space="preserve">
+    <value>The picture was not removed: {0}</value>
+  </data>
+  <data name="ClicksMove" xml:space="preserve">
+    <value>Move marker</value>
+  </data>
+  <data name="ClicksMoveDescription" xml:space="preserve">
+    <value>Arrows and rings where you sent your hero.</value>
+  </data>
+  <data name="ClicksAttack" xml:space="preserve">
+    <value>Attack marker</value>
+  </data>
+  <data name="ClicksAttackDescription" xml:space="preserve">
+    <value>The same for an attack order. Red in the game.</value>
+  </data>
+  <data name="ClicksUnit" xml:space="preserve">
+    <value>Click on a unit</value>
+  </data>
+  <data name="ClicksUnitDescription" xml:space="preserve">
+    <value>The ring on a unit you give an order on, such as the enemy you attack. Red on enemies in the game.</value>
+  </data>
+  <data name="ClicksRings" xml:space="preserve">
+    <value>Selection rings</value>
+  </data>
+  <data name="ClicksRingsDescription" xml:space="preserve">
+    <value>Rings under selected units and from a selection box. Own and enemy units get the same colour.</value>
+  </data>
+  <data name="ClicksHero" xml:space="preserve">
+    <value>Hero highlight</value>
+  </data>
+  <data name="ClicksHeroDescription" xml:space="preserve">
+    <value>The glow that shows where your hero is.</value>
+  </data>
+  <data name="ClicksMouseGroup" xml:space="preserve">
+    <value>Mouse and selection</value>
+  </data>
+  <data name="ColorsApply" xml:space="preserve">
+    <value>Apply</value>
+  </data>
+  <data name="ColorsApplied" xml:space="preserve">
+    <value>The colours are in the game.</value>
+  </data>
+  <data name="ColorsNotApplied" xml:space="preserve">
+    <value>The colours are not in the game yet.</value>
+  </data>
+  <data name="ColorsAsInGame" xml:space="preserve">
+    <value>Colours as the game has them.</value>
+  </data>
+  <data name="ColorsDotaRunning" xml:space="preserve">
+    <value>Dota is running. The colours can be applied after you quit the game.</value>
+  </data>
+  <data name="ClicksNotTakenFormat" xml:space="preserve">
+    <value>Not recoloured: {0}. The game was probably updated, details are in the log.</value>
+  </data>
+  <data name="ResetPartPack" xml:space="preserve">
+    <value>Pack: effects, clicks, menu background</value>
+  </data>
+  <data name="ResetPartAutoexec" xml:space="preserve">
+    <value>Lines in autoexec.cfg</value>
+  </data>
+  <data name="ResetPartTransfers" xml:space="preserve">
+    <value>Settings copied between accounts</value>
+  </data>
+  <data name="ResetPartLaunch" xml:space="preserve">
+    <value>Launch options</value>
+  </data>
+  <data name="ResetPartGrids" xml:space="preserve">
+    <value>Hero grid layouts</value>
+  </data>
+  <data name="ResetAll" xml:space="preserve">
+    <value>Reset everything</value>
+  </data>
+  <data name="ResetConfirm" xml:space="preserve">
+    <value>Put the game back the way it was before DotaTune?</value>
+  </data>
+  <data name="ResetConfirmYes" xml:space="preserve">
+    <value>Yes, reset</value>
+  </data>
+  <data name="ResetCancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="ResetClean" xml:space="preserve">
+    <value>The game is clean.</value>
+  </data>
+  <data name="ResetPartly" xml:space="preserve">
+    <value>Not everything was put back.</value>
+  </data>
+  <data name="ResetDotaRunning" xml:space="preserve">
+    <value>Dota is running. Reset works after you quit the game.</value>
+  </data>
+  <data name="ResetProblemDota" xml:space="preserve">
+    <value>close Dota and try again</value>
+  </data>
+  <data name="ResetProblemSteam" xml:space="preserve">
+    <value>close Steam and try again</value>
+  </data>
+  <data name="ResetProblemNoSteam" xml:space="preserve">
+    <value>Steam not found</value>
+  </data>
+  <data name="ResetProblemNoGame" xml:space="preserve">
+    <value>Dota 2 not found</value>
+  </data>
+  <data name="ResetProblemAutoexecFormat" xml:space="preserve">
+    <value>DotaTune marks in the file are broken, fix it by hand: {0}</value>
+  </data>
+  <data name="ResetProblemLaunchChanged" xml:space="preserve">
+    <value>the line was changed in Steam and stays as it is</value>
+  </data>
+  <data name="ResetProblemTransferChanged" xml:space="preserve">
+    <value>files changed after the transfer stay as they are</value>
+  </data>
+  <data name="ResetProblemGridsFormat" xml:space="preserve">
+    <value>the file does not read and stays as it is: {0}</value>
+  </data>
+  <data name="ResetProblemFailedFormat" xml:space="preserve">
+    <value>failed: {0}</value>
+  </data>
+  <data name="StatePackReady" xml:space="preserve">
+    <value>The DotaTune pack is in place.</value>
+  </data>
+  <data name="StateNoPack" xml:space="preserve">
+    <value>No DotaTune pack yet.</value>
+  </data>
+  <data name="PlayPackLoaded" xml:space="preserve">
+    <value>The game loaded the DotaTune pack.</value>
+  </data>
+  <data name="PlayPackNotLoaded" xml:space="preserve">
+    <value>The game started without the DotaTune pack. Install it again.</value>
+  </data>
+  <data name="StateOldPack" xml:space="preserve">
+    <value>An old DotaTune pack is left in the game, Reset takes it out.</value>
+  </data>
+  <data name="FactOtherMods" xml:space="preserve">
+    <value>Other mods</value>
+  </data>
+  <data name="NavMmr" xml:space="preserve">
+    <value>MMR</value>
+  </data>
+  <data name="MmrDescription" xml:space="preserve">
+    <value>Your MMR next to your name in the main menu, and its change after games next to the number in your profile. The game gives the number when you open your profile yourself.</value>
+  </data>
+  <data name="MmrSwitch" xml:space="preserve">
+    <value>Show MMR in the game</value>
+  </data>
+  <data name="MmrSwitchDescription" xml:space="preserve">
+    <value>Calibrated rating only</value>
+  </data>
+  <data name="MmrNoPack" xml:space="preserve">
+    <value>No pack yet. The MMR line goes in with it.</value>
+  </data>
+  <data name="MmrPackWithLine" xml:space="preserve">
+    <value>The pack is in place with the MMR line.</value>
+  </data>
+  <data name="MmrPackWithoutLine" xml:space="preserve">
+    <value>The pack is in place without the MMR line.</value>
+  </data>
+  <data name="MmrPackBuiltWithLine" xml:space="preserve">
+    <value>The pack was built with the MMR line.</value>
+  </data>
+  <data name="MmrPackBuiltWithoutLine" xml:space="preserve">
+    <value>The pack was built without the MMR line.</value>
+  </data>
+  <data name="MmrNotSupported" xml:space="preserve">
+    <value>The main menu of this game version is built differently, the MMR line cannot go in.</value>
+  </data>
+  <data name="MmrNotApplied" xml:space="preserve">
+    <value>The MMR line did not go into the pack, the log has the reason.</value>
+  </data>
+  <data name="MmrHistory" xml:space="preserve">
+    <value>History</value>
+  </data>
+  <data name="MmrHistoryEmpty" xml:space="preserve">
+    <value>No readings yet</value>
+  </data>
+  <data name="MmrHistoryUnreadable" xml:space="preserve">
+    <value>The history file mmr.json is unreadable, DotaTune leaves it as it is</value>
+  </data>
+  <data name="MmrConsoleLogHint" xml:space="preserve">
+    <value>Without -condebug in the launch options the history is kept only when the game is started from DotaTune</value>
+  </data>
+  <data name="MmrChangeFormat" xml:space="preserve">
+    <value>{0} over {1}</value>
+  </data>
+  <data name="MmrGamesOne" xml:space="preserve">
+    <value>{0} game</value>
+  </data>
+  <data name="MmrGamesFew" xml:space="preserve">
+    <value>{0} games</value>
+  </data>
+  <data name="MmrGamesMany" xml:space="preserve">
+    <value>{0} games</value>
+  </data>
+  <data name="LaunchConsoleLog" xml:space="preserve">
+    <value>Console log</value>
+  </data>
+  <data name="LaunchConsoleLogDescription" xml:space="preserve">
+    <value>-condebug, DotaTune keeps the MMR history from it</value>
+  </data>
+  <data name="NavAutoAccept" xml:space="preserve">
+    <value>Auto accept</value>
+  </data>
+  <data name="AutoAcceptDescription" xml:space="preserve">
+    <value>A found match is accepted on its own the chosen number of seconds after the window shows. If you accept first, DotaTune stays out of it.</value>
+  </data>
+  <data name="AutoAcceptSwitch" xml:space="preserve">
+    <value>Accept found matches</value>
+  </data>
+  <data name="AutoAcceptDelay" xml:space="preserve">
+    <value>After how many seconds</value>
+  </data>
+  <data name="AutoAcceptSecondsFormat" xml:space="preserve">
+    <value>{0} s</value>
+  </data>
+  <data name="AutoAcceptNoPack" xml:space="preserve">
+    <value>No pack yet. Auto accept goes in with it.</value>
+  </data>
+  <data name="AutoAcceptPackOnFormat" xml:space="preserve">
+    <value>Auto accept triggers after {0} s.</value>
+  </data>
+  <data name="AutoAcceptPackOff" xml:space="preserve">
+    <value>The pack is in place without auto accept.</value>
+  </data>
+  <data name="AutoAcceptBuiltOnFormat" xml:space="preserve">
+    <value>The pack was built to accept after {0} s.</value>
+  </data>
+  <data name="AutoAcceptBuiltOff" xml:space="preserve">
+    <value>The pack was built without auto accept.</value>
+  </data>
+  <data name="AutoAcceptNotSupported" xml:space="preserve">
+    <value>The match accept window of this game version is built differently, auto accept cannot go in.</value>
+  </data>
+  <data name="AutoAcceptNotApplied" xml:space="preserve">
+    <value>Auto accept did not go into the pack, the log has the reason.</value>
+  </data>
+  <data name="AutoAcceptUpdatePack" xml:space="preserve">
+    <value>Update pack</value>
+  </data>
+  <data name="AutoAcceptNotReplaced" xml:space="preserve">
+    <value>The delay in the pack did not change, the log has the reason.</value>
+  </data>
+</root>

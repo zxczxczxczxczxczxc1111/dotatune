@@ -1,0 +1,6 @@
+* text=auto
+*.ttf binary
+*.png binary
+*.ico binary
+# Compiled Source 2 resources: line endings must never be touched.
+*_c binary

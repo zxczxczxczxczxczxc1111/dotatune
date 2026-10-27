@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="SetupWindowTitle" xml:space="preserve">
+    <value>DotaTune setup</value>
+  </data>
+  <data name="SetupFreshTitle" xml:space="preserve">
+    <value>Install DotaTune</value>
+  </data>
+  <data name="SetupFreshLeadFormat" xml:space="preserve">
+    <value>Version {0}. The DotaTune window opens once it is installed.</value>
+  </data>
+  <data name="SetupInstall" xml:space="preserve">
+    <value>Install</value>
+  </data>
+  <data name="SetupUpdateTitle" xml:space="preserve">
+    <value>DotaTune is already installed</value>
+  </data>
+  <data name="SetupUpdateLeadFormat" xml:space="preserve">
+    <value>Installed: {0}. This update brings it to {1}, the settings stay.</value>
+  </data>
+  <data name="SetupUpdate" xml:space="preserve">
+    <value>Update</value>
+  </data>
+  <data name="SetupSameTitleFormat" xml:space="preserve">
+    <value>DotaTune {0} is already installed</value>
+  </data>
+  <data name="SetupSameLead" xml:space="preserve">
+    <value>This is the same version. Reinstall it if the program stopped starting.</value>
+  </data>
+  <data name="SetupOpen" xml:space="preserve">
+    <value>Open DotaTune</value>
+  </data>
+  <data name="SetupReinstall" xml:space="preserve">
+    <value>Reinstall</value>
+  </data>
+  <data name="SetupNewerTitle" xml:space="preserve">
+    <value>A newer version is installed</value>
+  </data>
+  <data name="SetupNewerLeadFormat" xml:space="preserve">
+    <value>Installed: {0}. This installer has {1}.</value>
+  </data>
+  <data name="SetupDowngradeFormat" xml:space="preserve">
+    <value>Install {0}</value>
+  </data>
+  <data name="SetupUnknownLeadFormat" xml:space="preserve">
+    <value>The installed version could not be read. Reinstalling puts {0} in place, the settings stay.</value>
+  </data>
+  <data name="SetupAppRunning" xml:space="preserve">
+    <value>The open DotaTune window closes for the installation.</value>
+  </data>
+  <data name="SetupInstallingFormat" xml:space="preserve">
+    <value>Installing DotaTune {0}</value>
+  </data>
+  <data name="SetupUpdatingFormat" xml:space="preserve">
+    <value>Updating DotaTune to {0}</value>
+  </data>
+  <data name="SetupClosingApp" xml:space="preserve">
+    <value>DotaTune is closing.</value>
+  </data>
+  <data name="SetupWorking" xml:space="preserve">
+    <value>This takes a few seconds.</value>
+  </data>
+  <data name="SetupFailedTitle" xml:space="preserve">
+    <value>DotaTune was not installed</value>
+  </data>
+  <data name="SetupFailedLead" xml:space="preserve">
+    <value>The details are in the log.</value>
+  </data>
+  <data name="SetupFailedKeptLead" xml:space="preserve">
+    <value>The installed version stays as it was. The details are in the log.</value>
+  </data>
+  <data name="SetupNoPayload" xml:space="preserve">
+    <value>This installer was built without the DotaTune package.</value>
+  </data>
+  <data name="SetupOpenLogs" xml:space="preserve">
+    <value>Open log</value>
+  </data>
+  <data name="SetupClose" xml:space="preserve">
+    <value>Close</value>
+  </data>
+  <data name="SetupOpenFailedTitle" xml:space="preserve">
+    <value>The DotaTune window did not open</value>
+  </data>
+  <data name="SetupNotOpenedTitle" xml:space="preserve">
+    <value>Installation finished</value>
+  </data>
+  <data name="SetupNotOpenedLead" xml:space="preserve">
+    <value>The DotaTune window did not open by itself. Start the program from the desktop shortcut.</value>
+  </data>
+</root>

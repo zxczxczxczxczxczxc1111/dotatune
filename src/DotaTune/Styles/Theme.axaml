@@ -1,0 +1,402 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+  <!-- Avalonia applies matching styles in file order, so every state below its base. -->
+
+  <Style Selector="Window">
+    <Setter Property="FontFamily" Value="{StaticResource BodyFont}" />
+    <Setter Property="FontSize" Value="14" />
+    <Setter Property="Foreground" Value="{StaticResource InkBrush}" />
+    <Setter Property="Background" Value="{StaticResource FrameBrush}" />
+  </Style>
+
+  <!-- Title bar drawn by Avalonia: the name is already in the sidebar, and full screen is not needed.
+       Seen on Avalonia 12.1.4 in the installer: a caption button hidden here kept the width of 45
+       it was measured with, and the row of buttons kept its width and spacing too, so the row,
+       aligned right, left that much empty space after the close button. A hidden button gets no
+       width, and a limit on the row's width that never binds makes the style measure the row
+       again. Headless tests draw no title bar: after an Avalonia update, look at the real window. -->
+  <Style Selector="WindowDrawnDecorations /template/ StackPanel#PART_OverlayPanel">
+    <Setter Property="MaxWidth" Value="10000" />
+  </Style>
+  <Style Selector="WindowDrawnDecorations /template/ :is(Control)#PART_FullScreenButton">
+    <Setter Property="IsVisible" Value="False" />
+    <Setter Property="Width" Value="0" />
+  </Style>
+  <!-- The template binds the visibility of the title itself, so only opacity is left to style. -->
+  <Style Selector="WindowDrawnDecorations /template/ :is(Control)#PART_TitleTextPanel">
+    <Setter Property="Opacity" Value="0" />
+  </Style>
+
+  <!-- A page and its host clip to their bounds by default, and a hovered pill at the page edge
+       grows past them. The scroll view around the page still clips, with the page margin to spare. -->
+  <Style Selector="ContentControl.page, ContentControl.page :is(UserControl)">
+    <Setter Property="ClipToBounds" Value="False" />
+  </Style>
+
+  <!-- Panels inside the black frame, as the sidebar and the main view of Spotify. -->
+  <Style Selector="Border.panel">
+    <Setter Property="Background" Value="{StaticResource PanelBrush}" />
+    <Setter Property="CornerRadius" Value="8" />
+  </Style>
+
+  <!-- Type: one family in 400 and 700; the name keeps its own display face. -->
+  <Style Selector="TextBlock.brand">
+    <Setter Property="FontFamily" Value="{StaticResource DisplayFont}" />
+    <Setter Property="FontWeight" Value="SemiBold" />
+    <Setter Property="FontSize" Value="18" />
+  </Style>
+  <Style Selector="TextBlock.title">
+    <Setter Property="FontWeight" Value="Bold" />
+    <Setter Property="FontSize" Value="32" />
+    <Setter Property="LineHeight" Value="40" />
+    <Setter Property="TextWrapping" Value="Wrap" />
+  </Style>
+  <Style Selector="TextBlock.lead">
+    <Setter Property="FontSize" Value="16" />
+    <Setter Property="LineHeight" Value="24" />
+    <Setter Property="Foreground" Value="{StaticResource InkMutedBrush}" />
+    <Setter Property="TextWrapping" Value="Wrap" />
+    <Setter Property="MaxWidth" Value="620" />
+    <Setter Property="HorizontalAlignment" Value="Left" />
+  </Style>
+  <Style Selector="TextBlock.label">
+    <Setter Property="FontWeight" Value="Bold" />
+    <Setter Property="FontSize" Value="16" />
+  </Style>
+  <Style Selector="TextBlock.muted">
+    <Setter Property="Foreground" Value="{StaticResource InkMutedBrush}" />
+    <Setter Property="TextWrapping" Value="Wrap" />
+  </Style>
+  <Style Selector="TextBlock.group">
+    <Setter Property="FontWeight" Value="Bold" />
+    <Setter Property="FontSize" Value="16" />
+  </Style>
+
+  <!-- Verdict of a page: a raised plate, the state is a small mark next to the summary. -->
+  <Style Selector="Border.verdict">
+    <Setter Property="Background" Value="{StaticResource RaisedBrush}" />
+    <Setter Property="CornerRadius" Value="8" />
+    <Setter Property="Padding" Value="20,16" />
+  </Style>
+  <Style Selector="Border.verdict Ellipse.mark">
+    <Setter Property="Fill" Value="{StaticResource InkMutedBrush}" />
+  </Style>
+  <Style Selector="Border.verdict.ok Ellipse.mark">
+    <Setter Property="Fill" Value="{StaticResource StatusOkBrush}" />
+  </Style>
+  <Style Selector="Border.verdict.attention Ellipse.mark">
+    <Setter Property="Fill" Value="{StaticResource StatusAttentionBrush}" />
+  </Style>
+  <Style Selector="Border.verdict.error Ellipse.mark">
+    <Setter Property="Fill" Value="{StaticResource StatusErrorBrush}" />
+  </Style>
+
+  <!-- Tag, as the Encore "tag" in its large size. -->
+  <Style Selector="Border.chip">
+    <Setter Property="Background" Value="{StaticResource TintedBrush}" />
+    <Setter Property="CornerRadius" Value="4" />
+    <Setter Property="Padding" Value="8,4" />
+    <Setter Property="HorizontalAlignment" Value="Left" />
+  </Style>
+  <Style Selector="Border.chip > TextBlock">
+    <Setter Property="FontSize" Value="12" />
+    <Setter Property="FontWeight" Value="Bold" />
+  </Style>
+
+  <!-- Pill buttons. The plain one is outlined; with .accent it is the filled main action.
+       Hover grows the button to 1.04, a press brings it back to 1 and does not shrink it. -->
+  <Style Selector="Button.pill">
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="BorderBrush" Value="{StaticResource OutlineBrush}" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="Foreground" Value="{StaticResource InkBrush}" />
+    <Setter Property="FontSize" Value="14" />
+    <Setter Property="FontWeight" Value="Bold" />
+    <Setter Property="MinHeight" Value="32" />
+    <Setter Property="Padding" Value="16,4" />
+    <Setter Property="CornerRadius" Value="16" />
+    <Setter Property="HorizontalContentAlignment" Value="Center" />
+    <Setter Property="VerticalContentAlignment" Value="Center" />
+    <Setter Property="VerticalAlignment" Value="Center" />
+    <Setter Property="Cursor" Value="Hand" />
+    <Setter Property="FocusAdorner" Value="{x:Null}" />
+    <Setter Property="RenderTransform" Value="scale(1)" />
+    <Setter Property="Transitions">
+      <Transitions>
+        <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.15" Easing="{StaticResource Productive}" />
+        <BrushTransition Property="Background" Duration="0:0:0.15" Easing="{StaticResource Productive}" />
+        <BrushTransition Property="BorderBrush" Duration="0:0:0.15" Easing="{StaticResource Productive}" />
+      </Transitions>
+    </Setter>
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Panel>
+          <Border Name="body"
+                  Background="{TemplateBinding Background}"
+                  BorderBrush="{TemplateBinding BorderBrush}"
+                  BorderThickness="{TemplateBinding BorderThickness}"
+                  CornerRadius="{TemplateBinding CornerRadius}">
+            <ContentPresenter Name="content"
+                              Content="{TemplateBinding Content}"
+                              ContentTemplate="{TemplateBinding ContentTemplate}"
+                              Padding="{TemplateBinding Padding}"
+                              HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                              VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
+          </Border>
+          <Border Name="ring" BorderBrush="{StaticResource FocusBrush}" BorderThickness="2"
+                  CornerRadius="{TemplateBinding CornerRadius}" IsVisible="False" />
+        </Panel>
+      </ControlTemplate>
+    </Setter>
+  </Style>
+  <Style Selector="Button.pill:pointerover">
+    <Setter Property="BorderBrush" Value="{StaticResource InkBrush}" />
+    <Setter Property="RenderTransform" Value="scale(1.04)" />
+  </Style>
+  <Style Selector="Button.pill:pressed">
+    <Setter Property="BorderBrush" Value="{StaticResource OutlineBrush}" />
+    <Setter Property="Opacity" Value="0.7" />
+    <Setter Property="RenderTransform" Value="scale(1)" />
+  </Style>
+  <Style Selector="Button.pill.accent">
+    <Setter Property="Background" Value="{StaticResource AccentBrush}" />
+    <Setter Property="BorderThickness" Value="0" />
+    <Setter Property="Foreground" Value="{StaticResource OnAccentBrush}" />
+    <Setter Property="FontSize" Value="16" />
+    <Setter Property="MinHeight" Value="48" />
+    <Setter Property="Padding" Value="32,8" />
+    <Setter Property="CornerRadius" Value="24" />
+  </Style>
+  <Style Selector="Button.pill.accent /template/ Border#ring">
+    <Setter Property="Margin" Value="2" />
+  </Style>
+  <Style Selector="Button.pill.accent:pointerover">
+    <Setter Property="Background" Value="{StaticResource AccentHoverBrush}" />
+  </Style>
+  <Style Selector="Button.pill.accent:pressed">
+    <Setter Property="Background" Value="{StaticResource AccentPressBrush}" />
+    <Setter Property="Opacity" Value="1" />
+  </Style>
+  <Style Selector="Button.pill:disabled">
+    <Setter Property="Opacity" Value="0.3" />
+    <Setter Property="RenderTransform" Value="scale(1)" />
+  </Style>
+  <Style Selector="Button.pill:focus-visible /template/ Border#ring">
+    <Setter Property="IsVisible" Value="True" />
+  </Style>
+
+  <!-- Side navigation, as the Encore navigation list: grey text turns white on hover,
+       the selected entry is white with a 4 px accent bar, there is no fill. -->
+  <Style Selector="ListBox.nav">
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="Padding" Value="0" />
+  </Style>
+  <Style Selector="ListBox.nav > ListBoxItem, Button.nav">
+    <Setter Property="Padding" Value="16,9" />
+    <Setter Property="Margin" Value="0" />
+    <Setter Property="FontSize" Value="16" />
+    <Setter Property="FontWeight" Value="Bold" />
+    <Setter Property="Foreground" Value="{StaticResource InkMutedBrush}" />
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="HorizontalAlignment" Value="Stretch" />
+    <Setter Property="HorizontalContentAlignment" Value="Left" />
+    <Setter Property="Cursor" Value="Hand" />
+    <Setter Property="FocusAdorner" Value="{x:Null}" />
+    <Setter Property="Transitions">
+      <Transitions>
+        <BrushTransition Property="Foreground" Duration="0:0:0.15" Easing="{StaticResource Productive}" />
+      </Transitions>
+    </Setter>
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Panel Background="Transparent">
+          <Border Name="bar" Width="4" Height="18" HorizontalAlignment="Left" VerticalAlignment="Center"
+                  Background="{StaticResource AccentBrush}" IsVisible="False" />
+          <ContentPresenter Name="content"
+                            Content="{TemplateBinding Content}"
+                            ContentTemplate="{TemplateBinding ContentTemplate}"
+                            Padding="{TemplateBinding Padding}"
+                            HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" />
+          <Border Name="ring" BorderBrush="{StaticResource FocusBrush}" BorderThickness="2" CornerRadius="4" IsVisible="False" />
+        </Panel>
+      </ControlTemplate>
+    </Setter>
+  </Style>
+  <Style Selector="ListBox.nav > ListBoxItem:pointerover, Button.nav:pointerover">
+    <Setter Property="Foreground" Value="{StaticResource InkBrush}" />
+  </Style>
+  <Style Selector="ListBox.nav > ListBoxItem:selected, Button.nav.active">
+    <Setter Property="Foreground" Value="{StaticResource InkBrush}" />
+  </Style>
+  <Style Selector="ListBox.nav > ListBoxItem:selected /template/ Border#bar, Button.nav.active /template/ Border#bar">
+    <Setter Property="IsVisible" Value="True" />
+  </Style>
+  <Style Selector="ListBox.nav > ListBoxItem:focus-visible /template/ Border#ring, Button.nav:focus-visible /template/ Border#ring">
+    <Setter Property="IsVisible" Value="True" />
+  </Style>
+
+  <!-- Switch, as on the Spotify settings page: colour and knob change at once, without motion. -->
+  <Style Selector="ToggleButton.switch">
+    <Setter Property="Width" Value="42" />
+    <Setter Property="Height" Value="24" />
+    <Setter Property="MinWidth" Value="0" />
+    <Setter Property="MinHeight" Value="0" />
+    <Setter Property="Background" Value="{StaticResource SwitchOffBrush}" />
+    <Setter Property="Cursor" Value="Hand" />
+    <Setter Property="FocusAdorner" Value="{x:Null}" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Panel>
+          <Border Name="track" Background="{TemplateBinding Background}" CornerRadius="12" />
+          <Border Name="knob" Width="20" Height="20" CornerRadius="10" Margin="2"
+                  HorizontalAlignment="Left" VerticalAlignment="Center" Background="{StaticResource InkBrush}" />
+          <Border Name="ring" Margin="-4" CornerRadius="16" BorderThickness="2"
+                  BorderBrush="{StaticResource FocusBrush}" IsVisible="False" />
+        </Panel>
+      </ControlTemplate>
+    </Setter>
+  </Style>
+  <Style Selector="ToggleButton.switch:pointerover">
+    <Setter Property="Background" Value="{StaticResource SwitchOffHoverBrush}" />
+  </Style>
+  <Style Selector="ToggleButton.switch:checked">
+    <Setter Property="Background" Value="{StaticResource AccentBrush}" />
+  </Style>
+  <Style Selector="ToggleButton.switch:checked:pointerover">
+    <Setter Property="Background" Value="{StaticResource AccentHoverBrush}" />
+  </Style>
+  <Style Selector="ToggleButton.switch:checked /template/ Border#knob">
+    <Setter Property="HorizontalAlignment" Value="Right" />
+  </Style>
+  <Style Selector="ToggleButton.switch:disabled">
+    <Setter Property="Opacity" Value="0.4" />
+  </Style>
+  <Style Selector="ToggleButton.switch:focus-visible /template/ Border#ring">
+    <Setter Property="IsVisible" Value="True" />
+  </Style>
+
+  <!-- Language list, as the drop-downs in the Spotify settings. -->
+  <Style Selector="ComboBox">
+    <Setter Property="MinHeight" Value="32" />
+    <Setter Property="CornerRadius" Value="4" />
+    <Setter Property="BorderThickness" Value="0" />
+    <Setter Property="Padding" Value="12,0,20,0" />
+    <Setter Property="FontSize" Value="14" />
+  </Style>
+
+  <!-- Colour palette: round swatches; the chosen one gets a white ring, as a checked radio in Encore. -->
+  <Style Selector="ListBox.swatches">
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="Padding" Value="0" />
+  </Style>
+  <Style Selector="ListBox.swatches > ListBoxItem">
+    <Setter Property="Width" Value="32" />
+    <Setter Property="Height" Value="32" />
+    <Setter Property="Margin" Value="0,0,8,8" />
+    <Setter Property="Padding" Value="0" />
+    <Setter Property="Cursor" Value="Hand" />
+    <Setter Property="FocusAdorner" Value="{x:Null}" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Panel Background="Transparent">
+          <ContentPresenter Name="content"
+                            Content="{TemplateBinding Content}"
+                            ContentTemplate="{TemplateBinding ContentTemplate}"
+                            HorizontalAlignment="Center" VerticalAlignment="Center" />
+          <Border Name="ring" CornerRadius="16" BorderThickness="2" BorderBrush="{StaticResource InkBrush}" IsVisible="False" />
+          <Border Name="focus" Margin="-4" CornerRadius="20" BorderThickness="2" BorderBrush="{StaticResource FocusBrush}" IsVisible="False" />
+        </Panel>
+      </ControlTemplate>
+    </Setter>
+  </Style>
+  <Style Selector="ListBox.swatches > ListBoxItem:pointerover /template/ Border#ring">
+    <Setter Property="IsVisible" Value="True" />
+    <Setter Property="BorderBrush" Value="{StaticResource OutlineBrush}" />
+  </Style>
+  <Style Selector="ListBox.swatches > ListBoxItem:selected /template/ Border#ring">
+    <Setter Property="IsVisible" Value="True" />
+    <Setter Property="BorderBrush" Value="{StaticResource InkBrush}" />
+  </Style>
+  <Style Selector="ListBox.swatches > ListBoxItem:focus-visible /template/ Border#focus">
+    <Setter Property="IsVisible" Value="True" />
+  </Style>
+
+  <!-- Own colour button: sits in the row of swatches and is marked the same way when its colour is chosen. -->
+  <Style Selector="Button.pick">
+    <Setter Property="Width" Value="32" />
+    <Setter Property="Height" Value="32" />
+    <Setter Property="MinWidth" Value="0" />
+    <Setter Property="MinHeight" Value="0" />
+    <Setter Property="Padding" Value="0" />
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="Cursor" Value="Hand" />
+    <Setter Property="FocusAdorner" Value="{x:Null}" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Panel Background="Transparent">
+          <ContentPresenter Name="content"
+                            Content="{TemplateBinding Content}"
+                            ContentTemplate="{TemplateBinding ContentTemplate}"
+                            HorizontalAlignment="Center" VerticalAlignment="Center" />
+          <Border Name="ring" CornerRadius="16" BorderThickness="2" BorderBrush="{StaticResource InkBrush}" IsVisible="False" />
+          <Border Name="focus" Margin="-4" CornerRadius="20" BorderThickness="2" BorderBrush="{StaticResource FocusBrush}" IsVisible="False" />
+        </Panel>
+      </ControlTemplate>
+    </Setter>
+  </Style>
+  <Style Selector="Button.pick:pointerover /template/ Border#ring, Button.pick:flyout-open /template/ Border#ring">
+    <Setter Property="IsVisible" Value="True" />
+    <Setter Property="BorderBrush" Value="{StaticResource OutlineBrush}" />
+  </Style>
+  <Style Selector="Button.pick.custom /template/ Border#ring">
+    <Setter Property="IsVisible" Value="True" />
+    <Setter Property="BorderBrush" Value="{StaticResource InkBrush}" />
+  </Style>
+  <Style Selector="Button.pick:focus-visible /template/ Border#focus">
+    <Setter Property="IsVisible" Value="True" />
+  </Style>
+  <Style Selector="Button.pick Ellipse.hue">
+    <Setter Property="Stroke">
+      <ConicGradientBrush>
+        <GradientStop Color="#FF0000" Offset="0" />
+        <GradientStop Color="#FFFF00" Offset="0.1667" />
+        <GradientStop Color="#00FF00" Offset="0.3333" />
+        <GradientStop Color="#00FFFF" Offset="0.5" />
+        <GradientStop Color="#0000FF" Offset="0.6667" />
+        <GradientStop Color="#FF00FF" Offset="0.8333" />
+        <GradientStop Color="#FF0000" Offset="1" />
+      </ConicGradientBrush>
+    </Setter>
+  </Style>
+
+  <!-- The picker opens on the menu surface, as the drop-down of the language list. -->
+  <Style Selector="FlyoutPresenter.picker">
+    <Setter Property="Background" Value="{StaticResource MenuBrush}" />
+    <Setter Property="BorderThickness" Value="0" />
+    <Setter Property="CornerRadius" Value="8" />
+    <Setter Property="Padding" Value="16" />
+    <Setter Property="MinWidth" Value="0" />
+  </Style>
+
+  <!-- Short code field, as the small Encore input: outline grey, white on hover and focus. -->
+  <Style Selector="TextBox.code">
+    <Setter Property="MinHeight" Value="32" />
+    <Setter Property="Padding" Value="8,6" />
+    <Setter Property="CornerRadius" Value="4" />
+    <Setter Property="FontSize" Value="14" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="BorderBrush" Value="{StaticResource OutlineBrush}" />
+    <Setter Property="Background" Value="Transparent" />
+  </Style>
+  <Style Selector="TextBox.code:pointerover /template/ Border#PART_BorderElement">
+    <Setter Property="BorderBrush" Value="{StaticResource InkBrush}" />
+    <Setter Property="Background" Value="Transparent" />
+  </Style>
+  <Style Selector="TextBox.code:focus /template/ Border#PART_BorderElement">
+    <Setter Property="BorderBrush" Value="{StaticResource FocusBrush}" />
+    <Setter Property="BorderThickness" Value="2" />
+    <Setter Property="Background" Value="Transparent" />
+  </Style>
+
+</Styles>

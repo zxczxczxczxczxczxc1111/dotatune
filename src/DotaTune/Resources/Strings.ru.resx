@@ -1,0 +1,1074 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="NavGameState" xml:space="preserve">
+    <value>Состояние игры</value>
+  </data>
+  <data name="NavEffects" xml:space="preserve">
+    <value>Эффекты</value>
+  </data>
+  <data name="NavClicks" xml:space="preserve">
+    <value>Цвета</value>
+  </data>
+  <data name="NavMenuBackground" xml:space="preserve">
+    <value>Фон меню</value>
+  </data>
+  <data name="NavHeroGrid" xml:space="preserve">
+    <value>Сетка героев</value>
+  </data>
+  <data name="NavConfig" xml:space="preserve">
+    <value>Конфиг и запуск</value>
+  </data>
+  <data name="NavReset" xml:space="preserve">
+    <value>Сброс</value>
+  </data>
+  <data name="NavSettings" xml:space="preserve">
+    <value>Настройки</value>
+  </data>
+  <data name="GameStateDescription" xml:space="preserve">
+    <value>Где стоит игра и на месте ли пак DotaTune.</value>
+  </data>
+  <data name="EffectsDescription" xml:space="preserve">
+    <value>Убирает эффекты, которые съедают кадры и ничего не говорят об игре. Способности и звук остаются.</value>
+  </data>
+  <data name="ClicksDescription" xml:space="preserve">
+    <value>Свои цвета кликов, выделения и миникарты.</value>
+  </data>
+  <data name="MenuBackgroundDescription" xml:space="preserve">
+    <value>Чёрный фон или своя картинка вместо 3D-сцены в меню. Видеокарте так легче.</value>
+  </data>
+  <data name="HeroGridDescription" xml:space="preserve">
+    <value>Готовые раскладки героев по позициям для сетки на экране выбора.</value>
+  </data>
+  <data name="ConfigDescription" xml:space="preserve">
+    <value>Команды, которые игра выполняет при запуске, и параметры запуска в Steam.</value>
+  </data>
+  <data name="ResetDescription" xml:space="preserve">
+    <value>Убирает из игры всё, что поставил DotaTune.</value>
+  </data>
+  <data name="LanguageLabel" xml:space="preserve">
+    <value>Язык интерфейса</value>
+  </data>
+  <data name="LanguageSystem" xml:space="preserve">
+    <value>Как в Windows</value>
+  </data>
+  <data name="LanguageRussian" xml:space="preserve">
+    <value>Русский</value>
+  </data>
+  <data name="LanguageEnglish" xml:space="preserve">
+    <value>English</value>
+  </data>
+  <data name="LanguageHint" xml:space="preserve">
+    <value>Язык игры и Windows не меняется.</value>
+  </data>
+  <data name="DataFolderLabel" xml:space="preserve">
+    <value>Настройки и журнал</value>
+  </data>
+  <data name="OpenFolder" xml:space="preserve">
+    <value>Открыть папку</value>
+  </data>
+  <data name="VersionFormat" xml:space="preserve">
+    <value>Версия {0}</value>
+  </data>
+  <data name="Refresh" xml:space="preserve">
+    <value>Обновить</value>
+  </data>
+  <data name="ReadingGame" xml:space="preserve">
+    <value>Читаю файлы игры…</value>
+  </data>
+  <data name="ActionUseVoiceFolder" xml:space="preserve">
+    <value>Пак встанет рядом с файлами игры, настройки игры не изменятся.</value>
+  </data>
+  <data name="ActionSwitchToCarrier" xml:space="preserve">
+    <value>DotaTune переключит язык озвучки на {0}, чтобы игра подключила пак. Голоса останутся английскими, текст в игре не изменится.</value>
+  </data>
+  <data name="ActionUseLaunchLanguageFolder" xml:space="preserve">
+    <value>Пак встанет туда, куда указывает параметр запуска -language {0}.</value>
+  </data>
+  <data name="ActionOfferRemoveEnglishOverride" xml:space="preserve">
+    <value>Параметр запуска -language english не даёт игре подключать моды. Убери его в Steam и выбери английский текст в настройках игры.</value>
+  </data>
+  <data name="ActionOfferRemoveForeignOverride" xml:space="preserve">
+    <value>В параметрах запуска остался -language {0}, обычно от Minify. С ним игра показывает текст на этом языке.</value>
+  </data>
+  <data name="ActionNoCarrier" xml:space="preserve">
+    <value>Пак не поставить, не поменяв голоса в игре, поэтому DotaTune ничего не ставит.</value>
+  </data>
+  <data name="ActionStartGameOnce" xml:space="preserve">
+    <value>Запусти игру один раз, выйди из неё и обнови страницу.</value>
+  </data>
+  <data name="ActionUnknownBootFormat" xml:space="preserve">
+    <value>Похоже, после обновления игра устроена по-новому. DotaTune пока ничего в неё не пишет.</value>
+  </data>
+  <data name="ProblemSteamNotFound" xml:space="preserve">
+    <value>Steam не найден.</value>
+  </data>
+  <data name="ProblemDotaNotFound" xml:space="preserve">
+    <value>Dota 2 нет ни в одной библиотеке Steam.</value>
+  </data>
+  <data name="ProblemNoAccount" xml:space="preserve">
+    <value>Не видно, какой аккаунт вошёл в Steam. Запусти Steam и обнови страницу.</value>
+  </data>
+  <data name="ProblemUnreadableFormat" xml:space="preserve">
+    <value>Не получилось прочитать {0}.</value>
+  </data>
+  <data name="DotaRunningNote" xml:space="preserve">
+    <value>Dota запущена. Поставить или убрать пак получится после выхода из игры.</value>
+  </data>
+  <data name="GroupGame" xml:space="preserve">
+    <value>Игра</value>
+  </data>
+  <data name="GroupSteam" xml:space="preserve">
+    <value>Steam</value>
+  </data>
+  <data name="FactGameFolder" xml:space="preserve">
+    <value>Папка игры</value>
+  </data>
+  <data name="FactBuild" xml:space="preserve">
+    <value>Версия игры</value>
+  </data>
+  <data name="FactDotaNow" xml:space="preserve">
+    <value>Dota сейчас</value>
+  </data>
+  <data name="FactVoiceLanguage" xml:space="preserve">
+    <value>Язык озвучки</value>
+  </data>
+  <data name="FactSteamFolder" xml:space="preserve">
+    <value>Папка Steam</value>
+  </data>
+  <data name="FactAccount" xml:space="preserve">
+    <value>Аккаунт</value>
+  </data>
+  <data name="FactLaunchOptions" xml:space="preserve">
+    <value>Параметры запуска</value>
+  </data>
+  <data name="ValueRunning" xml:space="preserve">
+    <value>Запущена</value>
+  </data>
+  <data name="ValueClosed" xml:space="preserve">
+    <value>Закрыта</value>
+  </data>
+  <data name="ValueNone" xml:space="preserve">
+    <value>Нет</value>
+  </data>
+  <data name="ValueUnknown" xml:space="preserve">
+    <value>Неизвестно</value>
+  </data>
+  <data name="AccountNowFormat" xml:space="preserve">
+    <value>{0}, сейчас в Steam</value>
+  </data>
+  <data name="AccountLastFormat" xml:space="preserve">
+    <value>{0}, входил последним</value>
+  </data>
+  <data name="InstallPack" xml:space="preserve">
+    <value>Поставить пак</value>
+  </data>
+  <data name="RemovePack" xml:space="preserve">
+    <value>Убрать пак</value>
+  </data>
+  <data name="HealthMissing" xml:space="preserve">
+    <value>Пака DotaTune нет на месте, обычно его убирает проверка файлов в Steam. Поставь его заново.</value>
+  </data>
+  <data name="HealthChanged" xml:space="preserve">
+    <value>Файл пака подменили, DotaTune его не трогает. Поставь пак заново.</value>
+  </data>
+  <data name="HealthFolderNotLoaded" xml:space="preserve">
+    <value>Поменялся язык озвучки, и игра больше не видит пак. Поставь его заново.</value>
+  </data>
+  <data name="HealthOtherBuild" xml:space="preserve">
+    <value>Игра обновилась, поставь пак заново.</value>
+  </data>
+  <data name="RefusedNoFreeSlot" xml:space="preserve">
+    <value>Для пака нет места: все свободные места заняли другие моды.</value>
+  </data>
+  <data name="RefusedWrittenFileDiffers" xml:space="preserve">
+    <value>Пак записался с ошибкой и убран. Проверь, есть ли место на диске с игрой.</value>
+  </data>
+  <data name="PackErrorFormat" xml:space="preserve">
+    <value>Пак не изменён: {0}</value>
+  </data>
+  <data name="Play" xml:space="preserve">
+    <value>Играть</value>
+  </data>
+  <data name="PlayWaiting" xml:space="preserve">
+    <value>Запускаю игру и жду, пока она подключит пак…</value>
+  </data>
+  <data name="PlayStarted" xml:space="preserve">
+    <value>Игра запускается.</value>
+  </data>
+  <data name="PlayDidNotStart" xml:space="preserve">
+    <value>Игра не запустилась за три минуты. Загляни в Steam: он мог ждать входа или обновлять игру.</value>
+  </data>
+  <data name="PlayClosedEarly" xml:space="preserve">
+    <value>Игра закрылась раньше, чем стало видно, подключён ли пак.</value>
+  </data>
+  <data name="PlayNoSearchPaths" xml:space="preserve">
+    <value>Игра запущена, но проверить пак не получилось.</value>
+  </data>
+  <data name="PlayAlreadyRunning" xml:space="preserve">
+    <value>Dota уже запущена.</value>
+  </data>
+  <data name="PlayErrorFormat" xml:space="preserve">
+    <value>Игра не запустилась: {0}</value>
+  </data>
+  <data name="EffectWeather" xml:space="preserve">
+    <value>Погода</value>
+  </data>
+  <data name="EffectWeatherDescription" xml:space="preserve">
+    <value>Дождь, снег и прочая погода с карты и из косметики.</value>
+  </data>
+  <data name="EffectMapAmbience" xml:space="preserve">
+    <value>Эффекты карты</value>
+  </data>
+  <data name="EffectMapAmbienceDescription" xml:space="preserve">
+    <value>Живность, огни, дым и лава на ландшафте.</value>
+  </data>
+  <data name="EffectEventCosmetics" xml:space="preserve">
+    <value>Украшения ивентов</value>
+  </data>
+  <data name="EffectEventCosmeticsDescription" xml:space="preserve">
+    <value>Эмблемы, эффекты шапок, баннеры убийств и фейерверки из ивентов.</value>
+  </data>
+  <data name="EffectSprays" xml:space="preserve">
+    <value>Спреи</value>
+  </data>
+  <data name="EffectSpraysDescription" xml:space="preserve">
+    <value>Рисунки, которые игроки оставляют на карте.</value>
+  </data>
+  <data name="EffectCosmeticWards" xml:space="preserve">
+    <value>Косметика вардов</value>
+  </data>
+  <data name="EffectCosmeticWardsDescription" xml:space="preserve">
+    <value>Свечение и частицы косметических вардов. Сам вард виден как обычно.</value>
+  </data>
+  <data name="EffectAttackFlashes" xml:space="preserve">
+    <value>Вспышки автоатак</value>
+  </data>
+  <data name="EffectAttackFlashesDescription" xml:space="preserve">
+    <value>Вспышки, хвосты и взрывы снарядов автоатаки героев. Сам снаряд летит как прежде.</value>
+  </data>
+  <data name="EffectBuildingAmbience" xml:space="preserve">
+    <value>Свечение зданий</value>
+  </data>
+  <data name="EffectBuildingAmbienceDescription" xml:space="preserve">
+    <value>Огни бараков, статуй, фонтана, ворот базы и фонарей на башнях. Разрушение зданий, святилища, телепорты и порталы видны как обычно.</value>
+  </data>
+  <data name="EffectFogMist" xml:space="preserve">
+    <value>Дымка в тумане войны</value>
+  </data>
+  <data name="EffectFogMistDescription" xml:space="preserve">
+    <value>Плывущая пелена над землёй вне обзора. Затемнение остаётся, граница обзора видна.</value>
+  </data>
+  <data name="EffectCosmeticAmbience" xml:space="preserve">
+    <value>Свечение косметики</value>
+  </data>
+  <data name="EffectCosmeticAmbienceDescription" xml:space="preserve">
+    <value>Искры, дым и сияние, которые шмотки героев и курьеров носят постоянно. Сами предметы и их вид в заклинаниях остаются.</value>
+  </data>
+  <data name="EffectsSaveErrorFormat" xml:space="preserve">
+    <value>Выбор не сохранился: {0}</value>
+  </data>
+  <data name="EffectsNoPack" xml:space="preserve">
+    <value>Пака пока нет. Пустые эффекты встанут вместе с ним.</value>
+  </data>
+  <data name="EffectsPackMatches" xml:space="preserve">
+    <value>Пак стоит с этими группами.</value>
+  </data>
+  <data name="EffectsPackDiffers" xml:space="preserve">
+    <value>Пак собран с другими группами.</value>
+  </data>
+  <data name="RebuildPack" xml:space="preserve">
+    <value>Пересобрать пак</value>
+  </data>
+  <data name="ConfigMinimapGroup" xml:space="preserve">
+    <value>Миникарта</value>
+  </data>
+  <data name="ConfigFriendly" xml:space="preserve">
+    <value>Свои</value>
+  </data>
+  <data name="ConfigFriendlyDescription" xml:space="preserve">
+    <value>Крипы и здания твоей стороны</value>
+  </data>
+  <data name="ConfigEnemy" xml:space="preserve">
+    <value>Враги</value>
+  </data>
+  <data name="ConfigEnemyDescription" xml:space="preserve">
+    <value>Крипы и здания противника</value>
+  </data>
+  <data name="ConfigNeutral" xml:space="preserve">
+    <value>Нейтралы</value>
+  </data>
+  <data name="ConfigNeutralDescription" xml:space="preserve">
+    <value>Нейтральные крипы и Рошан</value>
+  </data>
+  <data name="ConfigColorCode" xml:space="preserve">
+    <value>Код цвета</value>
+  </data>
+  <data name="ColorPick" xml:space="preserve">
+    <value>Свой цвет</value>
+  </data>
+  <data name="ColorPickShade" xml:space="preserve">
+    <value>Насыщенность и яркость</value>
+  </data>
+  <data name="ColorPickHue" xml:space="preserve">
+    <value>Оттенок</value>
+  </data>
+  <data name="ConfigCreepScale" xml:space="preserve">
+    <value>Размер крипов</value>
+  </data>
+  <data name="ConfigCreepScaleDescription" xml:space="preserve">
+    <value>Точки крипов на миникарте</value>
+  </data>
+  <data name="ConfigAsInGame" xml:space="preserve">
+    <value>Как в игре</value>
+  </data>
+  <data name="ConfigTimesFormat" xml:space="preserve">
+    <value>{0}×</value>
+  </data>
+  <data name="ConfigCommandsGroup" xml:space="preserve">
+    <value>Команды игры</value>
+  </data>
+  <data name="ConfigHideVideo" xml:space="preserve">
+    <value>Без видео на главной</value>
+  </data>
+  <data name="ConfigHideVideoDescription" xml:space="preserve">
+    <value>Главная страница меню не крутит ролик</value>
+  </data>
+  <data name="ConfigMenuFps" xml:space="preserve">
+    <value>FPS в меню</value>
+  </data>
+  <data name="ConfigMenuFpsDescription" xml:space="preserve">
+    <value>Предел кадров вне матча, на сам матч не влияет</value>
+  </data>
+  <data name="ConfigNoParticleLights" xml:space="preserve">
+    <value>Без света от эффектов</value>
+  </data>
+  <data name="ConfigNoParticleLightsDescription" xml:space="preserve">
+    <value>Драки легче для видеокарты, эффекты тусклее</value>
+  </data>
+  <data name="ConfigMinimalism" xml:space="preserve">
+    <value>minimalism</value>
+  </data>
+  <data name="ConfigMinimalismDescription" xml:space="preserve">
+    <value>Популярный конфиг: карта без цветокоррекции, без крови, частицы и тени попроще</value>
+  </data>
+  <data name="ConfigWrite" xml:space="preserve">
+    <value>Записать в autoexec.cfg</value>
+  </data>
+  <data name="ConfigRemove" xml:space="preserve">
+    <value>Убрать из autoexec.cfg</value>
+  </data>
+  <data name="ConfigNothingWritten" xml:space="preserve">
+    <value>В autoexec.cfg от DotaTune ничего нет.</value>
+  </data>
+  <data name="ConfigNotWrittenYet" xml:space="preserve">
+    <value>Выбор ещё не записан в autoexec.cfg.</value>
+  </data>
+  <data name="ConfigWritten" xml:space="preserve">
+    <value>Записано в autoexec.cfg. Игра возьмёт это при следующем запуске.</value>
+  </data>
+  <data name="ConfigDiffers" xml:space="preserve">
+    <value>В autoexec.cfg записан другой выбор.</value>
+  </data>
+  <data name="ConfigMissing" xml:space="preserve">
+    <value>Строки DotaTune пропали из autoexec.cfg.</value>
+  </data>
+  <data name="ConfigChanged" xml:space="preserve">
+    <value>Строки DotaTune в autoexec.cfg изменены вручную.</value>
+  </data>
+  <data name="ConfigDotaRunning" xml:space="preserve">
+    <value>Dota запущена. Записать и убрать строки получится после выхода из игры.</value>
+  </data>
+  <data name="ConfigBrokenMarksFormat" xml:space="preserve">
+    <value>В autoexec.cfg испорчены метки DotaTune. Поправь файл вручную: {0}</value>
+  </data>
+  <data name="ConfigErrorFormat" xml:space="preserve">
+    <value>autoexec.cfg не изменён: {0}</value>
+  </data>
+  <data name="ConfigSaveErrorFormat" xml:space="preserve">
+    <value>Выбор не сохранился: {0}</value>
+  </data>
+  <data name="ColorGreen" xml:space="preserve">
+    <value>Зелёный</value>
+  </data>
+  <data name="ColorRed" xml:space="preserve">
+    <value>Красный</value>
+  </data>
+  <data name="ColorWhite" xml:space="preserve">
+    <value>Белый</value>
+  </data>
+  <data name="ColorCyan" xml:space="preserve">
+    <value>Бирюзовый</value>
+  </data>
+  <data name="ColorMagenta" xml:space="preserve">
+    <value>Малиновый</value>
+  </data>
+  <data name="ColorYellow" xml:space="preserve">
+    <value>Жёлтый</value>
+  </data>
+  <data name="ColorBlue" xml:space="preserve">
+    <value>Синий</value>
+  </data>
+  <data name="ColorOrange" xml:space="preserve">
+    <value>Оранжевый</value>
+  </data>
+  <data name="ColorPurple" xml:space="preserve">
+    <value>Фиолетовый</value>
+  </data>
+  <data name="ConfigLaunchGroup" xml:space="preserve">
+    <value>Параметры запуска</value>
+  </data>
+  <data name="LaunchCurrentFormat" xml:space="preserve">
+    <value>Сейчас: {0}</value>
+  </data>
+  <data name="LaunchCurrentNone" xml:space="preserve">
+    <value>Сейчас параметров нет</value>
+  </data>
+  <data name="LaunchResultFormat" xml:space="preserve">
+    <value>Станет: {0}</value>
+  </data>
+  <data name="LaunchResultNone" xml:space="preserve">
+    <value>Станет: без параметров</value>
+  </data>
+  <data name="LaunchNoVideo" xml:space="preserve">
+    <value>Без заставки</value>
+  </data>
+  <data name="LaunchNoVideoDescription" xml:space="preserve">
+    <value>-novid, игра стартует без ролика Valve</value>
+  </data>
+  <data name="LaunchNoJoystick" xml:space="preserve">
+    <value>Без опроса джойстика</value>
+  </data>
+  <data name="LaunchNoJoystickDescription" xml:space="preserve">
+    <value>-nojoy, старт чуть быстрее, на FPS не влияет</value>
+  </data>
+  <data name="LaunchRemoveDead" xml:space="preserve">
+    <value>Убрать то, чего в игре уже нет</value>
+  </data>
+  <data name="LaunchWrite" xml:space="preserve">
+    <value>Записать параметры</value>
+  </data>
+  <data name="LaunchRestore" xml:space="preserve">
+    <value>Вернуть как было</value>
+  </data>
+  <data name="LaunchWritten" xml:space="preserve">
+    <value>Параметры записаны. Steam возьмёт их при следующем запуске игры.</value>
+  </data>
+  <data name="LaunchSteamRunning" xml:space="preserve">
+    <value>Steam запущен. Параметры записываются только при закрытом Steam.</value>
+  </data>
+  <data name="LaunchNoDotaBlock" xml:space="preserve">
+    <value>На этом аккаунте Dota ещё не запускалась, параметры записать некуда.</value>
+  </data>
+  <data name="LaunchErrorFormat" xml:space="preserve">
+    <value>Параметры не изменены: {0}</value>
+  </data>
+  <data name="LaunchRestored" xml:space="preserve">
+    <value>Параметры возвращены как были.</value>
+  </data>
+  <data name="LaunchChangedInSteam" xml:space="preserve">
+    <value>Строку поменяли в Steam после записи DotaTune, она осталась как есть.</value>
+  </data>
+  <data name="LaunchRestartAndWrite" xml:space="preserve">
+    <value>Перезапустить Steam и записать</value>
+  </data>
+  <data name="LaunchRestartAndRestore" xml:space="preserve">
+    <value>Перезапустить Steam и вернуть</value>
+  </data>
+  <data name="LaunchSteamStarting" xml:space="preserve">
+    <value>Steam запускается снова.</value>
+  </data>
+  <data name="LaunchSteamDidNotClose" xml:space="preserve">
+    <value>Steam не закрылся за минуту, ничего не записано. Если он закроется позже, запусти его сам.</value>
+  </data>
+  <data name="LaunchSteamClosing" xml:space="preserve">
+    <value>Steam закрывается, это может занять до минуты.</value>
+  </data>
+  <data name="LaunchSteamDidNotStart" xml:space="preserve">
+    <value>Steam не запустился, открой его сам.</value>
+  </data>
+  <data name="LaunchDotaRunning" xml:space="preserve">
+    <value>Dota запущена. Записать параметры получится после выхода из игры.</value>
+  </data>
+  <data name="ConfigTransferGroup" xml:space="preserve">
+    <value>Перенос между аккаунтами</value>
+  </data>
+  <data name="TransferFrom" xml:space="preserve">
+    <value>Откуда</value>
+  </data>
+  <data name="TransferTo" xml:space="preserve">
+    <value>Куда</value>
+  </data>
+  <data name="TransferAccountFormat" xml:space="preserve">
+    <value>{0} ({1})</value>
+  </data>
+  <data name="TransferHotkeys" xml:space="preserve">
+    <value>Горячие клавиши</value>
+  </data>
+  <data name="TransferHotkeysDescription" xml:space="preserve">
+    <value>Клавиши способностей, предметов и камеры</value>
+  </data>
+  <data name="TransferGameSettings" xml:space="preserve">
+    <value>Настройки игры</value>
+  </data>
+  <data name="TransferGameSettingsDescription" xml:space="preserve">
+    <value>Интерфейс, колесо чата, миникарта</value>
+  </data>
+  <data name="TransferConsoleBinds" xml:space="preserve">
+    <value>Консольные бинды</value>
+  </data>
+  <data name="TransferConsoleBindsDescription" xml:space="preserve">
+    <value>Клавиши, назначенные командой bind</value>
+  </data>
+  <data name="TransferHeroGrids" xml:space="preserve">
+    <value>Сетки героев</value>
+  </data>
+  <data name="TransferHeroGridsDescription" xml:space="preserve">
+    <value>Добавятся к сеткам аккаунта с пометкой #DotaTune, его сетки останутся</value>
+  </data>
+  <data name="TransferBuilds" xml:space="preserve">
+    <value>Сборки и гайды</value>
+  </data>
+  <data name="TransferBuildsDescription" xml:space="preserve">
+    <value>Сборки предметов, аспекты героев, гайды</value>
+  </data>
+  <data name="TransferMisc" xml:space="preserve">
+    <value>Предметы, группы и чат</value>
+  </data>
+  <data name="TransferMiscDescription" xml:space="preserve">
+    <value>Подсказки предметов, группы юнитов, чат, лобби</value>
+  </data>
+  <data name="TransferGraphics" xml:space="preserve">
+    <value>Графика</value>
+  </data>
+  <data name="TransferGraphicsDescription" xml:space="preserve">
+    <value>Настройки видео этого компьютера</value>
+  </data>
+  <data name="TransferLaunchOptions" xml:space="preserve">
+    <value>Параметры запуска</value>
+  </data>
+  <data name="TransferLaunchOptionsDescription" xml:space="preserve">
+    <value>Только при закрытом Steam</value>
+  </data>
+  <data name="TransferRun" xml:space="preserve">
+    <value>Перенести</value>
+  </data>
+  <data name="TransferRestore" xml:space="preserve">
+    <value>Вернуть как было</value>
+  </data>
+  <data name="TransferDoneFormat" xml:space="preserve">
+    <value>Перенесено, записано файлов: {0}.</value>
+  </data>
+  <data name="TransferRestored" xml:space="preserve">
+    <value>Аккаунт возвращён как был до переноса.</value>
+  </data>
+  <data name="TransferChangedSince" xml:space="preserve">
+    <value>Возвращено всё, кроме того, что поменялось после переноса: эти файлы остались как есть.</value>
+  </data>
+  <data name="TransferCloudHintFormat" xml:space="preserve">
+    <value>У {0} включено облако Steam. Если при следующем запуске Steam покажет конфликт синхронизации, выбери файлы на этом компьютере, иначе он вернёт старые.</value>
+  </data>
+  <data name="TransferDotaRunning" xml:space="preserve">
+    <value>Dota запущена. Перенести настройки получится после выхода из игры.</value>
+  </data>
+  <data name="TransferSteamRunning" xml:space="preserve">
+    <value>Steam запущен. Параметры запуска переносятся только при закрытом Steam: сними галочку или закрой Steam.</value>
+  </data>
+  <data name="TransferSameAccount" xml:space="preserve">
+    <value>Выбери два разных аккаунта.</value>
+  </data>
+  <data name="TransferNothing" xml:space="preserve">
+    <value>У аккаунта-источника нет ничего из выбранного.</value>
+  </data>
+  <data name="TransferNoSuchAccount" xml:space="preserve">
+    <value>У одного из аккаунтов больше нет папки Dota.</value>
+  </data>
+  <data name="TransferOneAccount" xml:space="preserve">
+    <value>На этом компьютере Dota запускалась только на одном аккаунте.</value>
+  </data>
+  <data name="TransferErrorFormat" xml:space="preserve">
+    <value>Перенос не удался: {0}</value>
+  </data>
+  <data name="ConfigPresetGroup" xml:space="preserve">
+    <value>Наборы</value>
+  </data>
+  <data name="PresetExportNote" xml:space="preserve">
+    <value>Код несёт эффекты, конфиг и параметры запуска. Сетки героев, клавиши и настройки игры переносит только файл</value>
+  </data>
+  <data name="PresetFileOnly" xml:space="preserve">
+    <value>Только в файле</value>
+  </data>
+  <data name="PresetCopyCode" xml:space="preserve">
+    <value>Скопировать код</value>
+  </data>
+  <data name="PresetSaveFile" xml:space="preserve">
+    <value>Сохранить в файл</value>
+  </data>
+  <data name="PresetCodeCopiedFormat" xml:space="preserve">
+    <value>Код скопирован, знаков: {0}.</value>
+  </data>
+  <data name="PresetSavedFormat" xml:space="preserve">
+    <value>Набор сохранён: {0}.</value>
+  </data>
+  <data name="PresetCodeWatermark" xml:space="preserve">
+    <value>Код набора, DT1-</value>
+  </data>
+  <data name="PresetLoadCode" xml:space="preserve">
+    <value>Загрузить код</value>
+  </data>
+  <data name="PresetOpenFile" xml:space="preserve">
+    <value>Открыть файл</value>
+  </data>
+  <data name="PresetChangesTitle" xml:space="preserve">
+    <value>Что поменяется</value>
+  </data>
+  <data name="PresetEffectsFormat" xml:space="preserve">
+    <value>Эффекты: {0}</value>
+  </data>
+  <data name="PresetEffectsAll" xml:space="preserve">
+    <value>Эффекты: все группы</value>
+  </data>
+  <data name="PresetEffectsNone" xml:space="preserve">
+    <value>Эффекты: ни одной группы</value>
+  </data>
+  <data name="PresetConfigFormat" xml:space="preserve">
+    <value>Конфиг: {0}</value>
+  </data>
+  <data name="PresetConfigNone" xml:space="preserve">
+    <value>Конфиг: как в игре</value>
+  </data>
+  <data name="PresetLaunchFormat" xml:space="preserve">
+    <value>Параметры запуска: {0}</value>
+  </data>
+  <data name="PresetLaunchNone" xml:space="preserve">
+    <value>Параметры запуска: без -novid и -nojoy</value>
+  </data>
+  <data name="PresetUnknownFormat" xml:space="preserve">
+    <value>Не ставится, этой версии неизвестно: {0}</value>
+  </data>
+  <data name="PresetApplyChoice" xml:space="preserve">
+    <value>Эффекты, конфиг и параметры запуска</value>
+  </data>
+  <data name="PresetApply" xml:space="preserve">
+    <value>Применить набор</value>
+  </data>
+  <data name="PresetCancel" xml:space="preserve">
+    <value>Отмена</value>
+  </data>
+  <data name="PresetAppliedFormat" xml:space="preserve">
+    <value>Набор применён: выбор стоит на страницах, записано файлов: {0}.</value>
+  </data>
+  <data name="PresetNotAPreset" xml:space="preserve">
+    <value>Это не набор DotaTune.</value>
+  </data>
+  <data name="PresetNewer" xml:space="preserve">
+    <value>Набор из более новой версии DotaTune. Чтобы его загрузить, обнови программу.</value>
+  </data>
+  <data name="PresetDamaged" xml:space="preserve">
+    <value>Набор повреждён: код обрезан или изменён, либо файл испорчен.</value>
+  </data>
+  <data name="PresetTooLarge" xml:space="preserve">
+    <value>Набор слишком большой.</value>
+  </data>
+  <data name="PresetErrorFormat" xml:space="preserve">
+    <value>С набором не вышло: {0}</value>
+  </data>
+  <data name="PresetFileType" xml:space="preserve">
+    <value>Набор DotaTune</value>
+  </data>
+  <data name="PresetCopyFailed" xml:space="preserve">
+    <value>Буфер обмена занят другой программой. Код показан выше, его можно выделить и скопировать вручную.</value>
+  </data>
+  <data name="GridAccountFormat" xml:space="preserve">
+    <value>Сетки аккаунта {0}</value>
+  </data>
+  <data name="GridMarkHint" xml:space="preserve">
+    <value>В редакторе сетки у раскладок DotaTune пометка #DotaTune-Import. Твои сетки остаются как были.</value>
+  </data>
+  <data name="GridSourceGroup" xml:space="preserve">
+    <value>Откуда раскладки</value>
+  </data>
+  <data name="GridCatalogBuiltInFormat" xml:space="preserve">
+    <value>Раскладки по статистике Stratz и Spectral, вшиты в программу, от {0}.</value>
+  </data>
+  <data name="GridCatalogDownloadedFormat" xml:space="preserve">
+    <value>Раскладки по статистике Stratz и Spectral, загружены {0}. Обновляются раз в день.</value>
+  </data>
+  <data name="GridDownloading" xml:space="preserve">
+    <value>Загружаются свежие раскладки</value>
+  </data>
+  <data name="GridDownloadFailedFormat" xml:space="preserve">
+    <value>Свежие не загрузились: {0}</value>
+  </data>
+  <data name="GridDownload" xml:space="preserve">
+    <value>Обновить раскладки</value>
+  </data>
+  <data name="GridApply" xml:space="preserve">
+    <value>Записать в игру</value>
+  </data>
+  <data name="GridRemoveAll" xml:space="preserve">
+    <value>Снять все</value>
+  </data>
+  <data name="GridAddFile" xml:space="preserve">
+    <value>Добавить из файла</value>
+  </data>
+  <data name="GridFileType" xml:space="preserve">
+    <value>Сетки героев Dota</value>
+  </data>
+  <data name="GridFileAddedFormat" xml:space="preserve">
+    <value>Из файла {1} взято раскладок: {0}. Они включены, осталось записать в игру.</value>
+  </data>
+  <data name="GridFileProblemFormat" xml:space="preserve">
+    <value>В файле нет сеток героев, которые покажет игра: {0}</value>
+  </data>
+  <data name="GridFromFileFormat" xml:space="preserve">
+    <value>Из файла {0}: {1}</value>
+  </data>
+  <data name="GridInGameFormat" xml:space="preserve">
+    <value>Уже в игре: {0}</value>
+  </data>
+  <data name="GridInGame" xml:space="preserve">
+    <value>Уже в игре</value>
+  </data>
+  <data name="GridNoneInGame" xml:space="preserve">
+    <value>В игре нет раскладок DotaTune</value>
+  </data>
+  <data name="GridMatches" xml:space="preserve">
+    <value>В игре стоят выбранные раскладки</value>
+  </data>
+  <data name="GridNewer" xml:space="preserve">
+    <value>Есть свежая версия раскладок, что стоят в игре</value>
+  </data>
+  <data name="GridDiffers" xml:space="preserve">
+    <value>Выбор ещё не записан в игру</value>
+  </data>
+  <data name="GridDotaRunning" xml:space="preserve">
+    <value>Dota запущена. Сетки можно менять после выхода из игры.</value>
+  </data>
+  <data name="GridNoAccount" xml:space="preserve">
+    <value>Не видно, какой аккаунт вошёл в Steam, или на нём ещё не запускали Dota. Запусти Steam и открой вкладку снова.</value>
+  </data>
+  <data name="GridBrokenFormat" xml:space="preserve">
+    <value>Файл сеток испорчен, DotaTune его не трогает. {0}</value>
+  </data>
+  <data name="GridDoneFormat" xml:space="preserve">
+    <value>Готово: добавлено {0}, убрано {1}. В редакторе сетки это появится при следующем запуске игры.</value>
+  </data>
+  <data name="GridErrorFormat" xml:space="preserve">
+    <value>С сетками не вышло: {0}</value>
+  </data>
+  <data name="GridNotStarted" xml:space="preserve">
+    <value>Этот аккаунт ещё не запускал Dota, у игры нет папки его настроек.</value>
+  </data>
+  <data name="GridPicture" xml:space="preserve">
+    <value>Рисунок из подписей</value>
+  </data>
+  <data name="GridArtGroup" xml:space="preserve">
+    <value>Арт-сетки</value>
+  </data>
+  <data name="GridNotSeen" xml:space="preserve">
+    <value>Игра пока не видит файл сеток этого аккаунта. Сохрани в игре любую свою сетку на странице героев, выйди и запиши снова.</value>
+  </data>
+  <data name="TransferGridsNotSeen" xml:space="preserve">
+    <value>Сетки героев не записаны: игра пока не видит файл сеток этого аккаунта. Сохрани в игре любую свою сетку на странице героев, выйди и перенеси снова.</value>
+  </data>
+  <data name="MenuGame" xml:space="preserve">
+    <value>Стандартный фон</value>
+  </data>
+  <data name="MenuBlack" xml:space="preserve">
+    <value>Чёрный фон</value>
+  </data>
+  <data name="MenuSample" xml:space="preserve">
+    <value>Пример фона</value>
+  </data>
+  <data name="MenuOwnPicture" xml:space="preserve">
+    <value>Своя картинка</value>
+  </data>
+  <data name="MenuAddPicture" xml:space="preserve">
+    <value>Добавить картинку</value>
+  </data>
+  <data name="MenuRemovePicture" xml:space="preserve">
+    <value>Убрать картинку</value>
+  </data>
+  <data name="MenuPictureHint" xml:space="preserve">
+    <value>Картинка обрезается по центру под экран.</value>
+  </data>
+  <data name="MenuPictureFileType" xml:space="preserve">
+    <value>Картинки</value>
+  </data>
+  <data name="MenuNoPack" xml:space="preserve">
+    <value>Пака пока нет. Фон меню встанет вместе с ним.</value>
+  </data>
+  <data name="MenuPackMatches" xml:space="preserve">
+    <value>Пак стоит с этим фоном. Dota покажет его со следующего запуска.</value>
+  </data>
+  <data name="MenuPackDiffers" xml:space="preserve">
+    <value>Пак собран с другим фоном.</value>
+  </data>
+  <data name="MenuNotApplied" xml:space="preserve">
+    <value>Фон не вошёл в пак, причина в журнале.</value>
+  </data>
+  <data name="MenuNotSupported" xml:space="preserve">
+    <value>В этой версии игры DotaTune не может сменить фон меню.</value>
+  </data>
+  <data name="MenuPictureNotSupported" xml:space="preserve">
+    <value>В этой версии игры картинку в меню не поставить, остаются стандартный и чёрный фон.</value>
+  </data>
+  <data name="MenuPictureUnreadable" xml:space="preserve">
+    <value>Этот файл не открылся как картинка или он слишком большой.</value>
+  </data>
+  <data name="MenuPictureErrorFormat" xml:space="preserve">
+    <value>Картинка не добавилась: {0}</value>
+  </data>
+  <data name="MenuRemoveErrorFormat" xml:space="preserve">
+    <value>Картинка не убралась: {0}</value>
+  </data>
+  <data name="ClicksMove" xml:space="preserve">
+    <value>Метка клика</value>
+  </data>
+  <data name="ClicksMoveDescription" xml:space="preserve">
+    <value>Стрелки и кольца там, куда ты отправил героя.</value>
+  </data>
+  <data name="ClicksAttack" xml:space="preserve">
+    <value>Метка атаки</value>
+  </data>
+  <data name="ClicksAttackDescription" xml:space="preserve">
+    <value>То же для приказа атаковать. В игре она красная.</value>
+  </data>
+  <data name="ClicksUnit" xml:space="preserve">
+    <value>Клик по юниту</value>
+  </data>
+  <data name="ClicksUnitDescription" xml:space="preserve">
+    <value>Кольцо на юните, которому ты отдал приказ, например на враге, которого бьёшь. На врагах в игре оно красное.</value>
+  </data>
+  <data name="ClicksRings" xml:space="preserve">
+    <value>Кольца выделения</value>
+  </data>
+  <data name="ClicksRingsDescription" xml:space="preserve">
+    <value>Кольца под выбранными юнитами и от выделения рамкой. Свои и чужие станут одного цвета.</value>
+  </data>
+  <data name="ClicksHero" xml:space="preserve">
+    <value>Подсветка героя</value>
+  </data>
+  <data name="ClicksHeroDescription" xml:space="preserve">
+    <value>Свечение, которое показывает, где твой герой.</value>
+  </data>
+  <data name="ClicksMouseGroup" xml:space="preserve">
+    <value>Мышь и выделение</value>
+  </data>
+  <data name="ColorsApply" xml:space="preserve">
+    <value>Применить</value>
+  </data>
+  <data name="ColorsApplied" xml:space="preserve">
+    <value>Цвета стоят в игре.</value>
+  </data>
+  <data name="ColorsNotApplied" xml:space="preserve">
+    <value>Цвета ещё не в игре.</value>
+  </data>
+  <data name="ColorsAsInGame" xml:space="preserve">
+    <value>Цвета как в игре.</value>
+  </data>
+  <data name="ColorsDotaRunning" xml:space="preserve">
+    <value>Dota запущена. Применить цвета получится после выхода из игры.</value>
+  </data>
+  <data name="ClicksNotTakenFormat" xml:space="preserve">
+    <value>Не перекрасилось: {0}. Похоже, игру обновили, подробности в журнале.</value>
+  </data>
+  <data name="ResetPartPack" xml:space="preserve">
+    <value>Пак: эффекты, клики, фон меню</value>
+  </data>
+  <data name="ResetPartAutoexec" xml:space="preserve">
+    <value>Строки в autoexec.cfg</value>
+  </data>
+  <data name="ResetPartTransfers" xml:space="preserve">
+    <value>Настройки, перенесённые между аккаунтами</value>
+  </data>
+  <data name="ResetPartLaunch" xml:space="preserve">
+    <value>Параметры запуска</value>
+  </data>
+  <data name="ResetPartGrids" xml:space="preserve">
+    <value>Раскладки сетки героев</value>
+  </data>
+  <data name="ResetAll" xml:space="preserve">
+    <value>Вернуть всё</value>
+  </data>
+  <data name="ResetConfirm" xml:space="preserve">
+    <value>Вернуть игру к виду до DotaTune?</value>
+  </data>
+  <data name="ResetConfirmYes" xml:space="preserve">
+    <value>Да, вернуть</value>
+  </data>
+  <data name="ResetCancel" xml:space="preserve">
+    <value>Отмена</value>
+  </data>
+  <data name="ResetClean" xml:space="preserve">
+    <value>Игра в чистом виде.</value>
+  </data>
+  <data name="ResetPartly" xml:space="preserve">
+    <value>Вернулось не всё.</value>
+  </data>
+  <data name="ResetDotaRunning" xml:space="preserve">
+    <value>Dota запущена. Вернуть получится после выхода из игры.</value>
+  </data>
+  <data name="ResetProblemDota" xml:space="preserve">
+    <value>закрой Dota и повтори</value>
+  </data>
+  <data name="ResetProblemSteam" xml:space="preserve">
+    <value>закрой Steam и повтори</value>
+  </data>
+  <data name="ResetProblemNoSteam" xml:space="preserve">
+    <value>Steam не найден</value>
+  </data>
+  <data name="ResetProblemNoGame" xml:space="preserve">
+    <value>Dota 2 не найдена</value>
+  </data>
+  <data name="ResetProblemAutoexecFormat" xml:space="preserve">
+    <value>метки DotaTune в файле испорчены, поправь его вручную: {0}</value>
+  </data>
+  <data name="ResetProblemLaunchChanged" xml:space="preserve">
+    <value>строку поменяли в Steam, она осталась как есть</value>
+  </data>
+  <data name="ResetProblemTransferChanged" xml:space="preserve">
+    <value>файлы, которые поменялись после переноса, остались как есть</value>
+  </data>
+  <data name="ResetProblemGridsFormat" xml:space="preserve">
+    <value>файл не читается и остался как есть: {0}</value>
+  </data>
+  <data name="ResetProblemFailedFormat" xml:space="preserve">
+    <value>не вышло: {0}</value>
+  </data>
+  <data name="StatePackReady" xml:space="preserve">
+    <value>Пак DotaTune на месте.</value>
+  </data>
+  <data name="StateNoPack" xml:space="preserve">
+    <value>Пака DotaTune пока нет.</value>
+  </data>
+  <data name="PlayPackLoaded" xml:space="preserve">
+    <value>Игра подключила пак DotaTune.</value>
+  </data>
+  <data name="PlayPackNotLoaded" xml:space="preserve">
+    <value>Игра запустилась без пака DotaTune. Поставь его заново.</value>
+  </data>
+  <data name="StateOldPack" xml:space="preserve">
+    <value>В игре остался старый пак DotaTune, его уберёт Сброс.</value>
+  </data>
+  <data name="FactOtherMods" xml:space="preserve">
+    <value>Другие моды</value>
+  </data>
+  <data name="NavMmr" xml:space="preserve">
+    <value>MMR</value>
+  </data>
+  <data name="MmrDescription" xml:space="preserve">
+    <value>Твой MMR у ника в главном меню и изменение после игр рядом с числом в профиле. Число игра отдаёт, когда ты сам открываешь профиль.</value>
+  </data>
+  <data name="MmrSwitch" xml:space="preserve">
+    <value>Показывать MMR в игре</value>
+  </data>
+  <data name="MmrSwitchDescription" xml:space="preserve">
+    <value>Только откалиброванный рейтинг</value>
+  </data>
+  <data name="MmrNoPack" xml:space="preserve">
+    <value>Пака пока нет. Строка MMR встанет вместе с ним.</value>
+  </data>
+  <data name="MmrPackWithLine" xml:space="preserve">
+    <value>Пак стоит со строкой MMR.</value>
+  </data>
+  <data name="MmrPackWithoutLine" xml:space="preserve">
+    <value>Пак стоит без строки MMR.</value>
+  </data>
+  <data name="MmrPackBuiltWithLine" xml:space="preserve">
+    <value>Пак собран со строкой MMR.</value>
+  </data>
+  <data name="MmrPackBuiltWithoutLine" xml:space="preserve">
+    <value>Пак собран без строки MMR.</value>
+  </data>
+  <data name="MmrNotSupported" xml:space="preserve">
+    <value>В этой версии игры главное меню устроено иначе, строку MMR не поставить.</value>
+  </data>
+  <data name="MmrNotApplied" xml:space="preserve">
+    <value>Строка MMR не вошла в пак, причина в журнале.</value>
+  </data>
+  <data name="MmrHistory" xml:space="preserve">
+    <value>История</value>
+  </data>
+  <data name="MmrHistoryEmpty" xml:space="preserve">
+    <value>Показаний пока нет</value>
+  </data>
+  <data name="MmrHistoryUnreadable" xml:space="preserve">
+    <value>Файл истории mmr.json не читается, DotaTune оставляет его как есть</value>
+  </data>
+  <data name="MmrConsoleLogHint" xml:space="preserve">
+    <value>Без -condebug в параметрах запуска история пишется, только когда игра запущена из DotaTune</value>
+  </data>
+  <data name="MmrChangeFormat" xml:space="preserve">
+    <value>{0} за {1}</value>
+  </data>
+  <data name="MmrGamesOne" xml:space="preserve">
+    <value>{0} игру</value>
+  </data>
+  <data name="MmrGamesFew" xml:space="preserve">
+    <value>{0} игры</value>
+  </data>
+  <data name="MmrGamesMany" xml:space="preserve">
+    <value>{0} игр</value>
+  </data>
+  <data name="LaunchConsoleLog" xml:space="preserve">
+    <value>Журнал консоли</value>
+  </data>
+  <data name="LaunchConsoleLogDescription" xml:space="preserve">
+    <value>-condebug, из него DotaTune ведёт историю MMR</value>
+  </data>
+  <data name="NavAutoAccept" xml:space="preserve">
+    <value>Автопринятие</value>
+  </data>
+  <data name="AutoAcceptDescription" xml:space="preserve">
+    <value>Найденный матч принимается сам через выбранное число секунд после появления окна. Если примешь раньше, DotaTune не вмешивается.</value>
+  </data>
+  <data name="AutoAcceptSwitch" xml:space="preserve">
+    <value>Принимать найденный матч</value>
+  </data>
+  <data name="AutoAcceptDelay" xml:space="preserve">
+    <value>Через сколько секунд</value>
+  </data>
+  <data name="AutoAcceptSecondsFormat" xml:space="preserve">
+    <value>{0} с</value>
+  </data>
+  <data name="AutoAcceptNoPack" xml:space="preserve">
+    <value>Пака пока нет. Автопринятие встанет вместе с ним.</value>
+  </data>
+  <data name="AutoAcceptPackOnFormat" xml:space="preserve">
+    <value>Автопринятие сработает через {0} с.</value>
+  </data>
+  <data name="AutoAcceptPackOff" xml:space="preserve">
+    <value>Пак стоит без автопринятия.</value>
+  </data>
+  <data name="AutoAcceptBuiltOnFormat" xml:space="preserve">
+    <value>Пак собран с принятием через {0} с.</value>
+  </data>
+  <data name="AutoAcceptBuiltOff" xml:space="preserve">
+    <value>Пак собран без автопринятия.</value>
+  </data>
+  <data name="AutoAcceptNotSupported" xml:space="preserve">
+    <value>В этой версии игры окно принятия матча устроено иначе, автопринятие не поставить.</value>
+  </data>
+  <data name="AutoAcceptNotApplied" xml:space="preserve">
+    <value>Автопринятие не вошло в пак, причина в журнале.</value>
+  </data>
+  <data name="AutoAcceptUpdatePack" xml:space="preserve">
+    <value>Обновить пак</value>
+  </data>
+  <data name="AutoAcceptNotReplaced" xml:space="preserve">
+    <value>Задержка в паке не сменилась, причина в журнале.</value>
+  </data>
+</root>

@@ -1,0 +1,70 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:DotaTune.ViewModels"
+             xmlns:res="using:DotaTune.Resources"
+             x:Class="DotaTune.Views.MmrView"
+             x:DataType="vm:MmrViewModel">
+  <UserControl.Styles>
+    <!-- The change carries the colours of the game's own win and loss, toned to the status colours. -->
+    <Style Selector="TextBlock.change.up">
+      <Setter Property="Foreground" Value="{StaticResource StatusOkBrush}" />
+    </Style>
+    <Style Selector="TextBlock.change.down">
+      <Setter Property="Foreground" Value="{StaticResource StatusErrorBrush}" />
+    </Style>
+  </UserControl.Styles>
+
+  <StackPanel Spacing="14" MaxWidth="820" HorizontalAlignment="Left">
+    <TextBlock Classes="title" Text="{Binding Title}" />
+    <TextBlock Classes="lead" Text="{Binding Description}" />
+
+    <Grid ColumnDefinitions="*,Auto" Margin="0,24,0,10">
+      <StackPanel Spacing="2">
+        <TextBlock Text="{x:Static res:Strings.MmrSwitch}" FontSize="16" TextWrapping="Wrap" />
+        <TextBlock Classes="muted" Text="{x:Static res:Strings.MmrSwitchDescription}" />
+      </StackPanel>
+      <ToggleButton Grid.Column="1" Classes="switch" IsChecked="{Binding IsOn}" Margin="32,0,0,0"
+                    AutomationProperties.Name="{x:Static res:Strings.MmrSwitch}" VerticalAlignment="Center" />
+    </Grid>
+
+    <Border Classes="verdict" Classes.ok="{Binding IsOk}" Classes.attention="{Binding IsAttention}"
+            IsVisible="{Binding Summary, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
+      <Grid ColumnDefinitions="Auto,*">
+        <Ellipse Classes="mark" Width="8" Height="8" VerticalAlignment="Top" Margin="0,8,12,0" />
+        <StackPanel Grid.Column="1" Spacing="8">
+          <TextBlock Classes="label" Text="{Binding Summary}" TextWrapping="Wrap" />
+          <TextBlock Classes="muted" Text="{Binding Note}" IsVisible="{Binding Note, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
+        </StackPanel>
+      </Grid>
+    </Border>
+
+    <Button Classes="pill accent" Content="{Binding ApplyText}" Command="{Binding ApplyCommand}"
+            IsVisible="{Binding CanApplyNow}" HorizontalAlignment="Left" Margin="0,10,0,0" />
+
+    <TextBlock Classes="group" Text="{x:Static res:Strings.MmrHistory}" Margin="0,18,0,0" />
+    <TextBlock Classes="muted" Text="{Binding HistoryNote}"
+               IsVisible="{Binding HistoryNote, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
+    <ItemsControl ItemsSource="{Binding Rows}" Grid.IsSharedSizeScope="True">
+      <ItemsControl.ItemTemplate>
+        <DataTemplate x:DataType="vm:MmrRow">
+          <Grid Margin="0,6">
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="Auto" SharedSizeGroup="time" />
+              <ColumnDefinition Width="Auto" SharedSizeGroup="account" />
+              <ColumnDefinition Width="Auto" SharedSizeGroup="mmr" />
+              <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <TextBlock Classes="muted" Text="{Binding Time}" Margin="0,0,24,0" />
+            <TextBlock Grid.Column="1" Classes="muted" Text="{Binding Account}" Margin="0,0,24,0"
+                       IsVisible="{Binding Account, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
+            <TextBlock Grid.Column="2" FontWeight="Bold" Text="{Binding Mmr}" Margin="0,0,24,0" />
+            <TextBlock Grid.Column="3" Classes="change" Classes.up="{Binding IsUp}" Classes.down="{Binding IsDown}"
+                       Text="{Binding Change}" />
+          </Grid>
+        </DataTemplate>
+      </ItemsControl.ItemTemplate>
+    </ItemsControl>
+    <TextBlock Classes="muted" Text="{x:Static res:Strings.MmrConsoleLogHint}" IsVisible="{Binding ShowConsoleLogHint}"
+               MaxWidth="620" HorizontalAlignment="Left" />
+  </StackPanel>
+</UserControl>

@@ -1,0 +1,89 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:DotaTune.ViewModels"
+             xmlns:res="using:DotaTune.Resources"
+             xmlns:primitives="using:Avalonia.Controls.Primitives"
+             x:Class="DotaTune.Views.ClicksView"
+             x:DataType="vm:ClicksViewModel">
+  <UserControl.DataTemplates>
+    <DataTemplate DataType="vm:ColorRow">
+      <StackPanel Margin="0,10" Spacing="12">
+        <Grid ColumnDefinitions="*,Auto">
+          <StackPanel Spacing="2">
+            <TextBlock Text="{Binding Title}" FontSize="16" TextWrapping="Wrap" />
+            <TextBlock Classes="muted" Text="{Binding Description}" />
+          </StackPanel>
+          <ToggleButton Grid.Column="1" Classes="switch" IsChecked="{Binding IsOn}" Margin="32,0,0,0"
+                        AutomationProperties.Name="{Binding Title}" VerticalAlignment="Center" />
+        </Grid>
+        <WrapPanel IsVisible="{Binding IsOn}">
+          <ListBox Classes="swatches" ItemsSource="{Binding Swatches}" SelectedItem="{Binding SelectedSwatch}">
+            <ListBox.ItemsPanel>
+              <ItemsPanelTemplate>
+                <WrapPanel Orientation="Horizontal" />
+              </ItemsPanelTemplate>
+            </ListBox.ItemsPanel>
+            <ListBox.ItemTemplate>
+              <DataTemplate x:DataType="vm:Swatch">
+                <Ellipse Width="22" Height="22" Fill="{Binding Brush}" ToolTip.Tip="{Binding Name}" />
+              </DataTemplate>
+            </ListBox.ItemTemplate>
+          </ListBox>
+          <!-- Own colour: a hue ring, with the colour inside it when it is not one of the swatches. -->
+          <Button Classes="pick" Classes.custom="{Binding IsCustom}" Margin="0,0,8,8"
+                  AutomationProperties.Name="{x:Static res:Strings.ColorPick}" ToolTip.Tip="{x:Static res:Strings.ColorPick}">
+            <Panel Width="22" Height="22">
+              <Ellipse Margin="5" Fill="{Binding Brush}" IsVisible="{Binding IsCustom}" />
+              <Ellipse Classes="hue" StrokeThickness="3" />
+            </Panel>
+            <Button.Flyout>
+              <Flyout Placement="BottomEdgeAlignedLeft" FlyoutPresenterClasses="picker" Closed="OnPickerClosed">
+                <StackPanel Width="216" Spacing="14">
+                  <!-- The box spectrum stays square, so it is as tall as the panel is wide. Tooltips off: it names colours in English. -->
+                  <primitives:ColorSpectrum Components="SaturationValue" Shape="Box" Height="216" CornerRadius="4"
+                                            HsvColor="{Binding PickerColor, Mode=TwoWay}" ToolTip.ServiceEnabled="False"
+                                            AutomationProperties.Name="{x:Static res:Strings.ColorPickShade}" />
+                  <primitives:ColorSlider ColorComponent="Component1" ColorModel="Hsva" IsAlphaVisible="False"
+                                          Orientation="Horizontal" HsvColor="{Binding PickerColor, Mode=TwoWay}"
+                                          AutomationProperties.Name="{x:Static res:Strings.ColorPickHue}" />
+                  <StackPanel Orientation="Horizontal" Spacing="8">
+                    <Ellipse Width="22" Height="22" Fill="{Binding PickerBrush}" VerticalAlignment="Center" />
+                    <TextBox Classes="code" Text="{Binding PickerHex}" Width="104" MaxLength="7"
+                             AutomationProperties.Name="{x:Static res:Strings.ConfigColorCode}" />
+                  </StackPanel>
+                </StackPanel>
+              </Flyout>
+            </Button.Flyout>
+          </Button>
+          <TextBox Classes="code" Text="{Binding Hex}" Width="104" MaxLength="7" Margin="4,0,0,8" VerticalAlignment="Center"
+                   AutomationProperties.Name="{x:Static res:Strings.ConfigColorCode}" />
+        </WrapPanel>
+      </StackPanel>
+    </DataTemplate>
+  </UserControl.DataTemplates>
+
+  <StackPanel Spacing="14" MaxWidth="820" HorizontalAlignment="Left">
+    <TextBlock Classes="title" Text="{Binding Title}" />
+    <TextBlock Classes="lead" Text="{Binding Description}" />
+
+    <TextBlock Classes="group" Text="{x:Static res:Strings.ClicksMouseGroup}" Margin="0,18,0,0" />
+    <ItemsControl ItemsSource="{Binding Rows}" />
+
+    <TextBlock Classes="group" Text="{x:Static res:Strings.ConfigMinimapGroup}" Margin="0,18,0,0" />
+    <ItemsControl ItemsSource="{Binding MinimapRows}" />
+
+    <Border Classes="verdict" Classes.ok="{Binding IsOk}" Classes.attention="{Binding IsAttention}" Margin="0,14,0,0"
+            IsVisible="{Binding Summary, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
+      <Grid ColumnDefinitions="Auto,*">
+        <Ellipse Classes="mark" Width="8" Height="8" VerticalAlignment="Top" Margin="0,8,12,0" />
+        <StackPanel Grid.Column="1" Spacing="8">
+          <TextBlock Classes="label" Text="{Binding Summary}" TextWrapping="Wrap" />
+          <TextBlock Classes="muted" Text="{Binding Note}" IsVisible="{Binding Note, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
+        </StackPanel>
+      </Grid>
+    </Border>
+
+    <Button Classes="pill accent" Content="{Binding ApplyText}" Command="{Binding ApplyCommand}"
+            IsVisible="{Binding CanApplyNow}" HorizontalAlignment="Left" Margin="0,10,0,0" />
+  </StackPanel>
+</UserControl>

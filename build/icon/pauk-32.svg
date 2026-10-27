@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+<defs><clipPath id="t"><rect width="32" height="32" rx="7"/></clipPath>
+<radialGradient id="g"><stop offset="0" stop-color="#ff3d14" stop-opacity="0.7"/><stop offset="1" stop-color="#ff3d14" stop-opacity="0"/></radialGradient></defs>
+<g clip-path="url(#t)">
+  <rect width="32" height="32" fill="#414c74"/>
+  <g fill="none" stroke="#0e0f15" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="14,17.5 12.2,6.2 8.8,3.8 6,6.5"/><polyline points="17.5,18.5 25.8,9 29.5,9.2 32.2,13"/><polyline points="12.5,21.5 7.2,18.8 4.5,23.2 2.8,30"/><polyline points="12.2,19.8 6,13.5 2.5,15 0.2,19.5"/><polyline points="13,18.2 8.8,8.8 4.8,8 1.8,11.2"/><polyline points="15.5,22.8 18.2,25.5 19,29.5 18,33.2"/><polyline points="17,21.8 23.8,20 26.5,24.5 27.8,31"/><polyline points="17.8,20 26.8,15.2 30.2,18.2 32.2,23.8"/></g>
+  <ellipse cx="19" cy="11" rx="5.8" ry="7.4" fill="#0e0f15" transform="rotate(14 19 11)"/>
+  <ellipse cx="16.8" cy="6.8" rx="0.9" ry="1.9" fill="#c3cdf0" opacity="0.55" transform="rotate(22 16.8 6.8)"/>
+  <circle cx="19.2" cy="9.4" r="1.6" fill="#ff4a1a"/>
+  <path d="M18.8 11.4 L18.2 16" stroke="#e8361a" stroke-width="1.1" stroke-linecap="round"/>
+  <ellipse cx="14.5" cy="20.5" rx="4.1" ry="3.7" fill="#0e0f15"/>
+  <circle cx="13.6" cy="22" r="3.4" fill="url(#g)"/>
+  <circle cx="12.6" cy="22" r="1" fill="#ff4a1a"/><circle cx="14.7" cy="22.3" r="1" fill="#ff4a1a"/>
+</g>
+</svg>

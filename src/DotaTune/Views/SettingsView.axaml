@@ -1,0 +1,33 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:DotaTune.ViewModels"
+             xmlns:res="using:DotaTune.Resources"
+             x:Class="DotaTune.Views.SettingsView"
+             x:DataType="vm:SettingsViewModel">
+  <StackPanel Spacing="32" MaxWidth="760" HorizontalAlignment="Left">
+    <TextBlock Classes="title" Text="{x:Static res:Strings.NavSettings}" />
+
+    <StackPanel Spacing="10">
+      <TextBlock Classes="label" Text="{x:Static res:Strings.LanguageLabel}" />
+      <ComboBox ItemsSource="{Binding Languages}"
+                SelectedItem="{Binding SelectedLanguage}"
+                MinWidth="260">
+        <ComboBox.ItemTemplate>
+          <DataTemplate x:DataType="vm:LanguageOption">
+            <TextBlock Text="{Binding Title}" />
+          </DataTemplate>
+        </ComboBox.ItemTemplate>
+      </ComboBox>
+      <TextBlock Classes="muted" Text="{x:Static res:Strings.LanguageHint}" />
+    </StackPanel>
+
+    <StackPanel Spacing="10">
+      <TextBlock Classes="label" Text="{x:Static res:Strings.DataFolderLabel}" />
+      <SelectableTextBlock Text="{Binding DataFolder}" TextWrapping="Wrap"
+                           Foreground="{StaticResource InkMutedBrush}" />
+      <Button Classes="pill" Content="{x:Static res:Strings.OpenFolder}" Click="OnOpenDataFolder" HorizontalAlignment="Left" />
+    </StackPanel>
+
+    <TextBlock Classes="muted" Text="{Binding VersionText}" />
+  </StackPanel>
+</UserControl>

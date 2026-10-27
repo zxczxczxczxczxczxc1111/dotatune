@@ -1,0 +1,68 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="using:DotaTune.Setup"
+        xmlns:res="using:DotaTune.Setup.Resources"
+        x:Class="DotaTune.Setup.SetupWindow"
+        x:DataType="local:SetupViewModel"
+        Title="{x:Static res:SetupStrings.SetupWindowTitle}"
+        Icon="avares://DotaTune.Setup/Assets/dotatune.ico"
+        Width="640" SizeToContent="Height"
+        CanResize="False"
+        WindowStartupLocation="CenterScreen"
+        ExtendClientAreaToDecorationsHint="True"
+        ExtendClientAreaTitleBarHeightHint="32">
+
+  <Window.Styles>
+    <!-- The window does not resize, so the title bar keeps only minimise and close. No width, as
+         the full screen button in Theme.axaml: otherwise its old width stays in the row. -->
+    <Style Selector="WindowDrawnDecorations /template/ :is(Control)#PART_MaximizeButton">
+      <Setter Property="IsVisible" Value="False" />
+      <Setter Property="Width" Value="0" />
+    </Style>
+    <!-- One question per window, so the title is smaller than on a page of the program. -->
+    <Style Selector="TextBlock.title">
+      <Setter Property="FontSize" Value="26" />
+      <Setter Property="LineHeight" Value="32" />
+    </Style>
+    <Style Selector="ProgressBar">
+      <Setter Property="Height" Value="4" />
+      <Setter Property="MinHeight" Value="4" />
+      <Setter Property="CornerRadius" Value="2" />
+      <Setter Property="Foreground" Value="{StaticResource AccentBrush}" />
+      <Setter Property="Background" Value="{StaticResource TintedBrush}" />
+    </Style>
+  </Window.Styles>
+
+  <!-- The same black frame and panel as the program window; the system draws its buttons on top. -->
+  <Grid RowDefinitions="32,Auto" Margin="8,0,8,8">
+    <Border Margin="-8,0" Background="Transparent" WindowDecorationProperties.ElementRole="TitleBar" />
+
+    <Border Grid.Row="1" Classes="panel" Padding="40,36,40,40">
+      <Grid ColumnDefinitions="Auto,*">
+        <Image Source="avares://DotaTune.Setup/Assets/dotatune.ico" Width="96" Height="96"
+               VerticalAlignment="Top" Margin="0,0,32,0" />
+
+        <StackPanel Grid.Column="1" Spacing="12">
+          <Grid ColumnDefinitions="Auto,*">
+            <Ellipse Width="8" Height="8" Fill="{StaticResource StatusErrorBrush}" VerticalAlignment="Top" Margin="0,12,12,0"
+                     IsVisible="{Binding IsFailed}" />
+            <TextBlock Grid.Column="1" Classes="title" Text="{Binding Title}" />
+          </Grid>
+          <TextBlock Classes="lead" Text="{Binding Lead}" />
+          <TextBlock Classes="muted" Text="{Binding Note}"
+                     IsVisible="{Binding Note, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
+
+          <!-- The bar takes the place of the buttons, so the window keeps its height when installing starts. -->
+          <Panel Margin="0,12,0,0" MinHeight="56">
+            <ProgressBar IsIndeterminate="True" IsVisible="{Binding IsBusy}" VerticalAlignment="Center" />
+            <WrapPanel IsVisible="{Binding ShowButtons}">
+              <Button Classes="pill accent" Content="{Binding PrimaryText}" Command="{Binding PrimaryCommand}" Margin="0,0,12,8" />
+              <Button Classes="pill" Content="{Binding SecondaryText}" Command="{Binding SecondaryCommand}" Margin="0,0,0,8"
+                      IsVisible="{Binding SecondaryText, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
+            </WrapPanel>
+          </Panel>
+        </StackPanel>
+      </Grid>
+    </Border>
+  </Grid>
+</Window>

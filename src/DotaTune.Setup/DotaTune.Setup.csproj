@@ -1,0 +1,68 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- The installer people download: a dark window of its own around the Velopack setup.exe,
+       which it carries inside and runs silently. build\pack.ps1 publishes it as one file. -->
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>DotaTune.Setup</RootNamespace>
+    <AssemblyName>DotaTune.Setup</AssemblyName>
+    <ApplicationManifest>..\DotaTune\app.manifest</ApplicationManifest>
+    <ApplicationIcon>..\DotaTune\Assets\dotatune.ico</ApplicationIcon>
+    <BuiltInComInteropSupport>false</BuiltInComInteropSupport>
+    <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+    <!-- LibraryImport generates marshalling stubs that need unsafe blocks. -->
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <!-- The installer carries a runtime of its own on top of the program package, so it is cut
+         to the code it uses. Set here and not on the command line, so DotaTune.Core is not
+         analysed for trimming as a whole: only its parts the installer reaches are kept.
+         The runtime and self-contained switches come from build\pack.ps1: set here, they would
+         stop the tests from referencing this project. -->
+    <PublishTrimmed>true</PublishTrimmed>
+    <PublishSingleFile>true</PublishSingleFile>
+    <EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
+    <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Avalonia" />
+    <PackageReference Include="Avalonia.Desktop" />
+    <PackageReference Include="Avalonia.Themes.Fluent" />
+    <PackageReference Include="CommunityToolkit.Mvvm" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- The look of DotaTune itself: the same styles, fonts and icon, linked rather than copied. -->
+    <AvaloniaResource Include="..\DotaTune\Styles\Theme.axaml" Link="Styles\Theme.axaml" />
+    <AvaloniaResource Include="..\DotaTune\Assets\Fonts\*.ttf" Link="Assets\Fonts\%(Filename)%(Extension)" />
+    <AvaloniaResource Include="..\DotaTune\Assets\dotatune.ico" Link="Assets\dotatune.ico" />
+    <!-- The installer is a single file, so the font licences travel inside it. -->
+    <EmbeddedResource Include="..\DotaTune\Assets\Fonts\OFL-*.txt" Link="Assets\Fonts\%(Filename)%(Extension)" LogicalName="Licenses.%(Filename)%(Extension)" />
+    <!-- The language rule of the program: the saved choice, else the Windows language. -->
+    <Compile Include="..\DotaTune\UiLanguage.cs" Link="UiLanguage.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Log, settings and their folders; the trimmed publish keeps only what is used. -->
+    <ProjectReference Include="..\DotaTune.Core\DotaTune.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Velopack's setup.exe of the same version; only build\pack.ps1 passes it in. -->
+    <EmbeddedResource Include="$(SetupPayload)" LogicalName="Payload.Setup.exe" Condition="'$(SetupPayload)' != ''" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Resources\SetupStrings.resx">
+      <StronglyTypedLanguage>CSharp</StronglyTypedLanguage>
+      <StronglyTypedNamespace>DotaTune.Setup.Resources</StronglyTypedNamespace>
+      <StronglyTypedClassName>SetupStrings</StronglyTypedClassName>
+      <StronglyTypedFileName>$(IntermediateOutputPath)SetupStrings.Designer.cs</StronglyTypedFileName>
+      <PublicClass>true</PublicClass>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="DotaTune.Tests" />
+  </ItemGroup>
+
+</Project>

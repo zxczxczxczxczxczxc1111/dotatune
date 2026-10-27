@@ -1,0 +1,48 @@
+<Application xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="DotaTune.Setup.App"
+             RequestedThemeVariant="Dark">
+
+  <Application.Resources>
+    <ResourceDictionary>
+      <FontFamily x:Key="BodyFont">avares://DotaTune.Setup/Assets/Fonts#Onest</FontFamily>
+      <FontFamily x:Key="DisplayFont">avares://DotaTune.Setup/Assets/Fonts#Unbounded</FontFamily>
+
+      <!-- The palette of DotaTune's App.axaml that the shared Theme.axaml reads; a test keeps the values equal. -->
+      <SolidColorBrush x:Key="FrameBrush" Color="#000000" />
+      <SolidColorBrush x:Key="PanelBrush" Color="#121212" />
+      <SolidColorBrush x:Key="RaisedBrush" Color="#1F1F1F" />
+      <SolidColorBrush x:Key="MenuBrush" Color="#282828" />
+      <SolidColorBrush x:Key="TintedBrush" Color="#1AFFFFFF" />
+      <SolidColorBrush x:Key="InkBrush" Color="#FFFFFF" />
+      <SolidColorBrush x:Key="InkMutedBrush" Color="#B3B3B3" />
+      <SolidColorBrush x:Key="OutlineBrush" Color="#7C7C7C" />
+      <SolidColorBrush x:Key="FocusBrush" Color="#FFFFFF" />
+      <SolidColorBrush x:Key="SwitchOffBrush" Color="#535353" />
+      <SolidColorBrush x:Key="SwitchOffHoverBrush" Color="#B3B3B3" />
+      <SolidColorBrush x:Key="AccentBrush" Color="#8E9CF0" />
+      <SolidColorBrush x:Key="AccentHoverBrush" Color="#B3BCF5" />
+      <SolidColorBrush x:Key="AccentPressBrush" Color="#7384EC" />
+      <SolidColorBrush x:Key="OnAccentBrush" Color="#000000" />
+      <SolidColorBrush x:Key="StatusOkBrush" Color="#3DBEAA" />
+      <SolidColorBrush x:Key="StatusAttentionBrush" Color="#FFA42B" />
+      <SolidColorBrush x:Key="StatusErrorBrush" Color="#F3727F" />
+
+      <SplineEasing x:Key="Productive" X1="0.3" Y1="0" X2="0" Y2="1" />
+    </ResourceDictionary>
+  </Application.Resources>
+
+  <Application.Styles>
+    <FluentTheme>
+      <FluentTheme.Palettes>
+        <ColorPaletteResources x:Key="Dark"
+                               Accent="#8E9CF0"
+                               RegionColor="#121212"
+                               AltHigh="#121212"
+                               BaseHigh="#FFFFFF" />
+      </FluentTheme.Palettes>
+    </FluentTheme>
+    <StyleInclude Source="avares://DotaTune.Setup/Styles/Theme.axaml" />
+  </Application.Styles>
+
+</Application>

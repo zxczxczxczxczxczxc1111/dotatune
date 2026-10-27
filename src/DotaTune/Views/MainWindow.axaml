@@ -1,0 +1,79 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:DotaTune.ViewModels"
+        xmlns:views="using:DotaTune.Views"
+        x:Class="DotaTune.Views.MainWindow"
+        x:DataType="vm:MainViewModel"
+        Title="DotaTune"
+        Icon="avares://DotaTune/Assets/dotatune.ico"
+        Width="1120" Height="720"
+        MinWidth="880" MinHeight="560"
+        WindowStartupLocation="CenterScreen"
+        ExtendClientAreaToDecorationsHint="True"
+        ExtendClientAreaTitleBarHeightHint="32">
+
+  <Window.DataTemplates>
+    <DataTemplate DataType="vm:SettingsViewModel">
+      <views:SettingsView />
+    </DataTemplate>
+    <DataTemplate DataType="vm:GameStateViewModel">
+      <views:GameStateView />
+    </DataTemplate>
+    <DataTemplate DataType="vm:EffectsViewModel">
+      <views:EffectsView />
+    </DataTemplate>
+    <DataTemplate DataType="vm:ClicksViewModel">
+      <views:ClicksView />
+    </DataTemplate>
+    <DataTemplate DataType="vm:ConfigViewModel">
+      <views:ConfigView />
+    </DataTemplate>
+    <DataTemplate DataType="vm:HeroGridViewModel">
+      <views:HeroGridView />
+    </DataTemplate>
+    <DataTemplate DataType="vm:MenuBackgroundViewModel">
+      <views:MenuBackgroundView />
+    </DataTemplate>
+    <DataTemplate DataType="vm:MmrViewModel">
+      <views:MmrView />
+    </DataTemplate>
+    <DataTemplate DataType="vm:AutoAcceptViewModel">
+      <views:AutoAcceptView />
+    </DataTemplate>
+    <DataTemplate DataType="vm:ResetViewModel">
+      <views:ResetView />
+    </DataTemplate>
+  </Window.DataTemplates>
+
+  <!-- The title bar is part of the black frame; the system draws its buttons on top. -->
+  <Grid RowDefinitions="32,*" ColumnDefinitions="Auto,*" Margin="8,0,8,8">
+    <Border Grid.ColumnSpan="2" Margin="-8,0" Background="Transparent" WindowDecorationProperties.ElementRole="TitleBar" />
+
+    <Border Grid.Row="1" Grid.Column="0" Classes="panel" Width="264">
+      <DockPanel Margin="8">
+        <TextBlock DockPanel.Dock="Top" Classes="brand" Text="DotaTune" Margin="16,16,0,24" />
+        <Button DockPanel.Dock="Bottom"
+                Classes="nav"
+                Classes.active="{Binding IsSettingsOpen}"
+                Command="{Binding OpenSettingsCommand}">
+          <TextBlock Text="{Binding SettingsSection.Title}" TextWrapping="Wrap" />
+        </Button>
+        <ListBox Classes="nav"
+                 ItemsSource="{Binding Sections}"
+                 SelectedItem="{Binding SelectedNav}">
+          <ListBox.ItemTemplate>
+            <DataTemplate x:DataType="vm:SectionViewModel">
+              <TextBlock Text="{Binding Title}" TextWrapping="Wrap" />
+            </DataTemplate>
+          </ListBox.ItemTemplate>
+        </ListBox>
+      </DockPanel>
+    </Border>
+
+    <Border Grid.Row="1" Grid.Column="1" Classes="panel" Margin="8,0,0,0">
+      <ScrollViewer Margin="0,4">
+        <ContentControl Classes="page" Content="{Binding Current.Page}" Margin="32,28,32,32" />
+      </ScrollViewer>
+    </Border>
+  </Grid>
+</Window>

@@ -1,0 +1,112 @@
+<Application xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="DotaTune.App"
+             RequestedThemeVariant="Dark">
+
+  <Application.Resources>
+    <ResourceDictionary>
+      <FontFamily x:Key="BodyFont">avares://DotaTune/Assets/Fonts#Onest</FontFamily>
+      <FontFamily x:Key="DisplayFont">avares://DotaTune/Assets/Fonts#Unbounded</FontFamily>
+
+      <!-- Values follow the Spotify desktop client (docs\dizayn-spotify.md): a black frame,
+           neutral panels, and one accent kept for the main action and selected marks. -->
+      <SolidColorBrush x:Key="FrameBrush" Color="#000000" />
+      <SolidColorBrush x:Key="PanelBrush" Color="#121212" />
+      <SolidColorBrush x:Key="RaisedBrush" Color="#1F1F1F" />
+      <SolidColorBrush x:Key="RaisedHighlightBrush" Color="#2A2A2A" />
+      <SolidColorBrush x:Key="MenuBrush" Color="#282828" />
+      <SolidColorBrush x:Key="TintedBrush" Color="#1AFFFFFF" />
+      <SolidColorBrush x:Key="TintedHighlightBrush" Color="#24FFFFFF" />
+      <SolidColorBrush x:Key="InkBrush" Color="#FFFFFF" />
+      <SolidColorBrush x:Key="InkMutedBrush" Color="#B3B3B3" />
+      <SolidColorBrush x:Key="OutlineBrush" Color="#7C7C7C" />
+      <SolidColorBrush x:Key="FocusBrush" Color="#FFFFFF" />
+      <SolidColorBrush x:Key="SwitchOffBrush" Color="#535353" />
+      <SolidColorBrush x:Key="SwitchOffHoverBrush" Color="#B3B3B3" />
+      <!-- Calm accent from the tone of the icon rim; text on it is black, as on the Spotify green. -->
+      <SolidColorBrush x:Key="AccentBrush" Color="#8E9CF0" />
+      <SolidColorBrush x:Key="AccentHoverBrush" Color="#B3BCF5" />
+      <SolidColorBrush x:Key="AccentPressBrush" Color="#7384EC" />
+      <SolidColorBrush x:Key="OnAccentBrush" Color="#000000" />
+      <!-- In Spotify ready is the accent itself; here it keeps its own teal. -->
+      <SolidColorBrush x:Key="StatusOkBrush" Color="#3DBEAA" />
+      <SolidColorBrush x:Key="StatusAttentionBrush" Color="#FFA42B" />
+      <SolidColorBrush x:Key="StatusErrorBrush" Color="#F3727F" />
+
+      <!-- Spotify "productive" curve. -->
+      <SplineEasing x:Key="Productive" X1="0.3" Y1="0" X2="0" Y2="1" />
+
+      <!-- Fluent parts that are kept: the language list and the scroll bars. -->
+      <SolidColorBrush x:Key="ComboBoxBackground" Color="#1F1F1F" />
+      <SolidColorBrush x:Key="ComboBoxBackgroundPointerOver" Color="#2A2A2A" />
+      <SolidColorBrush x:Key="ComboBoxBackgroundPressed" Color="#2A2A2A" />
+      <SolidColorBrush x:Key="ComboBoxBackgroundUnfocused" Color="#1F1F1F" />
+      <SolidColorBrush x:Key="ComboBoxBorderBrush" Color="Transparent" />
+      <SolidColorBrush x:Key="ComboBoxBorderBrushPointerOver" Color="Transparent" />
+      <SolidColorBrush x:Key="ComboBoxBorderBrushPressed" Color="Transparent" />
+      <SolidColorBrush x:Key="ComboBoxBackgroundBorderBrushFocused" Color="#FFFFFF" />
+      <SolidColorBrush x:Key="ComboBoxBackgroundBorderBrushUnfocused" Color="Transparent" />
+      <SolidColorBrush x:Key="ComboBoxForeground" Color="#FFFFFF" />
+      <SolidColorBrush x:Key="ComboBoxForegroundFocused" Color="#FFFFFF" />
+      <SolidColorBrush x:Key="ComboBoxForegroundFocusedPressed" Color="#FFFFFF" />
+      <SolidColorBrush x:Key="ComboBoxDropDownGlyphForeground" Color="#B3B3B3" />
+      <SolidColorBrush x:Key="ComboBoxDropDownGlyphForegroundFocused" Color="#FFFFFF" />
+      <SolidColorBrush x:Key="ComboBoxDropDownGlyphForegroundFocusedPressed" Color="#FFFFFF" />
+      <SolidColorBrush x:Key="ComboBoxDropDownBackground" Color="#282828" />
+      <SolidColorBrush x:Key="ComboBoxDropDownBorderBrush" Color="#282828" />
+      <SolidColorBrush x:Key="ComboBoxItemForeground" Color="#E6FFFFFF" />
+      <SolidColorBrush x:Key="ComboBoxItemForegroundPointerOver" Color="#FFFFFF" />
+      <SolidColorBrush x:Key="ComboBoxItemForegroundPressed" Color="#FFFFFF" />
+      <SolidColorBrush x:Key="ComboBoxItemForegroundSelected" Color="#FFFFFF" />
+      <SolidColorBrush x:Key="ComboBoxItemForegroundSelectedPointerOver" Color="#FFFFFF" />
+      <SolidColorBrush x:Key="ComboBoxItemForegroundSelectedPressed" Color="#FFFFFF" />
+      <SolidColorBrush x:Key="ComboBoxItemBackgroundPointerOver" Color="#1AFFFFFF" />
+      <SolidColorBrush x:Key="ComboBoxItemBackgroundPressed" Color="#24FFFFFF" />
+      <SolidColorBrush x:Key="ComboBoxItemBackgroundSelected" Color="#1AFFFFFF" />
+      <SolidColorBrush x:Key="ComboBoxItemBackgroundSelectedPointerOver" Color="#24FFFFFF" />
+      <SolidColorBrush x:Key="ComboBoxItemBackgroundSelectedPressed" Color="#24FFFFFF" />
+      <Color x:Key="ScrollBarThumbBackgroundColor">#4DFFFFFF</Color>
+      <Color x:Key="ScrollBarPanningThumbBackgroundColor">#4DFFFFFF</Color>
+      <!-- The thin bar shown while the pointer is away reads this brush, not the colour above. -->
+      <SolidColorBrush x:Key="ScrollBarPanningThumbBackground" Color="#4DFFFFFF" />
+      <SolidColorBrush x:Key="ScrollBarThumbFillPointerOver" Color="#80FFFFFF" />
+      <SolidColorBrush x:Key="ScrollBarThumbFillPressed" Color="#B3FFFFFF" />
+      <SolidColorBrush x:Key="ScrollBarTrackFill" Color="Transparent" />
+      <SolidColorBrush x:Key="ScrollBarTrackFillPointerOver" Color="Transparent" />
+      <SolidColorBrush x:Key="ScrollBarTrackStroke" Color="Transparent" />
+      <SolidColorBrush x:Key="ScrollBarTrackStrokePointerOver" Color="Transparent" />
+      <SolidColorBrush x:Key="ScrollBarButtonArrowForeground" Color="Transparent" />
+      <SolidColorBrush x:Key="ScrollBarButtonArrowForegroundPointerOver" Color="#B3B3B3" />
+      <SolidColorBrush x:Key="ScrollBarButtonArrowForegroundPressed" Color="#FFFFFF" />
+      <!-- Slider, as the Spotify volume bar: a white fill that takes the accent under the pointer.
+           A disabled slider keeps these colours; its panel dims it the way a switch dims. -->
+      <SolidColorBrush x:Key="SliderTrackFill" Color="#4DFFFFFF" />
+      <SolidColorBrush x:Key="SliderTrackFillPointerOver" Color="#4DFFFFFF" />
+      <SolidColorBrush x:Key="SliderTrackFillPressed" Color="#4DFFFFFF" />
+      <SolidColorBrush x:Key="SliderTrackFillDisabled" Color="#4DFFFFFF" />
+      <SolidColorBrush x:Key="SliderTrackValueFill" Color="#FFFFFF" />
+      <SolidColorBrush x:Key="SliderTrackValueFillPointerOver" Color="#8E9CF0" />
+      <SolidColorBrush x:Key="SliderTrackValueFillPressed" Color="#8E9CF0" />
+      <SolidColorBrush x:Key="SliderTrackValueFillDisabled" Color="#FFFFFF" />
+      <SolidColorBrush x:Key="SliderThumbBackground" Color="#FFFFFF" />
+      <SolidColorBrush x:Key="SliderThumbBackgroundPointerOver" Color="#FFFFFF" />
+      <SolidColorBrush x:Key="SliderThumbBackgroundPressed" Color="#FFFFFF" />
+      <SolidColorBrush x:Key="SliderThumbBackgroundDisabled" Color="#FFFFFF" />
+    </ResourceDictionary>
+  </Application.Resources>
+
+  <Application.Styles>
+    <FluentTheme>
+      <FluentTheme.Palettes>
+        <ColorPaletteResources x:Key="Dark"
+                               Accent="#8E9CF0"
+                               RegionColor="#121212"
+                               AltHigh="#121212"
+                               BaseHigh="#FFFFFF" />
+      </FluentTheme.Palettes>
+    </FluentTheme>
+    <StyleInclude Source="avares://Avalonia.Controls.ColorPicker/Themes/Fluent/Fluent.xaml" />
+    <StyleInclude Source="avares://DotaTune/Styles/Theme.axaml" />
+  </Application.Styles>
+
+</Application>
