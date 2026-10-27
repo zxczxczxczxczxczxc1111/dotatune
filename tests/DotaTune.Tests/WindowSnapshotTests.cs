@@ -177,6 +177,76 @@ public class WindowSnapshotTests
         window.Close();
     }
 
+    [AvaloniaFact]
+    public void Refresh_keeps_the_plate_and_the_buttons_in_place()
+    {
+        using var folder = new CyrillicTempFolder();
+        using var steam = new FakeSteam();
+        using var held = new ManualResetEventSlim(false);
+        int reads = 0;
+        App.Services = AppServices.Create(new AppPaths(Path.Combine(folder.Path, "Иван"), Path.Combine(folder.Path, "work")), () =>
+        {
+            held.Wait();
+            Interlocked.Increment(ref reads);
+            return steam.Read();
+        });
+        UiLanguage.Apply(UiLanguage.Resolve("ru"));
+        MainWindow window = App.CreateMainWindow(SectionKind.GameState);
+        window.Show();
+        var main = (MainViewModel)window.DataContext!;
+        var page = (GameStateViewModel)main.Sections.Single(s => s.Kind == SectionKind.GameState).Page;
+        Dispatcher.UIThread.RunJobs();
+
+        // Before the first reading lands, the plate itself says the game is being read.
+        Border plate = window.GetVisualDescendants().OfType<Border>().Single(b => b.Classes.Contains("verdict"));
+        Assert.True(page.IsLoading);
+        Assert.True(plate.IsVisible);
+        Assert.Equal(Resources.Strings.ReadingGame, page.Summary);
+        Assert.False(page.IsOk || page.IsAttention || page.IsError);
+        held.Set();
+        WaitForGameState(main);
+
+        Button install = window.GetVisualDescendants().OfType<Button>().Single(b => ReferenceEquals(b.Command, page.InstallPackCommand));
+        Rect plateBefore = plate.Bounds;
+        Point? installBefore = install.TranslatePoint(default, window);
+        string summary = page.Summary;
+        int readsBefore = reads;
+
+        held.Reset();
+        page.RefreshCommand.Execute(null);
+        page.RefreshCommand.Execute(null);
+        page.RefreshCommand.Execute(null);
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.True(page.IsLoading);
+        Assert.True(plate.IsVisible);
+        Assert.Equal(plateBefore, plate.Bounds);
+        Assert.Equal(installBefore, install.TranslatePoint(default, window));
+        Assert.Equal(summary, page.Summary);
+        Assert.True(install.IsEffectivelyEnabled);
+        Assert.True(page.RefreshCommand.CanExecute(null));
+        held.Set();
+        WaitForGameState(main);
+
+        // The first click reads, the second waits for its turn, the third adds nothing.
+        Assert.Equal(readsBefore + 2, reads);
+
+        // A click on install during a reading waits for it, then installs.
+        held.Reset();
+        page.RefreshCommand.Execute(null);
+        page.InstallPackCommand.Execute(null);
+        Assert.False(page.InstallPackCommand.CanExecute(null));
+        Assert.False(page.RemovePackCommand.CanExecute(null));
+        held.Set();
+        WaitForGameState(main);
+
+        Assert.True(File.Exists(Path.Combine(steam.GameRoot, "game", "dota_russian", "pak40_dir.vpk")));
+        Assert.Equal(Resources.Strings.StatePackReady, page.Summary);
+        page.RemovePackCommand.Execute(null);
+        WaitForGameState(main);
+        window.Close();
+    }
+
     [AvaloniaTheory]
     [InlineData("ru")]
     [InlineData("en")]

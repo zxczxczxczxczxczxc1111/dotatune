@@ -12,6 +12,9 @@ public enum Tone
     Ok,
     Attention,
     Error,
+
+    /// <summary>Nothing read yet: the plate shows a grey mark.</summary>
+    Neutral,
 }
 
 public sealed record FactRow(string Label, string Value);
@@ -23,11 +26,18 @@ public sealed partial class GameStateViewModel : ObservableObject, IActivatedPag
 {
     private readonly AppServices _services;
 
+    // Readings and changes of the game go one at a time, so a click during a reading waits for it
+    // and the page keeps its plate and buttons instead of blinking.
+    private readonly SemaphoreSlim _turn = new(1, 1);
+    private int _running;
+    private bool _readingQueued;
+
     internal GameStateViewModel(AppServices services, string title, string description)
     {
         _services = services;
         Title = title;
         Description = description;
+        Summary = Strings.ReadingGame;
     }
 
     public void Activated()
@@ -42,9 +52,14 @@ public sealed partial class GameStateViewModel : ObservableObject, IActivatedPag
 
     public string Description { get; }
 
+    /// <summary>A reading or a change of the game is under way or waits for its turn.</summary>
+    [ObservableProperty]
+    private bool _isLoading;
+
+    /// <summary>The pack is being installed or removed.</summary>
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(InstallPackCommand), nameof(RemovePackCommand), nameof(PlayCommand))]
-    private bool _isLoading;
+    private bool _isChanging;
 
     /// <summary>The game is being started and DotaTune waits for its search paths.</summary>
     [ObservableProperty]
@@ -53,7 +68,7 @@ public sealed partial class GameStateViewModel : ObservableObject, IActivatedPag
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsOk), nameof(IsAttention), nameof(IsError))]
-    private Tone _tone;
+    private Tone _tone = Tone.Neutral;
 
     [ObservableProperty]
     private string _summary = string.Empty;
@@ -89,30 +104,67 @@ public sealed partial class GameStateViewModel : ObservableObject, IActivatedPag
     /// <summary>One accent button at a time: while the pack can be installed, that is the main action.</summary>
     public bool PlayIsAccent => !Installable;
 
-    private bool CanInstall => Installable && !IsLoading && !IsPlaying;
+    private bool CanInstall => Installable && !IsChanging && !IsPlaying;
 
-    private bool CanRemove => Removable && !IsLoading && !IsPlaying;
+    private bool CanRemove => Removable && !IsChanging && !IsPlaying;
 
-    private bool CanPlay => Playable && !IsLoading && !IsPlaying;
+    private bool CanPlay => Playable && !IsChanging && !IsPlaying;
 
-    [RelayCommand]
-    private async Task RefreshAsync()
+    /// <summary>The button stays lit while reading: a reading already waiting for its turn sees everything done before it.</summary>
+    [RelayCommand(AllowConcurrentExecutions = true)]
+    private Task RefreshAsync()
     {
+        if (_readingQueued)
+        {
+            return Task.CompletedTask;
+        }
+
+        _readingQueued = true;
+        return InTurn(() =>
+        {
+            _readingQueued = false;
+            return ReadAndShowAsync();
+        });
+    }
+
+    /// <summary>Until the new reading lands, the page keeps showing the previous one.</summary>
+    private async Task ReadAndShowAsync()
+    {
+        (GameState state, PackHealth health) = await Task.Run(ReadAll);
+        Show(state, health);
+        _services.Log.Info($"Game state: problem {state.Problem}, decision {state.Decision}, pack {health}, build {state.Dota?.Build}");
+    }
+
+    private Task InTurn(Func<Task> work) => InTurn(async () =>
+    {
+        await work();
+        return true;
+    });
+
+    private async Task<T> InTurn<T>(Func<Task<T>> work)
+    {
+        _running++;
         IsLoading = true;
         try
         {
-            (GameState state, PackHealth health) = await Task.Run(ReadAll);
-            Show(state, health);
-            _services.Log.Info($"Game state: problem {state.Problem}, decision {state.Decision}, pack {health}, build {state.Dota?.Build}");
+            await _turn.WaitAsync();
+            try
+            {
+                return await work();
+            }
+            finally
+            {
+                _turn.Release();
+            }
         }
         finally
         {
-            IsLoading = false;
+            IsLoading = --_running > 0;
         }
     }
 
     [RelayCommand(CanExecute = nameof(CanInstall))]
-    private Task InstallPackAsync() => Change(() => RefusalText(_services.InstallPack()));
+    private Task InstallPackAsync() => Change(() => Installable, () => RefusalText(_services.InstallPack()));
 
     /// <summary>What to tell about a refused install; null when there is nothing to add to the page.</summary>
     internal static string? RefusalText(InstallRefusal? refusal) => refusal switch
@@ -124,7 +176,7 @@ public sealed partial class GameStateViewModel : ObservableObject, IActivatedPag
     };
 
     [RelayCommand(CanExecute = nameof(CanRemove))]
-    private Task RemovePackAsync() => Change(() =>
+    private Task RemovePackAsync() => Change(() => Removable, () =>
     {
         _services.Packs.Remove(_services.ReadGame());
         return null;
@@ -135,35 +187,43 @@ public sealed partial class GameStateViewModel : ObservableObject, IActivatedPag
     {
         IsPlaying = true;
         Note = Strings.PlayWaiting;
-        Tone? tone;
-        string message;
         try
         {
-            // The MMR line of the new session counts from the newest reading, so the pack gets it first.
-            (GameState game, InstallState? pack) = await Task.Run(() =>
+            Tone? tone;
+            string message;
+            try
             {
-                GameState read = _services.ReadGame();
-                _services.RefreshMmr(read);
-                return (read, _services.Packs.Current);
+                // The MMR line of the new session counts from the newest reading, so the pack gets it first.
+                // The pack is written here, so it waits for a reading under way.
+                (GameState game, InstallState? pack) = await InTurn(() => Task.Run(() =>
+                {
+                    GameState read = _services.ReadGame();
+                    _services.RefreshMmr(read);
+                    return (read, _services.Packs.Current);
+                }));
+                PlayResult result = await Task.Run(() => _services.Launcher.PlayAsync(game, pack));
+                (tone, message) = PlayText(result);
+            }
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or InvalidDataException or InvalidOperationException or System.ComponentModel.Win32Exception)
+            {
+                _services.Log.Error("Play failed", ex);
+                (tone, message) = (Tone.Error, Format(Strings.PlayErrorFormat, ex.Message));
+            }
+
+            // The buttons stay off until the page shows the running game, or they would light up for a moment.
+            await InTurn(async () =>
+            {
+                await ReadAndShowAsync();
+                Note = message;
+                if (tone is { } shown)
+                {
+                    Tone = shown;
+                }
             });
-            PlayResult result = await Task.Run(() => _services.Launcher.PlayAsync(game, pack));
-            (tone, message) = PlayText(result);
-        }
-        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or InvalidDataException or InvalidOperationException or System.ComponentModel.Win32Exception)
-        {
-            _services.Log.Error("Play failed", ex);
-            (tone, message) = (Tone.Error, Format(Strings.PlayErrorFormat, ex.Message));
         }
         finally
         {
             IsPlaying = false;
-        }
-
-        await RefreshAsync();
-        Note = message;
-        if (tone is { } shown)
-        {
-            Tone = shown;
         }
     }
 
@@ -180,29 +240,43 @@ public sealed partial class GameStateViewModel : ObservableObject, IActivatedPag
         _ => throw new InvalidOperationException($"Unknown play outcome {result.Outcome}"),
     };
 
-    /// <summary>Runs a change of the game off the UI thread, then reads everything again.</summary>
-    private async Task Change(Func<string?> change)
+    /// <summary>
+    /// Runs a change of the game off the UI thread in its turn, then reads everything again.
+    /// A click made during a reading is checked again against what that reading found.
+    /// </summary>
+    private async Task Change(Func<bool> stillWanted, Func<string?> change)
     {
-        IsLoading = true;
-        string? message;
+        IsChanging = true;
         try
         {
-            message = await Task.Run(change);
-        }
-        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or InvalidDataException or InvalidOperationException)
-        {
-            _services.Log.Error("Pack change failed", ex);
-            message = Format(Strings.PackErrorFormat, ex.Message);
+            await InTurn(async () =>
+            {
+                if (!stillWanted())
+                {
+                    return;
+                }
+
+                string? message;
+                try
+                {
+                    message = await Task.Run(change);
+                }
+                catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or InvalidDataException or InvalidOperationException)
+                {
+                    _services.Log.Error("Pack change failed", ex);
+                    message = Format(Strings.PackErrorFormat, ex.Message);
+                }
+
+                await ReadAndShowAsync();
+                if (message is not null)
+                {
+                    Note = message;
+                }
+            });
         }
         finally
         {
-            IsLoading = false;
-        }
-
-        await RefreshAsync();
-        if (message is not null)
-        {
-            Note = message;
+            IsChanging = false;
         }
     }
 

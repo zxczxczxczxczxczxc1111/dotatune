@@ -12,8 +12,7 @@
             Classes.ok="{Binding IsOk}"
             Classes.attention="{Binding IsAttention}"
             Classes.error="{Binding IsError}"
-            Margin="0,14,0,0"
-            IsVisible="{Binding !IsLoading}">
+            Margin="0,14,0,0">
       <Grid ColumnDefinitions="Auto,*">
         <Ellipse Classes="mark" Width="8" Height="8" VerticalAlignment="Top" Margin="0,8,12,0" />
         <StackPanel Grid.Column="1" Spacing="8">
@@ -23,7 +22,6 @@
         </StackPanel>
       </Grid>
     </Border>
-    <TextBlock Classes="muted" Text="{x:Static res:Strings.ReadingGame}" IsVisible="{Binding IsLoading}" Margin="0,14,0,0" />
 
     <WrapPanel Orientation="Horizontal" Margin="0,10,0,0">
       <Button Classes="pill accent" Content="{x:Static res:Strings.InstallPack}" Command="{Binding InstallPackCommand}"
