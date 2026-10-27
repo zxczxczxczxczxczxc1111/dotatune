@@ -577,7 +577,7 @@
     <value>Put back, except what changed after the transfer: those files stay as they are.</value>
   </data>
   <data name="TransferCloudHintFormat" xml:space="preserve">
-    <value>Steam Cloud is on for {0}. If Steam shows a sync conflict at the next start, pick the files on this computer, or it brings the old ones back.</value>
+    <value>Steam Cloud is on for {0}, no need to turn it off: Steam uploads these files the next time the game starts. If it asks which files to keep before the game starts, keep the ones on this computer, not the cloud ones, or the old settings come back.</value>
   </data>
   <data name="TransferDotaRunning" xml:space="preserve">
     <value>Dota is running. Settings can be transferred after you exit the game.</value>
