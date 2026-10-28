@@ -10,8 +10,6 @@
     <ApplicationIcon>..\DotaTune\Assets\dotatune.ico</ApplicationIcon>
     <BuiltInComInteropSupport>false</BuiltInComInteropSupport>
     <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
-    <!-- LibraryImport generates marshalling stubs that need unsafe blocks. -->
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <!-- The installer carries a runtime of its own on top of the program package, so it is cut
          to the code it uses. Set here and not on the command line, so DotaTune.Core is not
          analysed for trimming as a whole: only its parts the installer reaches are kept.

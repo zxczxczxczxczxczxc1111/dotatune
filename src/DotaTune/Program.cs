@@ -21,6 +21,22 @@ internal static class Program
             gridDownload: cancel => GridDownload.FromInternetAsync(AppServices.AppVersion, cancel),
             updater: VelopackUpdater.Create);
 
+        // A second start from this folder only brings the open window forward, and before Velopack:
+        // it would put a version downloaded for the exit in at once and stop the open copy, maybe in
+        // the middle of writing the game files. Velopack's hooks run whatever is open.
+        using SingleInstance? guard = IsVelopackHook(args)
+            ? null
+            : SingleInstance.Claim(SingleInstance.NameFor(AppContext.BaseDirectory), services.Log);
+        if (guard is { IsFirst: false })
+        {
+            if (Environment.ProcessPath is { } exe)
+            {
+                SingleInstance.BringOtherForward(exe, services.Log);
+            }
+
+            return 0;
+        }
+
         // Velopack runs install and uninstall hooks from here and exits right after them,
         // so it goes before any window is created. A version downloaded but not installed
         // before goes in here too, before anything writes the game files.
@@ -49,6 +65,10 @@ internal static class Program
             throw;
         }
     }
+
+    /// <summary>Velopack starts the program with --veloapp-install, -updated, -obsolete or -uninstall for its hooks.</summary>
+    internal static bool IsVelopackHook(string[] args) =>
+        args.Any(a => a.StartsWith("--veloapp-", StringComparison.OrdinalIgnoreCase));
 
     public static AppBuilder BuildAvaloniaApp() =>
         AppBuilder.Configure<App>()

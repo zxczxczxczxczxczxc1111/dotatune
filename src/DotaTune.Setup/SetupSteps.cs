@@ -1,7 +1,7 @@
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Runtime.InteropServices;
 using DotaTune.Core.Diagnostics;
+using DotaTune.Core.Platform;
 
 namespace DotaTune.Setup;
 
@@ -29,7 +29,7 @@ internal interface ISetupSteps
     void OpenLogs();
 }
 
-internal sealed partial class SetupSteps : ISetupSteps
+internal sealed class SetupSteps : ISetupSteps
 {
     /// <summary>What <see cref="InstallAsync"/> returns when Velopack has not finished in time.</summary>
     public const int StillRunning = -2;
@@ -169,16 +169,10 @@ internal sealed partial class SetupSteps : ISetupSteps
         Process[] running = Running();
         try
         {
-            // DotaTune has no guard against a second copy, so a running one is brought forward instead.
+            // A running copy is brought forward from here; started again, it would do the same itself.
             if (running.FirstOrDefault(p => p.MainWindowHandle != IntPtr.Zero) is { } open)
             {
-                // Only a minimised window is restored: restoring a maximised one would shrink it.
-                if (IsIconic(open.MainWindowHandle))
-                {
-                    ShowWindow(open.MainWindowHandle, RestoreWindow);
-                }
-
-                bool front = SetForegroundWindow(open.MainWindowHandle);
+                bool front = WindowFront.Bring(open.MainWindowHandle);
                 _log.Info($"DotaTune {open.Id} is already open, brought forward: {front}");
                 return true;
             }
@@ -256,18 +250,4 @@ internal sealed partial class SetupSteps : ISetupSteps
 
         return [.. found];
     }
-
-    private const int RestoreWindow = 9;
-
-    [LibraryImport("user32.dll")]
-    [return: MarshalAs(UnmanagedType.Bool)]
-    private static partial bool ShowWindow(IntPtr window, int command);
-
-    [LibraryImport("user32.dll")]
-    [return: MarshalAs(UnmanagedType.Bool)]
-    private static partial bool SetForegroundWindow(IntPtr window);
-
-    [LibraryImport("user32.dll")]
-    [return: MarshalAs(UnmanagedType.Bool)]
-    private static partial bool IsIconic(IntPtr window);
 }
