@@ -1191,4 +1191,97 @@
   <data name="BackupErrorFormat" xml:space="preserve">
     <value>The copy did not work: {0}</value>
   </data>
+  <data name="UpdatesLabel" xml:space="preserve">
+    <value>Updates</value>
+  </data>
+  <data name="UpdateTitleFormat" xml:space="preserve">
+    <value>Updating to version {0}</value>
+  </data>
+  <data name="UpdateDownloadingFormat" xml:space="preserve">
+    <value>Installed: {0}. Downloading: {1}%</value>
+  </data>
+  <data name="UpdateWaiting" xml:space="preserve">
+    <value>Waiting for DotaTune to finish writing the game files.</value>
+  </data>
+  <data name="UpdateInstalling" xml:space="preserve">
+    <value>Installing and restarting. The window opens again in a few seconds.</value>
+  </data>
+  <data name="UpdateKeeps" xml:space="preserve">
+    <value>Your settings and the pack in the game stay.</value>
+  </data>
+  <data name="UpdateLater" xml:space="preserve">
+    <value>Later</value>
+  </data>
+  <data name="UpdateFailedTitle" xml:space="preserve">
+    <value>The update did not install</value>
+  </data>
+  <data name="UpdateFailedFormat" xml:space="preserve">
+    <value>Version {0} stays, DotaTune tries again at the next start.</value>
+  </data>
+  <data name="UpdateConnectionLostFormat" xml:space="preserve">
+    <value>The connection to GitHub dropped. Version {0} stays, DotaTune tries again at the next start.</value>
+  </data>
+  <data name="UpdateClose" xml:space="preserve">
+    <value>Close</value>
+  </data>
+  <data name="UpdateOpenLog" xml:space="preserve">
+    <value>Open the log</value>
+  </data>
+  <data name="UpdateNotInstalled" xml:space="preserve">
+    <value>This build runs without installation and does not update itself.</value>
+  </data>
+  <data name="UpdateChecking" xml:space="preserve">
+    <value>Checking for updates…</value>
+  </data>
+  <data name="UpdateLatest" xml:space="preserve">
+    <value>This is the latest version.</value>
+  </data>
+  <data name="UpdateNoConnection" xml:space="preserve">
+    <value>No connection to GitHub. DotaTune checks again at the next start.</value>
+  </data>
+  <data name="UpdateLimited" xml:space="preserve">
+    <value>GitHub limits checks for now. DotaTune checks again at the next start.</value>
+  </data>
+  <data name="UpdateCheckFailed" xml:space="preserve">
+    <value>The check did not work, the reason is in the log. DotaTune checks again at the next start.</value>
+  </data>
+  <data name="UpdateDownloadingStatusFormat" xml:space="preserve">
+    <value>Downloading version {0}: {1}%</value>
+  </data>
+  <data name="UpdateDownloadedFormat" xml:space="preserve">
+    <value>Version {0} is downloaded and installs when you close DotaTune.</value>
+  </data>
+  <data name="UpdateInstallingStatusFormat" xml:space="preserve">
+    <value>Installing version {0}.</value>
+  </data>
+  <data name="UpdateFailedStatusFormat" xml:space="preserve">
+    <value>Version {0} did not install, the reason is in the log. DotaTune tries again at the next start.</value>
+  </data>
+  <data name="UpdateElsewhereFormat" xml:space="preserve">
+    <value>Another DotaTune window is installing version {0}.</value>
+  </data>
+  <data name="UpdateCheckNow" xml:space="preserve">
+    <value>Check now</value>
+  </data>
+  <data name="UpdateInstallNow" xml:space="preserve">
+    <value>Install now</value>
+  </data>
+  <data name="NewsTitleFormat" xml:space="preserve">
+    <value>What is new in {0}</value>
+  </data>
+  <data name="NewsPackOld" xml:space="preserve">
+    <value>The pack in the game was built by the previous version. A rebuild takes only what it already holds.</value>
+  </data>
+  <data name="NewsRebuild" xml:space="preserve">
+    <value>Rebuild the pack</value>
+  </data>
+  <data name="NewsRebuilding" xml:space="preserve">
+    <value>Rebuilding the pack…</value>
+  </data>
+  <data name="NewsRebuilt" xml:space="preserve">
+    <value>The pack is rebuilt.</value>
+  </data>
+  <data name="NewsRebuildRefused" xml:space="preserve">
+    <value>The pack is not rebuilt. The game status page shows what is in the way.</value>
+  </data>
 </root>

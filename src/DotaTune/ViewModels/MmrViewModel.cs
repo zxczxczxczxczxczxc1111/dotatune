@@ -56,7 +56,7 @@ public sealed class MmrRow
 /// The "MMR" page: the switch of the MMR line, how the installed pack relates to it and the
 /// readings taken from the game. A switch is saved at once and reaches the game with the pack.
 /// </summary>
-public sealed partial class MmrViewModel : ObservableObject, IActivatedPage
+public sealed partial class MmrViewModel : ObservableObject, IActivatedPage, IWorkingPage
 {
     /// <summary>Readings on the page, newest first; the file keeps many more.</summary>
     internal const int Shown = 50;
@@ -99,6 +99,8 @@ public sealed partial class MmrViewModel : ObservableObject, IActivatedPage
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(ApplyCommand))]
     private bool _isBusy;
+
+    bool IWorkingPage.IsWorking => IsBusy;
 
     [ObservableProperty]
     private string _summary = string.Empty;

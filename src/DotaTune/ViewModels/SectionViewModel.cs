@@ -20,6 +20,12 @@ public interface IActivatedPage
     void Activated();
 }
 
+/// <summary>A page that may be writing the game files right now; an update waits for it to finish.</summary>
+public interface IWorkingPage
+{
+    bool IsWorking { get; }
+}
+
 /// <summary>One entry of the side navigation and the page it opens.</summary>
 public sealed class SectionViewModel(SectionKind kind, string title, object page)
 {

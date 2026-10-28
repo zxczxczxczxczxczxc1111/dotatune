@@ -11,7 +11,7 @@ namespace DotaTune.ViewModels;
 /// The "Reset" page: what DotaTune changed in the game now and one button that takes all of it
 /// back. The choices on the other pages stay, so anything can be put in again from there.
 /// </summary>
-public sealed partial class ResetViewModel : ObservableObject, IActivatedPage
+public sealed partial class ResetViewModel : ObservableObject, IActivatedPage, IWorkingPage
 {
     private readonly AppServices _services;
 
@@ -36,6 +36,8 @@ public sealed partial class ResetViewModel : ObservableObject, IActivatedPage
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(ResetCommand), nameof(ConfirmCommand))]
     private bool _isBusy;
+
+    bool IWorkingPage.IsWorking => IsBusy;
 
     [ObservableProperty]
     private string _summary = string.Empty;

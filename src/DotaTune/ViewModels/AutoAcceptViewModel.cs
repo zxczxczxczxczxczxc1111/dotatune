@@ -14,7 +14,7 @@ namespace DotaTune.ViewModels;
 /// Both are saved at once and reach the game with the pack; another delay alone replaces one
 /// file of a pack in place instead of building it again.
 /// </summary>
-public sealed partial class AutoAcceptViewModel : ObservableObject, IActivatedPage
+public sealed partial class AutoAcceptViewModel : ObservableObject, IActivatedPage, IWorkingPage
 {
     private readonly AppServices _services;
     private GameState? _game;
@@ -65,6 +65,8 @@ public sealed partial class AutoAcceptViewModel : ObservableObject, IActivatedPa
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(ApplyCommand))]
     private bool _isBusy;
+
+    bool IWorkingPage.IsWorking => IsBusy;
 
     [ObservableProperty]
     private string _summary = string.Empty;

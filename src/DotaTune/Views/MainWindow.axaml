@@ -2,6 +2,8 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:vm="using:DotaTune.ViewModels"
         xmlns:views="using:DotaTune.Views"
+        xmlns:up="using:DotaTune.Updates"
+        xmlns:res="using:DotaTune.Resources"
         x:Class="DotaTune.Views.MainWindow"
         x:DataType="vm:MainViewModel"
         Title="DotaTune"
@@ -11,6 +13,26 @@
         WindowStartupLocation="CenterScreen"
         ExtendClientAreaToDecorationsHint="True"
         ExtendClientAreaTitleBarHeightHint="32">
+
+  <Window.Resources>
+    <!-- Dims the pages under the update card; the card keeps the panel colour. -->
+    <SolidColorBrush x:Key="ScrimBrush" Color="#B3000000" />
+  </Window.Resources>
+
+  <Window.Styles>
+    <!-- The update and what is new cards look as the installer window: a smaller title and its bar. -->
+    <Style Selector="Border.card TextBlock.title">
+      <Setter Property="FontSize" Value="26" />
+      <Setter Property="LineHeight" Value="32" />
+    </Style>
+    <Style Selector="Border.card ProgressBar">
+      <Setter Property="Height" Value="4" />
+      <Setter Property="MinHeight" Value="4" />
+      <Setter Property="CornerRadius" Value="2" />
+      <Setter Property="Foreground" Value="{StaticResource AccentBrush}" />
+      <Setter Property="Background" Value="{StaticResource TintedBrush}" />
+    </Style>
+  </Window.Styles>
 
   <Window.DataTemplates>
     <DataTemplate DataType="vm:SettingsViewModel">
@@ -46,34 +68,131 @@
   </Window.DataTemplates>
 
   <!-- The title bar is part of the black frame; the system draws its buttons on top. -->
-  <Grid RowDefinitions="32,*" ColumnDefinitions="Auto,*" Margin="8,0,8,8">
-    <Border Grid.ColumnSpan="2" Margin="-8,0" Background="Transparent" WindowDecorationProperties.ElementRole="TitleBar" />
+  <Grid RowDefinitions="32,*" Margin="8,0,8,8">
+    <Border Margin="-8,0" Background="Transparent" WindowDecorationProperties.ElementRole="TitleBar" />
 
-    <Border Grid.Row="1" Grid.Column="0" Classes="panel" Width="264">
-      <DockPanel Margin="8">
-        <TextBlock DockPanel.Dock="Top" Classes="brand" Text="DotaTune" Margin="16,16,0,24" />
-        <Button DockPanel.Dock="Bottom"
-                Classes="nav"
-                Classes.active="{Binding IsSettingsOpen}"
-                Command="{Binding OpenSettingsCommand}">
-          <TextBlock Text="{Binding SettingsSection.Title}" TextWrapping="Wrap" />
-        </Button>
-        <ListBox Classes="nav"
-                 ItemsSource="{Binding Sections}"
-                 SelectedItem="{Binding SelectedNav}">
-          <ListBox.ItemTemplate>
-            <DataTemplate x:DataType="vm:SectionViewModel">
-              <TextBlock Text="{Binding Title}" TextWrapping="Wrap" />
-            </DataTemplate>
-          </ListBox.ItemTemplate>
-        </ListBox>
-      </DockPanel>
-    </Border>
+    <!-- Under a card the pages take neither clicks nor keys. -->
+    <Grid Grid.Row="1" ColumnDefinitions="Auto,*">
+      <Grid.IsEnabled>
+        <MultiBinding Converter="{x:Static BoolConverters.And}">
+          <Binding Path="!Updates.IsPanelOpen" />
+          <Binding Path="!News.IsOpen" />
+        </MultiBinding>
+      </Grid.IsEnabled>
 
-    <Border Grid.Row="1" Grid.Column="1" Classes="panel" Margin="8,0,0,0">
-      <ScrollViewer Margin="0,4">
-        <ContentControl Classes="page" Content="{Binding Current.Page}" Margin="32,28,32,32" />
-      </ScrollViewer>
-    </Border>
+      <Border Grid.Column="0" Classes="panel" Width="264">
+        <DockPanel Margin="8">
+          <TextBlock DockPanel.Dock="Top" Classes="brand" Text="DotaTune" Margin="16,16,0,24" />
+          <Button DockPanel.Dock="Bottom"
+                  Classes="nav"
+                  Classes.active="{Binding IsSettingsOpen}"
+                  Command="{Binding OpenSettingsCommand}">
+            <TextBlock Text="{Binding SettingsSection.Title}" TextWrapping="Wrap" />
+          </Button>
+          <ListBox Classes="nav"
+                   ItemsSource="{Binding Sections}"
+                   SelectedItem="{Binding SelectedNav}">
+            <ListBox.ItemTemplate>
+              <DataTemplate x:DataType="vm:SectionViewModel">
+                <TextBlock Text="{Binding Title}" TextWrapping="Wrap" />
+              </DataTemplate>
+            </ListBox.ItemTemplate>
+          </ListBox>
+        </DockPanel>
+      </Border>
+
+      <Border Grid.Column="1" Classes="panel" Margin="8,0,0,0">
+        <ScrollViewer Margin="0,4">
+          <ContentControl Classes="page" Content="{Binding Current.Page}" Margin="32,28,32,32" />
+        </ScrollViewer>
+      </Border>
+    </Grid>
+
+    <!-- Update: the installer's card over both panels. Below the title bar, so the window still moves. -->
+    <Panel Grid.Row="1" Background="{StaticResource ScrimBrush}" IsVisible="{Binding Updates.IsPanelOpen}">
+      <Border Classes="panel card" Width="640" Padding="40,36,40,40" Margin="16"
+              HorizontalAlignment="Center" VerticalAlignment="Center">
+        <Grid ColumnDefinitions="Auto,*">
+          <Image Source="avares://DotaTune/Assets/dotatune.ico" Width="96" Height="96"
+                 VerticalAlignment="Top" Margin="0,0,32,0" />
+
+          <StackPanel Grid.Column="1" Spacing="12">
+            <Grid ColumnDefinitions="Auto,*">
+              <Ellipse Width="8" Height="8" Fill="{StaticResource StatusErrorBrush}" VerticalAlignment="Top" Margin="0,12,12,0"
+                       IsVisible="{Binding Updates.IsFailed}" />
+              <TextBlock Grid.Column="1" Classes="title" Text="{Binding Updates.PanelTitle}" />
+            </Grid>
+            <TextBlock Classes="lead" Text="{Binding Updates.PanelLead}" />
+            <TextBlock Classes="muted" Text="{Binding Updates.PanelNote}"
+                       IsVisible="{Binding Updates.PanelNote, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
+
+            <!-- The bar stays at the top, so the card keeps its height when "Later" goes away. -->
+            <Panel Margin="0,12,0,0" MinHeight="56">
+              <StackPanel IsVisible="{Binding Updates.ShowProgress}" Spacing="20" VerticalAlignment="Top">
+                <ProgressBar Minimum="0" Maximum="100" Value="{Binding Updates.Percent}"
+                             IsIndeterminate="{Binding Updates.IsProgressIndeterminate}" />
+                <Button Classes="pill" Content="{x:Static res:Strings.UpdateLater}" Command="{Binding Updates.LaterCommand}"
+                        IsVisible="{Binding Updates.ShowLater}" HorizontalAlignment="Left" />
+              </StackPanel>
+              <WrapPanel IsVisible="{Binding Updates.IsFailed}">
+                <Button Classes="pill accent" Content="{x:Static res:Strings.UpdateClose}" Command="{Binding Updates.ClosePanelCommand}" Margin="0,0,12,8" />
+                <Button Classes="pill" Content="{x:Static res:Strings.UpdateOpenLog}" Click="OnOpenLog" Margin="0,0,0,8" />
+              </WrapPanel>
+            </Panel>
+          </StackPanel>
+        </Grid>
+      </Border>
+    </Panel>
+
+    <!-- What is new: the first start after an update, unless the update card is up. -->
+    <Panel Grid.Row="1" Background="{StaticResource ScrimBrush}">
+      <Panel.IsVisible>
+        <MultiBinding Converter="{x:Static BoolConverters.And}">
+          <Binding Path="News.IsOpen" />
+          <Binding Path="!Updates.IsPanelOpen" />
+        </MultiBinding>
+      </Panel.IsVisible>
+      <Border Classes="panel card" Width="640" Padding="40,36,40,40" Margin="16"
+              HorizontalAlignment="Center" VerticalAlignment="Center">
+        <Grid ColumnDefinitions="Auto,*">
+          <Image Source="avares://DotaTune/Assets/dotatune.ico" Width="96" Height="96"
+                 VerticalAlignment="Top" Margin="0,0,32,0" />
+
+          <StackPanel Grid.Column="1" Spacing="12">
+            <TextBlock Classes="title" Text="{Binding News.Title}" />
+            <!-- Fits the smallest window with the pack line and the buttons under it. -->
+            <ScrollViewer MaxHeight="240" IsVisible="{Binding News.HasNotes}">
+              <ItemsControl ItemsSource="{Binding News.Notes}">
+                <ItemsControl.ItemTemplate>
+                  <DataTemplate x:DataType="up:NoteLine">
+                    <Panel>
+                      <TextBlock Classes="label" Text="{Binding Text}" IsVisible="{Binding IsHeading}" Margin="0,8,0,6" />
+                      <Grid ColumnDefinitions="16,*" IsVisible="{Binding IsItem}" Margin="0,0,0,6">
+                        <TextBlock Classes="muted" Text="•" />
+                        <TextBlock Grid.Column="1" Classes="muted" Text="{Binding Text}" />
+                      </Grid>
+                      <TextBlock Classes="muted" Text="{Binding Text}" IsVisible="{Binding IsText}" Margin="0,0,0,6" />
+                    </Panel>
+                  </DataTemplate>
+                </ItemsControl.ItemTemplate>
+              </ItemsControl>
+            </ScrollViewer>
+            <TextBlock Classes="lead" Text="{Binding News.PackNote}"
+                       IsVisible="{Binding News.PackNote, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
+
+            <Panel Margin="0,12,0,0" MinHeight="56">
+              <ProgressBar IsIndeterminate="True" IsVisible="{Binding News.IsRebuilding}" VerticalAlignment="Center" />
+              <WrapPanel IsVisible="{Binding News.ShowRebuild}">
+                <Button Classes="pill accent" Content="{x:Static res:Strings.NewsRebuild}" Command="{Binding News.RebuildCommand}" Margin="0,0,12,8" />
+                <Button Classes="pill" Content="{x:Static res:Strings.UpdateLater}" Command="{Binding CloseNewsCommand}" Margin="0,0,0,8" />
+              </WrapPanel>
+              <WrapPanel IsVisible="{Binding News.ShowClose}">
+                <Button Classes="pill accent" Content="{x:Static res:Strings.UpdateClose}" Command="{Binding CloseNewsCommand}" Margin="0,0,0,8" />
+              </WrapPanel>
+            </Panel>
+          </StackPanel>
+        </Grid>
+      </Border>
+    </Panel>
   </Grid>
 </Window>

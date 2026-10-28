@@ -25,9 +25,17 @@ public partial class App : Application
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
             UiLanguage.Apply(UiLanguage.Resolve(Services.Settings.Load().Language));
+            // Before the pages read the settings: it writes the effect groups out.
+            Services.News.Detect();
             desktop.MainWindow = CreateMainWindow(SectionKind.GameState);
             // The readings of a session played without DotaTune are in console.log until the next launch.
-            _ = Task.Run(() => Services.RefreshMmr());
+            Task mmr = Task.Run(() => Services.RefreshMmr());
+            // The start refreshes the MMR line in the pack, so an update waits for it as for a page.
+            Services.Updates.IsWorking = () =>
+                !mmr.IsCompleted || Services.News.IsRebuilding || (desktop.MainWindow?.DataContext as MainViewModel)?.IsWorking == true;
+            Services.Updates.KeepsPanelClosed = () => Services.News.IsOpen;
+            Services.Updates.Shutdown = () => desktop.Shutdown();
+            _ = Services.Updates.StartAsync();
         }
 
         base.OnFrameworkInitializationCompleted();

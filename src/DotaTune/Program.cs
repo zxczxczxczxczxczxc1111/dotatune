@@ -2,6 +2,7 @@ using Avalonia;
 using DotaTune.Core.HeroGrids;
 using DotaTune.Core.Platform;
 using DotaTune.Core.Text;
+using DotaTune.Updates;
 using Velopack;
 
 namespace DotaTune;
@@ -17,11 +18,14 @@ internal static class Program
 
         AppServices services = AppServices.Create(
             AppPaths.ForCurrentUser(),
-            gridDownload: cancel => GridDownload.FromInternetAsync(AppServices.AppVersion, cancel));
+            gridDownload: cancel => GridDownload.FromInternetAsync(AppServices.AppVersion, cancel),
+            updater: VelopackUpdater.Create);
 
         // Velopack runs install and uninstall hooks from here and exits right after them,
-        // so it goes before any window is created.
+        // so it goes before any window is created. A version downloaded but not installed
+        // before goes in here too, before anything writes the game files.
         VelopackApp.Build()
+            .SetLogger(new VelopackLog(services.Log))
             .OnAfterInstallFastCallback(version => services.Log.Info($"Installed version {version}"))
             .OnBeforeUninstallFastCallback(version =>
             {
@@ -35,7 +39,9 @@ internal static class Program
 
         try
         {
-            return BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);
+            int code = BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);
+            services.Updates.InstallOnExit();
+            return code;
         }
         catch (Exception ex)
         {

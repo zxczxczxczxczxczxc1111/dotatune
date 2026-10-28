@@ -1,6 +1,7 @@
 using System.Globalization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DotaTune.Resources;
+using DotaTune.Updates;
 
 namespace DotaTune.ViewModels;
 
@@ -34,6 +35,9 @@ public sealed partial class SettingsViewModel : ObservableObject
     private LanguageOption _selectedLanguage;
 
     public string DataFolder => _services.Paths.DataRoot;
+
+    /// <summary>The state of updates and the buttons to check or install now.</summary>
+    public UpdateService Updates => _services.Updates;
 
     public string VersionText => string.Format(CultureInfo.CurrentCulture, Strings.VersionFormat, AppServices.AppVersion);
 

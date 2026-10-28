@@ -23,9 +23,9 @@ public class EffectsPageTests
         Row(page, EffectGroup.Sprays).IsOn = false;
         Assert.Equal(EffectRules.All.Where(g => g != EffectGroup.Sprays), App.Services.Settings.Load().EffectGroups);
 
-        // Every group on again is stored as "all", so a group of a later version is on too.
+        // Every group on again is stored as the list: a group of a later version stays off.
         Row(page, EffectGroup.Sprays).IsOn = true;
-        Assert.Null(App.Services.Settings.Load().EffectGroups);
+        Assert.Equal(EffectRules.All, App.Services.Settings.Load().EffectGroups);
         window.Close();
     }
 

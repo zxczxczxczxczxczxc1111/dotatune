@@ -28,6 +28,23 @@
       <Button Classes="pill" Content="{x:Static res:Strings.OpenFolder}" Click="OnOpenDataFolder" HorizontalAlignment="Left" />
     </StackPanel>
 
+    <StackPanel Spacing="10">
+      <TextBlock Classes="label" Text="{x:Static res:Strings.UpdatesLabel}" />
+      <TextBlock Classes="muted" Text="{Binding Updates.Status}" />
+      <WrapPanel>
+        <WrapPanel.IsVisible>
+          <MultiBinding Converter="{x:Static BoolConverters.Or}">
+            <Binding Path="Updates.CanCheck" />
+            <Binding Path="Updates.CanInstallNow" />
+          </MultiBinding>
+        </WrapPanel.IsVisible>
+        <Button Classes="pill accent" Content="{x:Static res:Strings.UpdateInstallNow}" Command="{Binding Updates.InstallNowCommand}"
+                IsVisible="{Binding Updates.CanInstallNow}" />
+        <Button Classes="pill" Content="{x:Static res:Strings.UpdateCheckNow}" Command="{Binding Updates.CheckNowCommand}"
+                IsVisible="{Binding Updates.CanCheck}" />
+      </WrapPanel>
+    </StackPanel>
+
     <TextBlock Classes="muted" Text="{Binding VersionText}" />
   </StackPanel>
 </UserControl>

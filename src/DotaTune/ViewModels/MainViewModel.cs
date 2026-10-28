@@ -1,6 +1,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DotaTune.Resources;
+using DotaTune.Updates;
 
 namespace DotaTune.ViewModels;
 
@@ -10,6 +11,8 @@ public sealed partial class MainViewModel : ObservableObject
     {
         ArgumentNullException.ThrowIfNull(services);
         ArgumentNullException.ThrowIfNull(settings);
+        Updates = services.Updates;
+        News = services.News;
         // The colours page shows the minimap colours of the config page's choice.
         var config = new ConfigViewModel(services, Strings.NavConfig, Strings.ConfigDescription);
         Sections =
@@ -51,6 +54,15 @@ public sealed partial class MainViewModel : ObservableObject
 
     public SectionViewModel SettingsSection { get; }
 
+    /// <summary>The update panel over the pages; it outlives the window, see <see cref="UpdateService"/>.</summary>
+    public UpdateService Updates { get; }
+
+    /// <summary>The card with what is new after an update.</summary>
+    public UpdateNews News { get; }
+
+    /// <summary>A page is writing the game files or waits for its turn to.</summary>
+    internal bool IsWorking => Sections.Any(s => s.Page is IWorkingPage { IsWorking: true });
+
     /// <summary>Selection of the main list; empty while settings are open.</summary>
     [ObservableProperty]
     private SectionViewModel? _selectedNav;
@@ -89,5 +101,13 @@ public sealed partial class MainViewModel : ObservableObject
     {
         Current = SettingsSection;
         SelectedNav = null;
+    }
+
+    /// <summary>"Later" and "Close" of the card; the page under it reads the game again, the pack may be new.</summary>
+    [RelayCommand]
+    private void CloseNews()
+    {
+        News.IsOpen = false;
+        (Current.Page as IActivatedPage)?.Activated();
     }
 }

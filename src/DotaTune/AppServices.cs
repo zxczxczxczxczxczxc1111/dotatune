@@ -14,6 +14,7 @@ using DotaTune.Core.Presets;
 using DotaTune.Core.Reset;
 using DotaTune.Core.Settings;
 using DotaTune.Core.Steam;
+using DotaTune.Updates;
 
 namespace DotaTune;
 
@@ -21,7 +22,8 @@ namespace DotaTune;
 internal sealed class AppServices
 {
     private AppServices(
-        AppPaths paths, FileLog log, Func<GameState> readGame, GameLauncher launcher, SteamRestart steamRestart, Func<CancellationToken, Task<byte[]>>? gridDownload)
+        AppPaths paths, FileLog log, Func<GameState> readGame, GameLauncher launcher, SteamRestart steamRestart, Func<CancellationToken, Task<byte[]>>? gridDownload,
+        Func<FileLog, IAppUpdater>? updater)
     {
         SteamRestart = steamRestart;
         HeroGrids = new HeroGridService(new GridBackupStore(paths.HeroGridStateFile, paths.HeroGridFolder, log), log);
@@ -39,6 +41,9 @@ internal sealed class AppServices
         MenuPictures = new MenuPictures(paths.MenuPictureFolder, log);
         Mmr = new MmrService(new MmrHistoryStore(paths.MmrHistoryFile, log), Packs, log);
         Reset = new GameReset(Packs, Autoexec, Transfer, Launch, HeroGrids, log);
+        // Velopack is asked only after VelopackApp ran in Program, so the updater is made on the first check.
+        Updates = new UpdateService(updater is null ? null : () => updater(log), log);
+        News = new UpdateNews(paths, Settings, Packs, log, RebuildInstalledPack);
     }
 
     public AppPaths Paths { get; }
@@ -79,6 +84,12 @@ internal sealed class AppServices
     /// <summary>Takes back everything DotaTune changed in the game; the "Reset" page.</summary>
     public GameReset Reset { get; }
 
+    /// <summary>New versions of DotaTune: the check at start, the download and the install.</summary>
+    internal UpdateService Updates { get; }
+
+    /// <summary>What is new on the first start after an update, and the pack built again.</summary>
+    internal UpdateNews News { get; }
+
     public static string AppVersion =>
         typeof(AppServices).Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion.Split('+')[0]
         ?? "0.0.0";
@@ -87,12 +98,14 @@ internal sealed class AppServices
     /// <param name="launcher">Tests pass a launcher that starts nothing; null starts the game through Steam.</param>
     /// <param name="gridDownload">Downloads the hero grid layouts; null, as in tests and the designer, never goes online.</param>
     /// <param name="steamRestart">Tests pass a restart that closes nothing; null closes and starts the real Steam.</param>
+    /// <param name="updater">Asks for and installs new versions; null, as in tests and the designer, never goes online.</param>
     public static AppServices Create(
         AppPaths paths,
         Func<GameState>? readGame = null,
         Func<FileLog, GameLauncher>? launcher = null,
         Func<CancellationToken, Task<byte[]>>? gridDownload = null,
-        Func<FileLog, SteamRestart>? steamRestart = null)
+        Func<FileLog, SteamRestart>? steamRestart = null,
+        Func<FileLog, IAppUpdater>? updater = null)
     {
         ArgumentNullException.ThrowIfNull(paths);
         var processes = new SystemProcessProbe();
@@ -104,7 +117,8 @@ internal sealed class AppServices
             readGame ?? reader.Read,
             launcher?.Invoke(log) ?? new GameLauncher(new SteamGameStarter(), processes, log),
             steamRestart?.Invoke(log) ?? new SteamRestart(new SteamGameStarter(), processes, log),
-            gridDownload);
+            gridDownload,
+            updater);
     }
 
     /// <summary>
@@ -112,11 +126,12 @@ internal sealed class AppServices
     /// groups chosen in the settings, picked from the current game, the mouse effects in their
     /// chosen colours and the chosen menu background.
     /// </summary>
+    /// <param name="choice">What goes in; null takes the saved settings.</param>
     /// <exception cref="InvalidDataException">The game archive or a particle in it cannot be read.</exception>
-    public BuiltPack BuildPack(GameState game)
+    public BuiltPack BuildPack(GameState game, AppSettings? choice = null)
     {
         ArgumentNullException.ThrowIfNull(game);
-        AppSettings settings = Settings.Load();
+        AppSettings settings = choice ?? Settings.Load();
         IReadOnlyList<EffectGroup> groups = settings.EffectGroups ?? EffectRules.All;
         Dictionary<string, byte[]> files = [];
         Dictionary<EffectGroup, int> effects = [];
@@ -384,7 +399,10 @@ internal sealed class AppServices
 
     /// <summary>Builds the pack from the current game and installs it in place of an earlier one; null when it went in.</summary>
     /// <exception cref="InvalidDataException">The game archive or a particle in it cannot be read.</exception>
-    public InstallRefusal? InstallPack()
+    public InstallRefusal? InstallPack() => InstallPack(null);
+
+    /// <param name="choice">What goes in; null takes the saved settings.</param>
+    private InstallRefusal? InstallPack(AppSettings? choice)
     {
         // Building reads every particle of the game, so a pack that would be refused is not built.
         GameState game = ReadGame();
@@ -394,7 +412,7 @@ internal sealed class AppServices
             return refusal;
         }
 
-        BuiltPack pack = BuildPack(game);
+        BuiltPack pack = BuildPack(game, choice);
         InstallRefusal? installed = Packs.Install(
             ReadGame, pack.Bytes, pack.Effects, pack.MenuBackground, pack.MouseColors, pack.MouseNotTaken, pack.Mmr, pack.AutoAccept, pack.HideEvents).Refusal;
         if (installed is null && pack.Mmr)
@@ -405,6 +423,37 @@ internal sealed class AppServices
 
         return installed;
     }
+
+    /// <summary>
+    /// Builds the installed pack again by this version's rules with only what it holds, as
+    /// install.json records it, so a feature this version adds stays off until the player turns
+    /// it on. Changes on the pages that were never put into the pack stay out as well. Null when
+    /// it went in; <see cref="InstallRefusal.NothingToDo"/> when no pack is installed.
+    /// </summary>
+    /// <exception cref="InvalidDataException">install.json, the game archive or a particle in it cannot be read.</exception>
+    public InstallRefusal? RebuildInstalledPack()
+    {
+        if (Packs.Current is not { } installed)
+        {
+            Log.Info("Pack not rebuilt: none is installed");
+            return InstallRefusal.NothingToDo;
+        }
+
+        Log.Info("Rebuilding the installed pack with what it holds");
+        return InstallPack(InstalledChoice(installed, Settings.Load()));
+    }
+
+    /// <summary>The settings with the choices of the pack replaced by what the installed pack holds.</summary>
+    internal static AppSettings InstalledChoice(InstallState pack, AppSettings settings) => settings with
+    {
+        EffectGroups = [.. EffectRules.All.Where(g => pack.Effects?.ContainsKey(g) == true)],
+        MenuBackground = pack.MenuBackground,
+        MouseColors = pack.MouseColors,
+        MmrLine = pack.Mmr,
+        HideHomeEvents = pack.HideEvents,
+        AutoAccept = pack.AutoAccept is not null,
+        AutoAcceptDelay = pack.AutoAccept ?? settings.AutoAcceptDelay,
+    };
 
     /// <summary>
     /// Uninstall hook: the same reset as the "Reset" page except the settings copied between

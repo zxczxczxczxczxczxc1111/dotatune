@@ -211,7 +211,7 @@ public sealed partial class ColorRow : ObservableObject
 /// is saved at once and reaches the game when it is written again. The minimap colours belong to
 /// the block but are shown on the colours page.
 /// </summary>
-public sealed partial class ConfigViewModel : ObservableObject, IActivatedPage
+public sealed partial class ConfigViewModel : ObservableObject, IActivatedPage, IWorkingPage
 {
     private readonly AppServices _services;
     private GameState? _game;
@@ -288,6 +288,8 @@ public sealed partial class ConfigViewModel : ObservableObject, IActivatedPage
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(WriteCommand), nameof(RemoveCommand))]
     private bool _isBusy;
+
+    bool IWorkingPage.IsWorking => IsBusy;
 
     [ObservableProperty]
     private string _summary = string.Empty;
@@ -375,9 +377,16 @@ public sealed partial class ConfigViewModel : ObservableObject, IActivatedPage
         Presets.IsBusy = value;
     }
 
-    /// <summary>What a preset exported now carries: saved effect groups, this page and the launch switches.</summary>
-    private PresetChoice CurrentPresetChoice() =>
-        PresetReview.Choice(_services.Settings.Load().EffectGroups, Choice(), _game?.LaunchOptions);
+    /// <summary>
+    /// What a preset exported now carries: saved effect groups, this page and the launch switches.
+    /// Every group goes as "all", as the preset format has it, so the receiver reads "every group".
+    /// </summary>
+    private PresetChoice CurrentPresetChoice()
+    {
+        IReadOnlyList<EffectGroup>? groups = _services.Settings.Load().EffectGroups;
+        bool all = groups is null || EffectRules.All.All(groups.Contains);
+        return PresetReview.Choice(all ? null : groups, Choice(), _game?.LaunchOptions);
+    }
 
     /// <summary>
     /// The chosen lines of a loaded preset: effect groups are saved for the effects page and the
@@ -390,10 +399,8 @@ public sealed partial class ConfigViewModel : ObservableObject, IActivatedPage
         {
             try
             {
-                _services.Settings.Save(_services.Settings.Load() with
-                {
-                    EffectGroups = review.Effects is { } groups && groups.Count == EffectRules.All.Count ? null : review.Effects,
-                });
+                // A preset without a list means every group; saved as the list, as on the effects page.
+                _services.Settings.Save(_services.Settings.Load() with { EffectGroups = review.Effects ?? EffectRules.All });
             }
             catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
             {

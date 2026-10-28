@@ -40,7 +40,7 @@ public sealed partial class GridRow : ObservableObject
 /// settings belong to. A tick is only a wish until the write button; the file of the game
 /// says what is in it, so every opening of the page reads it again.
 /// </summary>
-public sealed partial class HeroGridViewModel : ObservableObject, IActivatedPage
+public sealed partial class HeroGridViewModel : ObservableObject, IActivatedPage, IWorkingPage
 {
     private readonly AppServices _services;
 
@@ -97,6 +97,8 @@ public sealed partial class HeroGridViewModel : ObservableObject, IActivatedPage
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(ApplyCommand), nameof(RemoveAllCommand), nameof(AddFileCommand))]
     private bool _isBusy;
+
+    bool IWorkingPage.IsWorking => IsBusy;
 
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(DownloadCommand))]

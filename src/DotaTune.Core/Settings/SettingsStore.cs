@@ -39,6 +39,9 @@ public sealed record AppSettings
 
     /// <summary>The settings copy saved last, offered for a restore without picking a file.</summary>
     public string? LastBackup { get; init; }
+
+    /// <summary>The version that started last; null when the settings come from a version before 0.3.0 or none started yet.</summary>
+    public string? LastVersion { get; init; }
 }
 
 /// <summary>
@@ -108,20 +111,32 @@ public sealed class SettingsStore
     /// <summary>Returns defaults when the file is missing or unreadable; a broken file is logged and left as is.</summary>
     public AppSettings Load()
     {
+        TryLoad(out AppSettings settings);
+        return settings;
+    }
+
+    /// <summary>
+    /// False, with defaults, when the file is there but cannot be read, for instance written by a
+    /// newer version: a change nobody asked for must not write defaults over it.
+    /// </summary>
+    public bool TryLoad(out AppSettings settings)
+    {
+        settings = new AppSettings();
         if (!File.Exists(_file))
         {
-            return new AppSettings();
+            return true;
         }
 
         try
         {
             string json = File.ReadAllText(_file, Utf8NoBom);
-            return JsonSerializer.Deserialize(json, SettingsJsonContext.Default.AppSettings) ?? new AppSettings();
+            settings = JsonSerializer.Deserialize(json, SettingsJsonContext.Default.AppSettings) ?? new AppSettings();
+            return true;
         }
         catch (Exception ex) when (ex is JsonException or IOException or UnauthorizedAccessException)
         {
             _log.Warning($"Settings file {_file} is unreadable, defaults are used: {ex.Message}");
-            return new AppSettings();
+            return false;
         }
     }
 

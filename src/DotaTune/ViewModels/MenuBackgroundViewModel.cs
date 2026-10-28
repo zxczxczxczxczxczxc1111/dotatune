@@ -46,7 +46,7 @@ public sealed class MenuTile
 /// own, and the switch that hides the event tiles of the home page. A choice is saved at once and
 /// reaches the game when the pack is built again.
 /// </summary>
-public sealed partial class MenuBackgroundViewModel : ObservableObject, IActivatedPage
+public sealed partial class MenuBackgroundViewModel : ObservableObject, IActivatedPage, IWorkingPage
 {
     private const int PreviewWidth = 320;
     private readonly AppServices _services;
@@ -103,6 +103,8 @@ public sealed partial class MenuBackgroundViewModel : ObservableObject, IActivat
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(ApplyCommand), nameof(AddPictureCommand), nameof(RemovePictureCommand))]
     private bool _isBusy;
+
+    bool IWorkingPage.IsWorking => IsBusy;
 
     [ObservableProperty]
     private string _summary = string.Empty;

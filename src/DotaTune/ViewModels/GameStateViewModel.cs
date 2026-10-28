@@ -22,7 +22,7 @@ public sealed record FactRow(string Label, string Value);
 public sealed record FactGroup(string Title, IReadOnlyList<FactRow> Rows);
 
 /// <summary>The "Game status" page: what DotaTune read about Steam and the game, what it would do, and the pack itself.</summary>
-public sealed partial class GameStateViewModel : ObservableObject, IActivatedPage
+public sealed partial class GameStateViewModel : ObservableObject, IActivatedPage, IWorkingPage
 {
     private readonly AppServices _services;
 
@@ -65,6 +65,8 @@ public sealed partial class GameStateViewModel : ObservableObject, IActivatedPag
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(InstallPackCommand), nameof(RemovePackCommand), nameof(PlayCommand))]
     private bool _isPlaying;
+
+    bool IWorkingPage.IsWorking => IsLoading || IsChanging || IsPlaying;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsOk), nameof(IsAttention), nameof(IsError))]

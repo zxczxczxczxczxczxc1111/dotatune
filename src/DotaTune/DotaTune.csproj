@@ -33,6 +33,8 @@
   <ItemGroup>
     <!-- Sample menu backgrounds picked by the owner, cut to 16:9; MenuPictures opens them by these names. -->
     <EmbeddedResource Include="Assets\MenuBackgrounds\*.jpg" LogicalName="MenuBackgrounds.%(Filename)%(Extension)" />
+    <!-- The release notes the first start after an update shows, without going online. -->
+    <EmbeddedResource Include="..\..\CHANGELOG.md" LogicalName="CHANGELOG.md" />
   </ItemGroup>
 
   <ItemGroup>

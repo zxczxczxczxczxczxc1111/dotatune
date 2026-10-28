@@ -14,7 +14,7 @@ namespace DotaTune.ViewModels;
 /// carried by the pack; the minimap colours are lines of the config page's autoexec block. A
 /// change is saved at once, and the button puts into the game the part that differs.
 /// </summary>
-public sealed partial class ClicksViewModel : ObservableObject, IActivatedPage
+public sealed partial class ClicksViewModel : ObservableObject, IActivatedPage, IWorkingPage
 {
     private readonly AppServices _services;
     private readonly ConfigViewModel _config;
@@ -63,6 +63,8 @@ public sealed partial class ClicksViewModel : ObservableObject, IActivatedPage
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(ApplyCommand))]
     private bool _isBusy;
+
+    bool IWorkingPage.IsWorking => IsBusy;
 
     [ObservableProperty]
     private string _summary = string.Empty;

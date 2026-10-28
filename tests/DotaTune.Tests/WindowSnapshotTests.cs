@@ -94,12 +94,7 @@ public class WindowSnapshotTests
         Directory.CreateDirectory(dir);
         frame.Save(Path.Combine(dir, $"{language}-{kind}.png"), new Avalonia.Media.Imaging.PngBitmapEncoderOptions());
 
-        foreach (TextBlock block in window.GetLogicalDescendants().OfType<TextBlock>().Where(b => b.IsEffectivelyVisible))
-        {
-            Assert.True(
-                block.DesiredSize.Width <= block.Bounds.Width + 0.5,
-                $"\"{block.Text}\" needs {block.DesiredSize.Width:F0} px but got {block.Bounds.Width:F0}");
-        }
+        AssertTextFits(window);
 
         // A hovered pill grows to 1.04 around its centre: only the scroll view may clip it, and with room to spare.
         foreach (Button pill in window.GetVisualDescendants().OfType<Button>().Where(b => b.Classes.Contains("pill") && b.IsEffectivelyVisible))
@@ -301,6 +296,17 @@ public class WindowSnapshotTests
         }
 
         return window.CaptureRenderedFrame();
+    }
+
+    /// <summary>No text block shown in the window is wider than the space it got.</summary>
+    internal static void AssertTextFits(Window window)
+    {
+        foreach (TextBlock block in window.GetLogicalDescendants().OfType<TextBlock>().Where(b => b.IsEffectivelyVisible))
+        {
+            Assert.True(
+                block.DesiredSize.Width <= block.Bounds.Width + 0.5,
+                $"\"{block.Text}\" needs {block.DesiredSize.Width:F0} px but got {block.Bounds.Width:F0}");
+        }
     }
 
     /// <summary>The game state is read on a worker thread; pump the UI queue until it lands.</summary>

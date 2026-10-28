@@ -38,7 +38,7 @@ public sealed partial class EffectGroupRow : ObservableObject
 /// The "Effects" page: the groups the pack replaces with Valve's empty particle. A change is
 /// saved at once and reaches the game when the pack is built again.
 /// </summary>
-public sealed partial class EffectsViewModel : ObservableObject, IActivatedPage
+public sealed partial class EffectsViewModel : ObservableObject, IActivatedPage, IWorkingPage
 {
     private readonly AppServices _services;
     private GameState? _game;
@@ -63,6 +63,8 @@ public sealed partial class EffectsViewModel : ObservableObject, IActivatedPage
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(ApplyCommand))]
     private bool _isBusy;
+
+    bool IWorkingPage.IsWorking => IsBusy;
 
     [ObservableProperty]
     private string _summary = string.Empty;
@@ -154,9 +156,8 @@ public sealed partial class EffectsViewModel : ObservableObject, IActivatedPage
         List<EffectGroup> chosen = Chosen();
         try
         {
-            // Null keeps "every group", so a group added in a later version is on as well.
-            IReadOnlyList<EffectGroup>? stored = chosen.Count == EffectRules.All.Count ? null : chosen;
-            _services.Settings.Save(_services.Settings.Load() with { EffectGroups = stored });
+            // Always the list itself: a group a later version adds stays off until it is ticked.
+            _services.Settings.Save(_services.Settings.Load() with { EffectGroups = chosen });
             Note = BaseNote;
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
