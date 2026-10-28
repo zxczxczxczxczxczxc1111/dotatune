@@ -3,6 +3,7 @@ using System.Text.Json;
 using DotaTune.Core.Diagnostics;
 using DotaTune.Core.Effects;
 using DotaTune.Core.Game;
+using DotaTune.Core.Menu;
 using DotaTune.Core.Mmr;
 using DotaTune.Core.Pack;
 using DotaTune.Core.Steam;
@@ -116,12 +117,16 @@ public sealed class MmrTests : IDisposable
     [Fact]
     public void Pack_files_are_the_layout_the_script_and_the_data()
     {
-        Dictionary<string, byte[]> files = MmrMenu.PackFiles([], "en");
+        Dictionary<string, byte[]> files = MmrMenu.PackFiles([], "en", hideEvents: false);
 
-        Assert.Equal([MmrMenu.BasePath, MmrMenu.ScriptPath, MmrMenu.DataPath], files.Keys.Order(StringComparer.Ordinal));
+        Assert.Equal([MmrMenu.BasePath, MmrMenu.EventsPath, MmrMenu.ScriptPath, MmrMenu.DataPath], files.Keys.Order(StringComparer.Ordinal));
+        Assert.Equal(MmrMenu.Paths.Order(StringComparer.Ordinal), files.Keys.Order(StringComparer.Ordinal));
         Assert.Contains("DotaTuneMmrData", Encoding.UTF8.GetString(CompiledResource.Data(files[MmrMenu.ScriptPath])), StringComparison.Ordinal);
         Assert.Contains("\"accounts\":{}", Encoding.UTF8.GetString(CompiledResource.Data(files[MmrMenu.DataPath])), StringComparison.Ordinal);
         Assert.NotNull(CompiledResource.Block(files[MmrMenu.BasePath], "LaCo"u8));
+
+        // The layout loads the events script as well, so it goes in with no code.
+        Assert.DoesNotContain(HomeEvents.ColumnId, Encoding.UTF8.GetString(CompiledResource.Data(files[MmrMenu.EventsPath])), StringComparison.Ordinal);
     }
 
     [Fact]
@@ -130,7 +135,7 @@ public sealed class MmrTests : IDisposable
         Assert.Null(MmrMenu.Problem(ValveBase()));
 
         // A game layout that already loads scripts is not the one ours is made from.
-        string? withScripts = MmrMenu.Problem(MmrMenu.PackFiles([], "en")[MmrMenu.BasePath]);
+        string? withScripts = MmrMenu.Problem(MmrMenu.PackFiles([], "en", hideEvents: false)[MmrMenu.BasePath]);
         Assert.NotNull(withScripts);
         Assert.Contains("SCRIPTS", withScripts, StringComparison.Ordinal);
 
@@ -169,7 +174,7 @@ public sealed class MmrTests : IDisposable
         var store = new InstallStateStore(Path.Combine(_steam.DataRoot, "install.json"), _log);
         var packs = new PackService(store, _log);
         var service = new MmrService(new MmrHistoryStore(Path.Combine(_steam.DataRoot, "mmr.json"), _log), packs, _log);
-        byte[] pak = PackBuilder.Build(new PackMarker(PackBuilder.AppName, "0.1.0", "6967", DateTimeOffset.UnixEpoch), MmrMenu.PackFiles([], "ru"));
+        byte[] pak = PackBuilder.Build(new PackMarker(PackBuilder.AppName, "0.1.0", "6967", DateTimeOffset.UnixEpoch), MmrMenu.PackFiles([], "ru", hideEvents: false));
 
         // A pack without the line is left alone.
         packs.Install(_steam.Read, pak);

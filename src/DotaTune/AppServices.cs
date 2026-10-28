@@ -168,7 +168,9 @@ internal sealed class AppServices
         }
 
         string? menu = game.Dota is { } forMenu ? AddMenuBackground(settings.MenuBackground, forMenu, files) : null;
-        bool mmr = settings.MmrLine && game.Dota is { } forMmr && AddMmr(game, forMmr, files);
+        (bool mmr, bool hideEvents) = game.Dota is { } forScripts
+            ? AddMenuScripts(game, forScripts, files, settings.MmrLine, settings.HideHomeEvents)
+            : (false, false);
         int? accept = settings.AutoAccept ? AutoAccept.Delay(settings.AutoAcceptDelay) : null;
         if (accept is { } delay && game.Dota is { } forAccept && AcceptScript(forAccept, delay) is { } script)
         {
@@ -181,9 +183,9 @@ internal sealed class AppServices
         }
 
         byte[] bytes = PackBuilder.Build(
-            new PackMarker(PackBuilder.AppName, AppVersion, game.Dota?.Build, DateTimeOffset.Now, effects, menu, taken is { IsEmpty: false } ? taken : null, mmr),
+            new PackMarker(PackBuilder.AppName, AppVersion, game.Dota?.Build, DateTimeOffset.Now, effects, menu, taken is { IsEmpty: false } ? taken : null, mmr, hideEvents),
             files);
-        return new BuiltPack(bytes, effects, menu, mouse, notTaken is { Count: > 0 } ? notTaken : null, mmr, accept);
+        return new BuiltPack(bytes, effects, menu, mouse, notTaken is { Count: > 0 } ? notTaken : null, mmr, accept, hideEvents);
     }
 
     /// <summary>
@@ -239,46 +241,84 @@ internal sealed class AppServices
     }
 
     /// <summary>
-    /// Adds the MMR line with the newest reading of every account, after the readings of the
-    /// last session are taken in. False with a log line when the game's root menu layout is not
-    /// the one the line is made from: the pack then leaves the menu alone.
+    /// Adds the root menu layout with DotaTune's scripts: the MMR line with the newest reading of
+    /// every account, after the readings of the last session are taken in, and the script that
+    /// hides the event tiles of the home page. Says which of the two went in. Neither goes in, with
+    /// a log line, when the game's root menu layout is not the one the scripts are made from, and
+    /// the events stay when the home page has no column of them: the pack then leaves that alone.
     /// </summary>
-    private bool AddMmr(GameState game, DotaInstall dota, Dictionary<string, byte[]> files)
+    private (bool Mmr, bool HideEvents) AddMenuScripts(GameState game, DotaInstall dota, Dictionary<string, byte[]> files, bool mmr, bool hideEvents)
     {
-        try
+        if (!mmr && !hideEvents)
         {
-            if (MmrMenu.Problem(MmrMenu.ReadGameBase(dota.DotaFolder)) is { } problem)
+            return (false, false);
+        }
+
+        if (MenuScriptsProblem(dota) is { } problem)
+        {
+            Log.Warning($"Menu scripts are left out of the pack of build {dota.Build}: {problem}");
+            return (false, false);
+        }
+
+        if (hideEvents && HomeEventsProblem(dota) is { } missing)
+        {
+            Log.Warning($"Home page events of build {dota.Build} stay as they are: {missing}");
+            hideEvents = false;
+            if (!mmr)
             {
-                Log.Warning($"MMR line is left out of the pack of build {dota.Build}: {problem}");
-                return false;
+                return (false, false);
             }
         }
-        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or InvalidDataException)
+
+        IReadOnlyList<MmrReading>? latest = null;
+        if (mmr)
         {
-            Log.Warning($"MMR line is left out of the pack: {ex.Message}");
-            return false;
+            try
+            {
+                Mmr.Collect(game);
+                latest = MmrHistoryStore.Latest(Mmr.History.Load());
+            }
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or InvalidDataException)
+            {
+                // The line still reads the number in the profile; only the change waits for a second reading.
+                Log.Warning($"MMR history is not readable, the line goes in without it: {ex.Message}");
+                latest = [];
+            }
         }
 
-        IReadOnlyList<MmrReading> latest;
-        try
-        {
-            Mmr.Collect(game);
-            latest = MmrHistoryStore.Latest(Mmr.History.Load());
-        }
-        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or InvalidDataException)
-        {
-            // The line still reads the number in the profile; only the change waits for a second reading.
-            Log.Warning($"MMR history is not readable, the line goes in without it: {ex.Message}");
-            latest = [];
-        }
-
-        foreach ((string path, byte[] data) in MmrMenu.PackFiles(latest, MmrLanguage))
+        foreach ((string path, byte[] data) in MmrMenu.PackFiles(latest, MmrLanguage, hideEvents))
         {
             files[path] = data;
         }
 
-        Log.Info($"MMR line for the pack: readings of {latest.Count} accounts");
-        return true;
+        Log.Info($"Menu scripts for the pack: MMR line {(latest is null ? "off" : $"with readings of {latest.Count} accounts")}, home events {(hideEvents ? "hidden" : "shown")}");
+        return (mmr, hideEvents);
+    }
+
+    /// <summary>Null when the game's root menu layout is the one DotaTune's menu scripts are made from; otherwise why not. Only reads.</summary>
+    internal string? MenuScriptsProblem(DotaInstall dota)
+    {
+        try
+        {
+            return MmrMenu.Problem(MmrMenu.ReadGameBase(dota.DotaFolder));
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or InvalidDataException)
+        {
+            return $"the game's root layout is not readable: {ex.Message}";
+        }
+    }
+
+    /// <summary>Null when the home page of this build has the column of event tiles; otherwise why not. Only reads.</summary>
+    internal string? HomeEventsProblem(DotaInstall dota)
+    {
+        try
+        {
+            return HomeEvents.Problem(HomeEvents.ReadGameHome(dota.DotaFolder));
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or InvalidDataException)
+        {
+            return $"the home page is not readable: {ex.Message}";
+        }
     }
 
     /// <summary>
@@ -356,7 +396,7 @@ internal sealed class AppServices
 
         BuiltPack pack = BuildPack(game);
         InstallRefusal? installed = Packs.Install(
-            ReadGame, pack.Bytes, pack.Effects, pack.MenuBackground, pack.MouseColors, pack.MouseNotTaken, pack.Mmr, pack.AutoAccept).Refusal;
+            ReadGame, pack.Bytes, pack.Effects, pack.MenuBackground, pack.MouseColors, pack.MouseNotTaken, pack.Mmr, pack.AutoAccept, pack.HideEvents).Refusal;
         if (installed is null && pack.Mmr)
         {
             // A reading taken in while the pack was built went into the pack it replaced.

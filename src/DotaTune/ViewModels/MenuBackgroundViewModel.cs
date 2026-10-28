@@ -5,7 +5,9 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DotaTune.Core.Game;
 using DotaTune.Core.Menu;
+using DotaTune.Core.Mmr;
 using DotaTune.Core.Pack;
+using DotaTune.Core.Settings;
 using DotaTune.Resources;
 
 namespace DotaTune.ViewModels;
@@ -41,7 +43,8 @@ public sealed class MenuTile
 
 /// <summary>
 /// The "Menu background" page: the game's own background, black, a sample or a picture of one's
-/// own. A choice is saved at once and reaches the game when the pack is built again.
+/// own, and the switch that hides the event tiles of the home page. A choice is saved at once and
+/// reaches the game when the pack is built again.
 /// </summary>
 public sealed partial class MenuBackgroundViewModel : ObservableObject, IActivatedPage
 {
@@ -51,6 +54,9 @@ public sealed partial class MenuBackgroundViewModel : ObservableObject, IActivat
     private InstallState? _pack;
     private PackHealth _health;
     private MenuSupport _support = MenuSupport.Unknown;
+
+    /// <summary>Whether this build lets the pack hide the event tiles; null until the game is read.</summary>
+    private bool? _eventsSupport;
     private string? _supportBuild;
     private bool _picturesLoaded;
     private bool _restoring;
@@ -70,7 +76,9 @@ public sealed partial class MenuBackgroundViewModel : ObservableObject, IActivat
         Description = description;
         Tiles = [new MenuTile(null, Strings.MenuGame, null), new MenuTile(MenuPictures.BlackId, Strings.MenuBlack, null)];
         _restoring = true;
-        Selected = Tiles.FirstOrDefault(t => t.Id == services.Settings.Load().MenuBackground) ?? Tiles[0];
+        AppSettings settings = services.Settings.Load();
+        Selected = Tiles.FirstOrDefault(t => t.Id == settings.MenuBackground) ?? Tiles[0];
+        HideEvents = settings.HideHomeEvents;
         _restoring = false;
     }
 
@@ -87,6 +95,10 @@ public sealed partial class MenuBackgroundViewModel : ObservableObject, IActivat
     [NotifyPropertyChangedFor(nameof(CanRemove))]
     [NotifyCanExecuteChangedFor(nameof(RemovePictureCommand))]
     private MenuTile? _selected;
+
+    /// <summary>The pack hides the column of event tiles on the home page.</summary>
+    [ObservableProperty]
+    private bool _hideEvents;
 
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(ApplyCommand), nameof(AddPictureCommand), nameof(RemovePictureCommand))]
@@ -117,6 +129,9 @@ public sealed partial class MenuBackgroundViewModel : ObservableObject, IActivat
 
     private bool CanApply => CanApplyNow && !IsBusy;
 
+    /// <summary>The events can be hidden only where the game's menu is the one the script is made from.</summary>
+    private bool WantsHiddenEvents => HideEvents && _eventsSupport != false;
+
     private bool NotBusy => !IsBusy;
 
     private bool CanRemoveNow => CanRemove && !IsBusy;
@@ -140,12 +155,35 @@ public sealed partial class MenuBackgroundViewModel : ObservableObject, IActivat
         Show();
     }
 
+    partial void OnHideEventsChanged(bool value)
+    {
+        if (_restoring)
+        {
+            return;
+        }
+
+        try
+        {
+            _services.Settings.Save(_services.Settings.Load() with { HideHomeEvents = value });
+            Note = BaseNote;
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+        {
+            _services.Log.Error("Could not save the home events switch", ex);
+            Note = string.Format(CultureInfo.CurrentCulture, Strings.EffectsSaveErrorFormat, ex.Message);
+        }
+
+        Show();
+    }
+
     [RelayCommand(CanExecute = nameof(CanApply))]
     private async Task ApplyAsync()
     {
         IsBusy = true;
         // The tiles stay clickable while the pack is built, so the pack is checked against what it was built for.
         string? chosen = Selected?.Id;
+        bool fits = Problem(chosen) is null;
+        bool hide = WantsHiddenEvents;
         string? message;
         try
         {
@@ -162,9 +200,15 @@ public sealed partial class MenuBackgroundViewModel : ObservableObject, IActivat
         }
 
         await RefreshAsync();
-        if (message is null && _pack is not null && _pack.MenuBackground != chosen)
+        // A background this build cannot take is already named in the note.
+        if (message is null && _pack is not null && fits && _pack.MenuBackground != chosen)
         {
             message = Strings.MenuNotApplied;
+        }
+        // The switch turned off while the pack was built is not a failure.
+        else if (message is null && _pack is not null && hide && WantsHiddenEvents && !_pack.HideEvents)
+        {
+            message = Strings.MenuEventsNotApplied;
         }
 
         Note = message ?? Note;
@@ -242,7 +286,7 @@ public sealed partial class MenuBackgroundViewModel : ObservableObject, IActivat
         try
         {
             bool loadPictures = !_picturesLoaded;
-            (_game, _pack, _health, _support, _supportBuild, IReadOnlyList<MenuTile> pictures) = await Task.Run(() => Read(loadPictures));
+            (_game, _pack, _health, _support, _eventsSupport, _supportBuild, IReadOnlyList<MenuTile> pictures) = await Task.Run(() => Read(loadPictures));
             if (loadPictures)
             {
                 _picturesLoaded = true;
@@ -258,7 +302,7 @@ public sealed partial class MenuBackgroundViewModel : ObservableObject, IActivat
         }
     }
 
-    private (GameState, InstallState?, PackHealth, MenuSupport, string?, IReadOnlyList<MenuTile>) Read(bool loadPictures)
+    private (GameState, InstallState?, PackHealth, MenuSupport, bool?, string?, IReadOnlyList<MenuTile>) Read(bool loadPictures)
     {
         GameState game = _services.ReadGame();
         InstallState? pack;
@@ -275,10 +319,10 @@ public sealed partial class MenuBackgroundViewModel : ObservableObject, IActivat
             (pack, health) = (null, PackHealth.NotInstalled);
         }
 
-        (MenuSupport support, string? build) = (_support, _supportBuild);
+        (MenuSupport support, bool? events, string? build) = (_support, _eventsSupport, _supportBuild);
         if (game.Dota is { } dota && (support == MenuSupport.Unknown || build != dota.Build))
         {
-            (support, build) = (Support(dota), dota.Build);
+            (support, events, build) = (Support(dota), EventsSupport(dota), dota.Build);
         }
 
         List<MenuTile> pictures = [];
@@ -296,7 +340,19 @@ public sealed partial class MenuBackgroundViewModel : ObservableObject, IActivat
             }
         }
 
-        return (game, pack, health, support, build, pictures);
+        return (game, pack, health, support, events, build, pictures);
+    }
+
+    /// <summary>Whether this build lets the pack hide the event tiles of the home page; read once per build.</summary>
+    private bool EventsSupport(DotaInstall dota)
+    {
+        string? problem = _services.MenuScriptsProblem(dota) ?? _services.HomeEventsProblem(dota);
+        if (problem is not null)
+        {
+            _services.Log.Warning($"Home page events of build {dota.Build} cannot be hidden: {problem}");
+        }
+
+        return problem is null;
     }
 
     /// <summary>What this build of the game lets the pack do with the menu; read once per build.</summary>
@@ -379,29 +435,37 @@ public sealed partial class MenuBackgroundViewModel : ObservableObject, IActivat
         }
 
         string? chosen = Selected?.Id;
-        bool installable = PackService.RefusalFor(_game) is null && Problem(chosen) is null;
+        bool hide = WantsHiddenEvents;
+        bool canInstall = PackService.RefusalFor(_game) is null;
+        // A background this build cannot take does not hold back the events or a pack that has to be
+        // built again: the pack goes in without it.
+        bool fits = Problem(chosen) is null;
         if (_pack is null)
         {
             Summary = Strings.MenuNoPack;
             (IsOk, IsAttention) = (false, false);
             ApplyText = Strings.InstallPack;
-            CanApplyNow = installable && chosen is not null;
+            CanApplyNow = canInstall && ((chosen is not null && fits) || hide);
             return;
         }
 
         // A pack that is gone, replaced or from an older build has to be built again whatever the choice.
-        bool matches = _health == PackHealth.Ready && _pack.MenuBackground == chosen;
+        bool background = _pack.MenuBackground == chosen;
+        bool events = _pack.HideEvents == hide;
+        bool matches = _health == PackHealth.Ready && background && events;
         Summary = _health switch
         {
             PackHealth.Missing => Strings.HealthMissing,
             PackHealth.Changed => Strings.HealthChanged,
             PackHealth.FolderNotLoaded => Strings.HealthFolderNotLoaded,
             PackHealth.OtherBuild => Strings.HealthOtherBuild,
-            _ => matches ? Strings.MenuPackMatches : Strings.MenuPackDiffers,
+            _ when !background => Strings.MenuPackDiffers,
+            _ when !events => _pack.HideEvents ? Strings.MenuPackEventsHidden : Strings.MenuPackEventsShown,
+            _ => _pack.HideEvents ? Strings.MenuPackMatchesWithoutEvents : Strings.MenuPackMatches,
         };
         (IsOk, IsAttention) = (matches, !matches);
         ApplyText = Strings.RebuildPack;
-        CanApplyNow = !matches && installable;
+        CanApplyNow = !matches && canInstall && (fits || !events || _health != PackHealth.Ready);
     }
 
     /// <summary>Why the game cannot take this choice; null when it can or when the game is not known yet.</summary>
@@ -413,5 +477,8 @@ public sealed partial class MenuBackgroundViewModel : ObservableObject, IActivat
         _ => null,
     };
 
-    private string? BaseNote => Problem(Selected?.Id) ?? (_game?.DotaRunning == true ? Strings.DotaRunningNote : null);
+    private string? BaseNote =>
+        Problem(Selected?.Id)
+        ?? (HideEvents && _eventsSupport == false ? Strings.MenuEventsNotSupported : null)
+        ?? (_game?.DotaRunning == true ? Strings.DotaRunningNote : null);
 }

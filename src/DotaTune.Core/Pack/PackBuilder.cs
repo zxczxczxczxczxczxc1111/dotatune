@@ -11,18 +11,21 @@ namespace DotaTune.Core.Pack;
 /// <param name="MenuBackground">Id of the main menu background the pack puts in; null for the game's own.</param>
 /// <param name="MouseColors">The mouse effects the pack recolours and their colours.</param>
 /// <param name="Mmr">The pack puts the MMR line into the menu and the profile.</param>
+/// <param name="HideEvents">The pack hides the event tiles of the home page.</param>
 public sealed record PackMarker(
     string App, string Version, string? GameBuild, DateTimeOffset Created, IReadOnlyDictionary<EffectGroup, int>? Effects = null,
-    string? MenuBackground = null, MouseColorChoice? MouseColors = null, bool Mmr = false);
+    string? MenuBackground = null, MouseColorChoice? MouseColors = null, bool Mmr = false, bool HideEvents = false);
 
 /// <summary>A pack ready to install and what is in it.</summary>
 /// <param name="MouseColors">The mouse colours chosen when the pack was built.</param>
 /// <param name="MouseNotTaken">Chosen mouse effects the pack could not recolour: the game has no such particles any more.</param>
 /// <param name="Mmr">The MMR line went in.</param>
 /// <param name="AutoAccept">Seconds after which the pack accepts a found match; null when it does not.</param>
+/// <param name="HideEvents">The script that hides the event tiles of the home page went in.</param>
 public sealed record BuiltPack(
     byte[] Bytes, IReadOnlyDictionary<EffectGroup, int> Effects, string? MenuBackground = null,
-    MouseColorChoice? MouseColors = null, IReadOnlyList<MouseEffect>? MouseNotTaken = null, bool Mmr = false, int? AutoAccept = null);
+    MouseColorChoice? MouseColors = null, IReadOnlyList<MouseEffect>? MouseNotTaken = null, bool Mmr = false, int? AutoAccept = null,
+    bool HideEvents = false);
 
 [JsonSourceGenerationOptions(WriteIndented = true, PropertyNamingPolicy = JsonKnownNamingPolicy.CamelCase, UseStringEnumConverter = true)]
 [JsonSerializable(typeof(PackMarker))]

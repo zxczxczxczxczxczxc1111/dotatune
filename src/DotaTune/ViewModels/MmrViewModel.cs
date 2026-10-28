@@ -286,21 +286,13 @@ public sealed partial class MmrViewModel : ObservableObject, IActivatedPage
     /// <summary>Whether this build of the game takes the MMR line; read once per build.</summary>
     private MenuSupport Support(DotaInstall dota)
     {
-        try
+        if (_services.MenuScriptsProblem(dota) is { } problem)
         {
-            if (MmrMenu.Problem(MmrMenu.ReadGameBase(dota.DotaFolder)) is { } problem)
-            {
-                _services.Log.Warning($"MMR line does not fit build {dota.Build}: {problem}");
-                return MenuSupport.None;
-            }
-
-            return MenuSupport.Line;
-        }
-        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or InvalidDataException)
-        {
-            _services.Log.Warning($"Root menu layout of build {dota.Build} is not readable: {ex.Message}");
+            _services.Log.Warning($"MMR line does not fit build {dota.Build}: {problem}");
             return MenuSupport.None;
         }
+
+        return MenuSupport.Line;
     }
 
     /// <summary>Shows how the installed pack relates to the switch; the note is left to the caller.</summary>

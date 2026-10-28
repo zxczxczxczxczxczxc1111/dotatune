@@ -28,6 +28,9 @@ public sealed record AppSettings
     /// <summary>The pack puts the MMR line into the menu and the profile.</summary>
     public bool MmrLine { get; init; }
 
+    /// <summary>The pack hides the column of event tiles on the home page of the menu.</summary>
+    public bool HideHomeEvents { get; init; }
+
     /// <summary>The pack accepts a found match on its own.</summary>
     public bool AutoAccept { get; init; }
 

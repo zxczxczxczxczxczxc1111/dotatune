@@ -270,10 +270,8 @@ public static class PanoramaLayout
             return LayoutKind.Unreadable;
         }
 
-        // A stack and not recursion: the tree comes from a file.
         bool anyPanel = false;
-        var pending = new Stack<Kv3Value>([root]);
-        while (pending.TryPop(out Kv3Value? node))
+        foreach (Kv3Value node in Nodes(root))
         {
             string? name = node["name"]?.Text;
             switch (node["eType"]?.Text)
@@ -288,7 +286,19 @@ public static class PanoramaLayout
                 default:
                     return LayoutKind.Page;
             }
+        }
 
+        return anyPanel ? LayoutKind.Background : LayoutKind.Page;
+    }
+
+    /// <summary>Every node of the tree, the root first: several children sit under "vecChildren", one under "child".</summary>
+    public static IEnumerable<Kv3Value> Nodes(Kv3Value root)
+    {
+        // A stack and not recursion: the tree comes from a file.
+        var pending = new Stack<Kv3Value>([root]);
+        while (pending.TryPop(out Kv3Value? node))
+        {
+            yield return node;
             foreach (Kv3Value child in node["vecChildren"]?.Items ?? [])
             {
                 pending.Push(child);
@@ -299,8 +309,6 @@ public static class PanoramaLayout
                 pending.Push(only);
             }
         }
-
-        return anyPanel ? LayoutKind.Background : LayoutKind.Page;
     }
 
     /// <summary>

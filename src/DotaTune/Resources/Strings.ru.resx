@@ -805,7 +805,7 @@
     <value>Картинки</value>
   </data>
   <data name="MenuNoPack" xml:space="preserve">
-    <value>Пака пока нет. Фон меню встанет вместе с ним.</value>
+    <value>Пака пока нет. Выбранное здесь встанет вместе с ним.</value>
   </data>
   <data name="MenuPackMatches" xml:space="preserve">
     <value>Пак стоит с этим фоном. Dota покажет его со следующего запуска.</value>
@@ -815,6 +815,27 @@
   </data>
   <data name="MenuNotApplied" xml:space="preserve">
     <value>Фон не вошёл в пак, причина в журнале.</value>
+  </data>
+  <data name="MenuEventsSwitch" xml:space="preserve">
+    <value>Скрыть ивенты</value>
+  </data>
+  <data name="MenuEventsSwitchDescription" xml:space="preserve">
+    <value>Столбец плиток справа на главной</value>
+  </data>
+  <data name="MenuPackEventsHidden" xml:space="preserve">
+    <value>Пак собран со скрытыми ивентами.</value>
+  </data>
+  <data name="MenuPackEventsShown" xml:space="preserve">
+    <value>Пак собран с ивентами на главной.</value>
+  </data>
+  <data name="MenuPackMatchesWithoutEvents" xml:space="preserve">
+    <value>Пак стоит с этим фоном и без ивентов на главной. Dota покажет это со следующего запуска.</value>
+  </data>
+  <data name="MenuEventsNotSupported" xml:space="preserve">
+    <value>В этой версии игры главная устроена иначе, ивенты не скрыть.</value>
+  </data>
+  <data name="MenuEventsNotApplied" xml:space="preserve">
+    <value>Скрытие ивентов не вошло в пак, причина в журнале.</value>
   </data>
   <data name="MenuNotSupported" xml:space="preserve">
     <value>В этой версии игры DotaTune не может сменить фон меню.</value>

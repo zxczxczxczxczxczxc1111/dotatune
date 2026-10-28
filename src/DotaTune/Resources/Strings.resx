@@ -805,7 +805,7 @@
     <value>Pictures</value>
   </data>
   <data name="MenuNoPack" xml:space="preserve">
-    <value>No pack yet. The menu background goes in with it.</value>
+    <value>No pack yet. What you choose here goes in with it.</value>
   </data>
   <data name="MenuPackMatches" xml:space="preserve">
     <value>The pack is installed with this background. Dota shows it from its next start.</value>
@@ -815,6 +815,27 @@
   </data>
   <data name="MenuNotApplied" xml:space="preserve">
     <value>The background did not go into the pack, the reason is in the log.</value>
+  </data>
+  <data name="MenuEventsSwitch" xml:space="preserve">
+    <value>Hide events</value>
+  </data>
+  <data name="MenuEventsSwitchDescription" xml:space="preserve">
+    <value>The column of tiles on the right of the home page</value>
+  </data>
+  <data name="MenuPackEventsHidden" xml:space="preserve">
+    <value>The pack was built with the events hidden.</value>
+  </data>
+  <data name="MenuPackEventsShown" xml:space="preserve">
+    <value>The pack was built with the events on the home page.</value>
+  </data>
+  <data name="MenuPackMatchesWithoutEvents" xml:space="preserve">
+    <value>The pack is installed with this background and without the events on the home page. Dota shows it from its next start.</value>
+  </data>
+  <data name="MenuEventsNotSupported" xml:space="preserve">
+    <value>The home page of this game version is built differently, the events cannot be hidden.</value>
+  </data>
+  <data name="MenuEventsNotApplied" xml:space="preserve">
+    <value>Hiding the events did not go into the pack, the reason is in the log.</value>
   </data>
   <data name="MenuNotSupported" xml:space="preserve">
     <value>DotaTune cannot change the menu background in this game version.</value>

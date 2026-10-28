@@ -84,6 +84,15 @@
     </StackPanel>
     <TextBlock Classes="muted" Text="{x:Static res:Strings.MenuPictureHint}" MaxWidth="620" HorizontalAlignment="Left" />
 
+    <Grid ColumnDefinitions="*,Auto" Margin="0,24,0,0">
+      <StackPanel Spacing="2">
+        <TextBlock Text="{x:Static res:Strings.MenuEventsSwitch}" FontSize="16" TextWrapping="Wrap" />
+        <TextBlock Classes="muted" Text="{x:Static res:Strings.MenuEventsSwitchDescription}" />
+      </StackPanel>
+      <ToggleButton Grid.Column="1" Classes="switch" IsChecked="{Binding HideEvents}" Margin="32,0,0,0"
+                    AutomationProperties.Name="{x:Static res:Strings.MenuEventsSwitch}" VerticalAlignment="Center" />
+    </Grid>
+
     <Border Classes="verdict" Classes.ok="{Binding IsOk}" Classes.attention="{Binding IsAttention}" Margin="0,14,0,0"
             IsVisible="{Binding Summary, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
       <Grid ColumnDefinitions="Auto,*">

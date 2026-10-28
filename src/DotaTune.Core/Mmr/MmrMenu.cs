@@ -20,8 +20,9 @@ internal sealed record MmrScriptData(int V, string Lang, Dictionary<string, MmrS
 internal sealed partial class MmrScriptJsonContext : JsonSerializerContext;
 
 /// <summary>
-/// The files that put the MMR line into the game: the root layout of the menu with two scripts
-/// added, the script itself and its data. The first two are compiled from Mmr\Panorama by
+/// The files that put DotaTune's scripts into the menu: the root layout of the menu with three
+/// scripts added, the MMR line with its data and the script that hides the event tiles of the home
+/// page (<see cref="HomeEvents"/>). The layout and the scripts are compiled from Mmr\Panorama by
 /// build\panorama.ps1; the data is made here from the compiled template by putting the text in
 /// place of its DATA block, which holds nothing but the script text (checked on build 6967).
 /// </summary>
@@ -30,12 +31,16 @@ public static class MmrMenu
     public const string BasePath = "panorama/layout/base.vxml_c";
     public const string ScriptPath = "panorama/scripts/dotatune_mmr.vjs_c";
     public const string DataPath = "panorama/scripts/dotatune_mmr_data.vjs_c";
+    public const string EventsPath = "panorama/scripts/dotatune_events.vjs_c";
 
     private const string ResourcePrefix = "DotaTune.Mmr.";
     private const string LineMember = "sourceLineColumn";
 
+    /// <summary>The text of a script whose part is off: the root layout loads every script, so each one has to be there.</summary>
+    private static ReadOnlySpan<byte> OffText => "// DotaTune: this part is off\n"u8;
+
     /// <summary>Paths of the files in the pack.</summary>
-    public static IReadOnlyList<string> Paths { get; } = [BasePath, ScriptPath, DataPath];
+    public static IReadOnlyList<string> Paths { get; } = [BasePath, ScriptPath, DataPath, EventsPath];
 
     /// <summary>Reads the root layout of the menu from game\dota\pak01_dir.vpk. Only reads.</summary>
     /// <exception cref="FileNotFoundException">The game has no pak01_dir.vpk.</exception>
@@ -64,14 +69,23 @@ public static class MmrMenu
             : $"the game's root layout is not the one DotaTune knows: {game[..Math.Min(game.Length, 400)]}";
     }
 
-    /// <summary>The three files for the pack, with the newest reading of each account in the data.</summary>
+    /// <summary>The four files for the pack; a part that is off goes in as a script with no code.</summary>
+    /// <param name="latest">The newest reading of each account for the MMR line; null leaves the line out.</param>
     /// <param name="language">"ru" or "en": the words of the line in the menu.</param>
-    public static Dictionary<string, byte[]> PackFiles(IEnumerable<MmrReading> latest, string language) => new(StringComparer.Ordinal)
+    /// <param name="hideEvents">The script that hides the event tiles of the home page goes in.</param>
+    public static Dictionary<string, byte[]> PackFiles(IEnumerable<MmrReading>? latest, string language, bool hideEvents)
     {
-        [BasePath] = Resource("base.vxml_c"),
-        [ScriptPath] = Resource("dotatune_mmr.vjs_c"),
-        [DataPath] = DataFile(latest, language),
-    };
+        byte[] script = Resource("dotatune_mmr.vjs_c");
+        byte[] events = Resource("dotatune_events.vjs_c");
+        return new(StringComparer.Ordinal)
+        {
+            [BasePath] = Resource("base.vxml_c"),
+            [ScriptPath] = latest is null ? CompiledResource.WithData(script, OffText) : script,
+            // The template's own text is "var DotaTuneMmrData = null;".
+            [DataPath] = latest is null ? Resource("dotatune_mmr_data.vjs_c") : DataFile(latest, language),
+            [EventsPath] = hideEvents ? events : CompiledResource.WithData(events, OffText),
+        };
+    }
 
     /// <summary>The compiled data template with <c>var DotaTuneMmrData = {...};</c> as its text.</summary>
     public static byte[] DataFile(IEnumerable<MmrReading> latest, string language)

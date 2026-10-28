@@ -62,6 +62,16 @@ internal static class MenuGameFiles
             Panel("Image", [("id", "BackgroundVignette")]),
             Panel("Label", [("text", "#DOTA_Title")]))));
 
+    /// <summary>The home page of build 6969: the column of event tiles in the right column, or a page without it.</summary>
+    public static byte[] HomeTree(bool withColumn = true) => Layout(Panel(
+        "DOTAHomePage",
+        [("class", "DashboardPage"), ("hittest", "false")],
+        Panel("Panel", [("id", "StatLine")], Panel("DOTAAntiAddictionBadge", [("class", "StatLineContainer")])),
+        Panel(
+            "Panel",
+            [("id", "TodayPages")],
+            Panel("Panel", [("id", "RightColumn"), ("hittest", "false")], Panel("DOTAFrontpageContents", [("id", withColumn ? "FrontpageContents" : "OtherContents")])))));
+
     /// <summary>The treasure preview of build 6969: a panel of the game's own kind that finds BackgroundScene in itself.</summary>
     public static byte[] TreasureTree() => Layout(Panel(
         "DOTACCBackgroundSummer2023",

@@ -81,21 +81,23 @@ public sealed class PackService(InstallStateStore store, FileLog log)
     /// <param name="mouseNotTaken">Those of them the pack could not recolour.</param>
     /// <param name="mmr">The pack carries the MMR line.</param>
     /// <param name="autoAccept">Seconds after which the pack accepts a found match; null when it does not.</param>
+    /// <param name="hideEvents">The pack hides the event tiles of the home page.</param>
     public InstallResult Install(
         Func<GameState> readGame, byte[] pak, IReadOnlyDictionary<EffectGroup, int>? effects = null, string? menuBackground = null,
-        MouseColorChoice? mouseColors = null, IReadOnlyList<MouseEffect>? mouseNotTaken = null, bool mmr = false, int? autoAccept = null)
+        MouseColorChoice? mouseColors = null, IReadOnlyList<MouseEffect>? mouseNotTaken = null, bool mmr = false, int? autoAccept = null,
+        bool hideEvents = false)
     {
         ArgumentNullException.ThrowIfNull(readGame);
         ArgumentNullException.ThrowIfNull(pak);
         lock (_gate)
         {
-            return InstallLocked(readGame, pak, effects, menuBackground, mouseColors, mouseNotTaken, mmr, autoAccept);
+            return InstallLocked(readGame, pak, effects, menuBackground, mouseColors, mouseNotTaken, mmr, autoAccept, hideEvents);
         }
     }
 
     private InstallResult InstallLocked(
         Func<GameState> readGame, byte[] pak, IReadOnlyDictionary<EffectGroup, int>? effects, string? menuBackground,
-        MouseColorChoice? mouseColors, IReadOnlyList<MouseEffect>? mouseNotTaken, bool mmr, int? autoAccept)
+        MouseColorChoice? mouseColors, IReadOnlyList<MouseEffect>? mouseNotTaken, bool mmr, int? autoAccept, bool hideEvents)
     {
         GameState game = readGame();
         if (game.DotaRunning)
@@ -141,7 +143,7 @@ public sealed class PackService(InstallStateStore store, FileLog log)
 
         string? previousVoice = null;
         var state = new InstallState(
-            game.Dota.GameRoot, decision.TargetFolder, slot.Value, sha1, null, game.Dota.Build, DateTimeOffset.Now, effects, menuBackground, mouseColors, mouseNotTaken, mmr, autoAccept);
+            game.Dota.GameRoot, decision.TargetFolder, slot.Value, sha1, null, game.Dota.Build, DateTimeOffset.Now, effects, menuBackground, mouseColors, mouseNotTaken, mmr, autoAccept, hideEvents);
         try
         {
             if (decision.Action == PackAction.SwitchToCarrier)
@@ -160,7 +162,7 @@ public sealed class PackService(InstallStateStore store, FileLog log)
             File.Delete(target);
             throw;
         }
-        log.Info($"Pack installed: {state.PakPath}, SHA1 {sha1}, voice language {(previousVoice is null ? "unchanged" : $"{previousVoice} -> {decision.TargetFolder}")}, blank effects {effects?.Values.Sum() ?? 0}, menu background {menuBackground ?? "game"}, MMR line {(mmr ? "on" : "off")}, auto accept {(autoAccept is { } delay ? $"{delay} s" : "off")}");
+        log.Info($"Pack installed: {state.PakPath}, SHA1 {sha1}, voice language {(previousVoice is null ? "unchanged" : $"{previousVoice} -> {decision.TargetFolder}")}, blank effects {effects?.Values.Sum() ?? 0}, menu background {menuBackground ?? "game"}, MMR line {(mmr ? "on" : "off")}, auto accept {(autoAccept is { } delay ? $"{delay} s" : "off")}, home events {(hideEvents ? "hidden" : "shown")}");
         return new InstallResult(state, null);
     }
 

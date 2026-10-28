@@ -5,6 +5,7 @@
 	<scripts>
 		<include src="s2r://panorama/scripts/dotatune_mmr_data.vjs" />
 		<include src="s2r://panorama/scripts/dotatune_mmr.vjs" />
+		<include src="s2r://panorama/scripts/dotatune_events.vjs" />
 	</scripts>
 	<Panel class="WindowRoot" hittest="false">
 		<DOTADashboard id="Dashboard" />

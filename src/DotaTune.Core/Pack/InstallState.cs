@@ -13,6 +13,7 @@ namespace DotaTune.Core.Pack;
 /// <param name="MouseNotTaken">Those of them the pack could not recolour, see <see cref="BuiltPack.MouseNotTaken"/>.</param>
 /// <param name="Mmr">The installed pack puts the MMR line into the menu and the profile.</param>
 /// <param name="AutoAccept">Seconds after which the installed pack accepts a found match; null when it does not.</param>
+/// <param name="HideEvents">The installed pack hides the event tiles of the home page.</param>
 public sealed record InstallState(
     string GameRoot,
     string Language,
@@ -26,7 +27,8 @@ public sealed record InstallState(
     MouseColorChoice? MouseColors = null,
     IReadOnlyList<MouseEffect>? MouseNotTaken = null,
     bool Mmr = false,
-    int? AutoAccept = null)
+    int? AutoAccept = null,
+    bool HideEvents = false)
 {
     public string PakPath => Path.Combine(GameRoot, "game", $"dota_{Language}", PakFileName(Slot));
 
