@@ -23,7 +23,7 @@ public enum MouseEffect
     /// <summary>Highlight that shows where the own hero is.</summary>
     HeroHighlight,
 
-    /// <summary>Circle of a tower's attack range and the flash when the tower takes the hero as its target.</summary>
+    /// <summary>Circle of a tower's attack range, the beam to its target and the flash when the tower takes the hero as its target.</summary>
     TowerRange,
 }
 

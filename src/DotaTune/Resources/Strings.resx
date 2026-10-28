@@ -889,7 +889,7 @@
     <value>Tower range</value>
   </data>
   <data name="ClicksTowerDescription" xml:space="preserve">
-    <value>The circle of a tower's attack range and the flash when the tower targets you. In the game the circle turns from yellow to red; your colour stays the same.</value>
+    <value>The circle of a tower's attack range, the beam from the tower to its target and the flash when the tower targets you. In the game the circle turns from yellow to red; your colour stays the same.</value>
   </data>
   <data name="ClicksMouseGroup" xml:space="preserve">
     <value>Mouse and selection</value>
