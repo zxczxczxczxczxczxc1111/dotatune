@@ -53,7 +53,7 @@ internal sealed class VelopackUpdater : IAppUpdater
         }
 
         // No token: 60 requests an hour from one address are plenty for one check per start.
-        return new VelopackUpdater(new UpdateManager(new GithubSource(Repository, null, false)));
+        return new VelopackUpdater(new UpdateManager(new GithubSource(Repository, null, false, new FeedDownloader(FeedDownloader.FeedLimit))));
     }
 
     public bool IsInstalled => _manager.IsInstalled;
@@ -77,6 +77,25 @@ internal sealed class VelopackUpdater : IAppUpdater
     {
         public UpdateInfo Info { get; } = info;
     }
+}
+
+/// <summary>
+/// Velopack's downloader with a short limit on the list of releases and the feed. Velopack gives
+/// every request 30 minutes, so a network that takes the request and never answers kept the check
+/// at "Checking" that long. Packages keep the long limit: their download shows progress and "Later".
+/// </summary>
+internal sealed class FeedDownloader(TimeSpan limit) : HttpClientFileDownloader
+{
+    public static readonly TimeSpan FeedLimit = TimeSpan.FromSeconds(30);
+
+    public override Task<string> DownloadString(string url, IDictionary<string, string>? headers = null, double timeout = 30) =>
+        base.DownloadString(url, headers, Minutes(timeout));
+
+    public override Task<byte[]> DownloadBytes(string url, IDictionary<string, string>? headers = null, double timeout = 30) =>
+        base.DownloadBytes(url, headers, Minutes(timeout));
+
+    /// <summary>Velopack counts the timeout in minutes.</summary>
+    private double Minutes(double timeout) => Math.Min(timeout, limit.TotalMinutes);
 }
 
 /// <summary>Velopack's own lines in DotaTune's log, from information up: the rest repeats on every check.</summary>

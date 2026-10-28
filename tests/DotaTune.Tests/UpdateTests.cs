@@ -206,6 +206,41 @@ public class UpdateTests
         Assert.Equal(UpdateStage.NoConnection, UpdateService.CheckFailure(new TaskCanceledException("timeout")));
     }
 
+    [Fact]
+    public async Task Feed_request_without_an_answer_ends_within_the_limit()
+    {
+        // A server that takes the connection and never answers, as a network that hangs.
+        using var listener = new System.Net.Sockets.TcpListener(IPAddress.Loopback, 0);
+        listener.Start();
+        var held = new List<System.Net.Sockets.TcpClient>();
+        Task accepting = Task.Run(async () =>
+        {
+            try
+            {
+                while (true)
+                {
+                    held.Add(await listener.AcceptTcpClientAsync(TestContext.Current.CancellationToken));
+                }
+            }
+            catch (Exception ex) when (ex is System.Net.Sockets.SocketException or ObjectDisposedException or OperationCanceledException)
+            {
+                // The listener stops with the test.
+            }
+        }, TestContext.Current.CancellationToken);
+        string url = $"http://127.0.0.1:{((IPEndPoint)listener.LocalEndpoint).Port}/releases";
+        var downloader = new FeedDownloader(TimeSpan.FromSeconds(1));
+        var watch = System.Diagnostics.Stopwatch.StartNew();
+
+        Exception error = await Assert.ThrowsAnyAsync<Exception>(() => downloader.DownloadString(url));
+        Assert.True(watch.Elapsed < TimeSpan.FromSeconds(10), $"took {watch.Elapsed}");
+        Assert.Equal(UpdateStage.NoConnection, UpdateService.CheckFailure(error));
+        Assert.True(FeedDownloader.FeedLimit <= TimeSpan.FromMinutes(1));
+
+        listener.Stop();
+        await accepting;
+        held.ForEach(c => c.Dispose());
+    }
+
     [AvaloniaFact]
     public void Download_that_loses_the_connection_keeps_this_version()
     {
