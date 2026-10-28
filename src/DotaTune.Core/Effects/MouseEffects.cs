@@ -22,6 +22,9 @@ public enum MouseEffect
 
     /// <summary>Highlight that shows where the own hero is.</summary>
     HeroHighlight,
+
+    /// <summary>Circle of a tower's attack range and the flash when the tower takes the hero as its target.</summary>
+    TowerRange,
 }
 
 /// <summary>A colour per mouse effect; null keeps the game's colour.</summary>
@@ -42,6 +45,9 @@ public sealed record MouseColorChoice
     [JsonConverter(typeof(RgbJsonConverter))]
     public Rgb? HeroHighlight { get; init; }
 
+    [JsonConverter(typeof(RgbJsonConverter))]
+    public Rgb? TowerRange { get; init; }
+
     [JsonIgnore]
     public bool IsEmpty => Chosen.Count == 0;
 
@@ -57,6 +63,7 @@ public sealed record MouseColorChoice
         MouseEffect.UnitClick => UnitClick,
         MouseEffect.SelectionRings => SelectionRings,
         MouseEffect.HeroHighlight => HeroHighlight,
+        MouseEffect.TowerRange => TowerRange,
         _ => throw new ArgumentOutOfRangeException(nameof(effect), effect, null),
     };
 
@@ -67,6 +74,7 @@ public sealed record MouseColorChoice
         MouseEffect.UnitClick => this with { UnitClick = color },
         MouseEffect.SelectionRings => this with { SelectionRings = color },
         MouseEffect.HeroHighlight => this with { HeroHighlight = color },
+        MouseEffect.TowerRange => this with { TowerRange = color },
         _ => throw new ArgumentOutOfRangeException(nameof(effect), effect, null),
     };
 }
@@ -79,8 +87,10 @@ public sealed record MouseRecolor(IReadOnlyList<PackedFile> Files, IReadOnlyDict
 /// Recolours the game's own mouse particles, as Dota 2 Mod Manager does, for any colour. Checked
 /// on build 6967: the game passes the colour of a click or a ring in control point 1, and each
 /// particle turns that point into the colour of its particles through a remap; some layers draw a
-/// colour of their own. Both kinds become the chosen colour. Particles are read from the current
-/// game, so a patch that changes them is picked up on the next build of the pack.
+/// colour of their own. Both kinds become the chosen colour. The tower range (build 6969) gets from
+/// the game in point 4 a colour going from yellow to red with the danger and sets it as it is; that
+/// input becomes the chosen colour too. Particles are read from the current game, so a patch that
+/// changes them is picked up on the next build of the pack.
 /// </summary>
 public static class MouseEffects
 {
@@ -92,7 +102,9 @@ public static class MouseEffects
     /// <summary>
     /// The particles the game starts for each effect (names from client.dll of build 6967); their
     /// children come along. The move marker has two looks, chosen by
-    /// dota_use_occluded_click_particle_effects: both are recoloured.
+    /// dota_use_occluded_click_particle_effects: both are recoloured. The tower range has two looks
+    /// as well and a flash the game starts with the sound Building_Tower.Aggro (build 6969);
+    /// range_finder_tower_aoe stays, abilities of heroes use it too.
     /// </summary>
     public static IReadOnlyList<string> Roots(MouseEffect effect) => effect switch
     {
@@ -101,6 +113,7 @@ public static class MouseEffects
         MouseEffect.UnitClick => [Folder + "clicked_unit_select.vpcf"],
         MouseEffect.SelectionRings => [Folder + "selected_ring.vpcf", Folder + "drag_selected_ring.vpcf", Folder + "drag_selected_ring_reselect.vpcf", Folder + "selected_ring_hit.vpcf"],
         MouseEffect.HeroHighlight => [Folder + "hero_highlighter.vpcf", Folder + "hero_highlighter_playerglow.vpcf"],
+        MouseEffect.TowerRange => [Folder + "tower_range_indicator_default.vpcf", Folder + "tower_range_indicator_alt.vpcf", Folder + "range_finder_tower_experimental_pulse.vpcf"],
         _ => throw new ArgumentOutOfRangeException(nameof(effect), effect, null),
     };
 
@@ -219,9 +232,10 @@ public static class MouseEffects
     /// <summary>
     /// Puts the colour into a particle and returns how many values changed. A remap from a control
     /// point into the colour gets the colour at both ends of its output, so whatever the game
-    /// passes comes out as the colour. A colour written in the file keeps its brightness: black
-    /// shadows stay black, dimmer layers stay dimmer. Textures are left alone: their gradients
-    /// can be masks, and a colour there would cut channels out.
+    /// passes comes out as the colour. An operator that sets the colour from a control point reads
+    /// the colour as a literal instead, at the point's scale. A colour written in the file keeps its
+    /// brightness: black shadows stay black, dimmer layers stay dimmer. Textures are left alone:
+    /// their gradients can be masks, and a colour there would cut channels out.
     /// </summary>
     internal static int Paint(Kv3Value value, Rgb color)
     {
@@ -243,6 +257,18 @@ public static class MouseEffects
             {
                 if (member.Name == "m_vecTexturesInput")
                 {
+                    continue;
+                }
+
+                // A colour the game passes in a control point becomes the chosen one written in the
+                // file; the input is not walked further, or its new literal would be painted again.
+                // The point's scale goes into the literal, which has none: a layer at half keeps half.
+                if (member.Name == "m_InputValue" && IsColorFromPoint(value) && member.Value["m_LiteralColor"] is { Numbers.Length: 3 } literal)
+                {
+                    double[] scale = member.Value["m_vCPValueScale"]?.Numbers is { Length: 3 } cpScale ? cpScale : [1, 1, 1];
+                    member.Value.Set("m_nType", Kv3Value.String(member.Value["m_nType"]!.Flag, "PVEC_TYPE_LITERAL_COLOR"));
+                    literal.SetNumbers([Scaled(color.R, scale[0]), Scaled(color.G, scale[1]), Scaled(color.B, scale[2])]);
+                    changed++;
                     continue;
                 }
 
@@ -280,8 +306,33 @@ public static class MouseEffects
     private static bool IsColorRemap(Kv3Value value) =>
         value["_class"]?.Text is "C_INIT_RemapCPtoVector" or "C_OP_RemapCPtoVector" or "C_INIT_RemapTransformToVector"
         && value["m_nFieldOutput"] is { } field
-        && ((field.IsNumber && field.Number == ColorField) || field.Text == "PARTICLE_ATTRIBUTE_TINT_RGB")
-        && value["m_nSetMethod"] is null or { Text: "PARTICLE_SET_REPLACE_VALUE" } or { IsNumber: true, Number: 0 };
+        && IsColorField(field)
+        && IsReplace(value);
+
+    /// <summary>
+    /// An operator that sets the colour to a vector read from a control point. The tower range
+    /// (build 6969) does it with C_OP_SetVec naming no field: its root calls point 4 the colour
+    /// defined in code, so a SetVec without a field is taken to write the colour. An initializer
+    /// counts only with the colour field named.
+    /// </summary>
+    private static bool IsColorFromPoint(Kv3Value value)
+    {
+        string? kind = value["_class"]?.Text;
+        if (kind is not ("C_OP_SetVec" or "C_INIT_InitVec") || value["m_InputValue"]?["m_nType"]?.Text != "PVEC_TYPE_CP_VALUE")
+        {
+            return false;
+        }
+
+        bool color = value["m_nOutputField"] is { } field ? IsColorField(field) : kind == "C_OP_SetVec";
+        return color && IsReplace(value);
+    }
+
+    private static double Scaled(byte channel, double scale) => Math.Clamp(Math.Round(channel * scale), 0, 255);
+
+    private static bool IsColorField(Kv3Value field) => (field.IsNumber && field.Number == ColorField) || field.Text == "PARTICLE_ATTRIBUTE_TINT_RGB";
+
+    private static bool IsReplace(Kv3Value value) =>
+        value["m_nSetMethod"] is null or { Text: "PARTICLE_SET_REPLACE_VALUE" } or { IsNumber: true, Number: 0 };
 
     // A literal colour counts only where the vector input is set to it; other vector inputs keep an unused one.
     private static bool IsColor(Kv3Value owner, Kv3Member member) => member.Name switch

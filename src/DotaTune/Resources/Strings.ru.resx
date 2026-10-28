@@ -882,6 +882,12 @@
   <data name="ClicksHeroDescription" xml:space="preserve">
     <value>Свечение, которое показывает, где твой герой.</value>
   </data>
+  <data name="ClicksTower" xml:space="preserve">
+    <value>Радиус башен</value>
+  </data>
+  <data name="ClicksTowerDescription" xml:space="preserve">
+    <value>Круг дальности атаки башни и вспышка, когда башня берёт тебя в цель. В игре круг из жёлтого становится красным, а твой цвет не меняется.</value>
+  </data>
   <data name="ClicksMouseGroup" xml:space="preserve">
     <value>Мышь и выделение</value>
   </data>

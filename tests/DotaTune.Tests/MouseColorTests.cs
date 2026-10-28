@@ -213,6 +213,61 @@ public sealed class MouseColorTests
     }
 
     [Fact]
+    public void Tower_range_takes_the_colour_in_place_of_the_one_the_game_passes_in_a_point()
+    {
+        // Without a scale the point counts in full.
+        Kv3Value Input(double? scale = null)
+        {
+            var members = new List<(string, Kv3Value)>
+            {
+                ("m_nType", Str("PVEC_TYPE_CP_VALUE")),
+                ("m_LiteralColor", Ints(Kv3Type.ShortTypedArray, Kv3Type.Int32, 0, 0, 0)),
+                ("m_nControlPoint", Kv3Value.Scalar(Kv3Type.Int32, Kv3Flag.None, integer: 4)),
+            };
+            if (scale is { } each)
+            {
+                members.Add(("m_vCPValueScale", Kv3Value.Doubles(each, each, each)));
+            }
+
+            return Obj([.. members]);
+        }
+
+        Kv3Value ground = Obj(
+            ("m_ConstantColor", Ints(Kv3Type.TypedArray, Kv3Type.Int32, 0, 0, 0, 255)),
+            ("m_Operators", Kv3Value.Array(Kv3Type.Array, Kv3Flag.None,
+            [
+                Obj(("_class", Str("C_OP_SetVec")), ("m_InputValue", Input())),
+                Obj(("_class", Str("C_OP_SetVec")), ("m_InputValue", Input()), ("m_nOutputField", Kv3Value.Scalar(Kv3Type.Int32, Kv3Flag.None, integer: 0))),
+                Obj(("_class", Str("C_INIT_InitVec")), ("m_InputValue", Input())),
+                Obj(("_class", Str("C_OP_SetVec")), ("m_InputValue", Input(0.5))),
+            ])));
+        var game = new Dictionary<string, byte[]>(StringComparer.Ordinal)
+        {
+            [Folder + "tower_range_indicator_default.vpcf_c"] = Particle(Obj(), Folder + "tower_range_indicator_default_ground.vpcf"),
+            [Folder + "tower_range_indicator_default_ground.vpcf_c"] = Particle(ground),
+        };
+
+        // A dark colour: the literal the input becomes is not painted again by its brightness.
+        MouseRecolor recolor = MouseEffects.Recolor(path => game.GetValueOrDefault(path), new MouseColorChoice { TowerRange = new Rgb(128, 0, 64) });
+
+        Assert.Equal([Folder + "tower_range_indicator_default_ground.vpcf_c"], recolor.Files.Select(f => f.Path));
+        Assert.Equal(1, recolor.Counts[MouseEffect.TowerRange]);
+        Assert.Equal(
+            [Folder + "tower_range_indicator_alt.vpcf: not in the game", Folder + "range_finder_tower_experimental_pulse.vpcf: not in the game"],
+            recolor.Problems);
+        List<Kv3Value> operators = Root(recolor, "tower_range_indicator_default_ground")["m_Operators"]!.Items!;
+        Assert.Equal("PVEC_TYPE_LITERAL_COLOR", operators[0]["m_InputValue"]!["m_nType"]!.Text);
+        Assert.Equal([128.0, 0, 64], operators[0]["m_InputValue"]!["m_LiteralColor"]!.Numbers!);
+        // A SetVec into another field and an initializer naming no field keep the point.
+        Assert.Equal("PVEC_TYPE_CP_VALUE", operators[1]["m_InputValue"]!["m_nType"]!.Text);
+        Assert.Equal("PVEC_TYPE_CP_VALUE", operators[2]["m_InputValue"]!["m_nType"]!.Text);
+        Assert.Equal([0.0, 0, 0], operators[2]["m_InputValue"]!["m_LiteralColor"]!.Numbers!);
+        // A layer that takes the point at half keeps half of the colour.
+        Assert.Equal("PVEC_TYPE_LITERAL_COLOR", operators[3]["m_InputValue"]!["m_nType"]!.Text);
+        Assert.Equal([64.0, 0, 32], operators[3]["m_InputValue"]!["m_LiteralColor"]!.Numbers!);
+    }
+
+    [Fact]
     public void Nothing_chosen_gives_no_files_and_the_choice_round_trips_through_settings()
     {
         Dictionary<string, byte[]> game = MouseParticles();
@@ -221,11 +276,12 @@ public sealed class MouseColorTests
         using var folder = new CyrillicTempFolder();
         string file = Path.Combine(folder.Path, "settings.json");
         var store = new SettingsStore(file, new FileLog(Path.Combine(folder.Path, "logs")));
-        var choice = new MouseColorChoice { MoveClick = new Rgb(160, 96, 255), HeroHighlight = new Rgb(255, 255, 0) };
+        var choice = new MouseColorChoice { MoveClick = new Rgb(160, 96, 255), HeroHighlight = new Rgb(255, 255, 0), TowerRange = new Rgb(33, 161, 255) };
         store.Save(new AppSettings { MouseColors = choice });
 
         Assert.Equal(choice, store.Load().MouseColors);
         Assert.Contains("\"moveClick\": \"#A060FF\"", File.ReadAllText(file), StringComparison.Ordinal);
+        Assert.Contains("\"towerRange\": \"#21A1FF\"", File.ReadAllText(file), StringComparison.Ordinal);
 
         // A colour that is not one and a name of a later version are dropped, the rest stays.
         File.WriteAllText(file, "{ \"mouseColors\": { \"moveClick\": \"#zz\", \"unitClick\": \"#00FFFF\", \"cursorTrail\": \"#FFFFFF\" } }");

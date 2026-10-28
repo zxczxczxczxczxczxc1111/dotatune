@@ -272,6 +272,7 @@ public sealed partial class ClicksViewModel : ObservableObject, IActivatedPage, 
         MouseEffect.UnitClick => new Rgb(0, 255, 255),
         MouseEffect.SelectionRings => new Rgb(255, 0, 255),
         MouseEffect.HeroHighlight => new Rgb(255, 255, 0),
+        MouseEffect.TowerRange => new Rgb(33, 161, 255),
         _ => throw new InvalidOperationException($"Unknown mouse effect {effect}"),
     };
 
@@ -282,6 +283,7 @@ public sealed partial class ClicksViewModel : ObservableObject, IActivatedPage, 
         MouseEffect.UnitClick => Strings.ClicksUnit,
         MouseEffect.SelectionRings => Strings.ClicksRings,
         MouseEffect.HeroHighlight => Strings.ClicksHero,
+        MouseEffect.TowerRange => Strings.ClicksTower,
         _ => throw new InvalidOperationException($"Unknown mouse effect {effect}"),
     };
 
@@ -292,6 +294,7 @@ public sealed partial class ClicksViewModel : ObservableObject, IActivatedPage, 
         MouseEffect.UnitClick => Strings.ClicksUnitDescription,
         MouseEffect.SelectionRings => Strings.ClicksRingsDescription,
         MouseEffect.HeroHighlight => Strings.ClicksHeroDescription,
+        MouseEffect.TowerRange => Strings.ClicksTowerDescription,
         _ => throw new InvalidOperationException($"Unknown mouse effect {effect}"),
     };
 
