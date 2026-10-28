@@ -31,6 +31,7 @@ public sealed class MenuBackgroundTests : IDisposable
         GameMenuBackground menu = GameMenuBackground.Read(DotaFolder);
 
         Assert.Equal(MenuGameFiles.Backgrounds, menu.Layouts);
+        Assert.Equal(MenuGameFiles.Pages, menu.Pages);
         Assert.Equal(MenuGameFiles.All()[MenuGameFiles.Empty], menu.EmptyLayout);
         Assert.True(menu.CanShowPicture);
         // The first textures of the folder are RGBA and compressed, so the model is the PNG after them.
@@ -44,13 +45,91 @@ public sealed class MenuBackgroundTests : IDisposable
         Assert.Throws<InvalidDataException>(() => GameMenuBackground.Read(DotaFolder));
 
         Dictionary<string, byte[]> noBackgrounds = MenuGameFiles.All();
-        foreach (string layout in MenuGameFiles.Backgrounds)
+        foreach (string layout in MenuGameFiles.Backgrounds.Concat(MenuGameFiles.Pages))
         {
             noBackgrounds.Remove(layout);
         }
 
         MenuGameFiles.AddTo(_steam, noBackgrounds);
         Assert.Throws<InvalidDataException>(() => GameMenuBackground.Read(DotaFolder));
+    }
+
+    [Fact]
+    public void Game_with_pages_only_can_show_no_background()
+    {
+        Dictionary<string, byte[]> pagesOnly = MenuGameFiles.All();
+        foreach (string layout in MenuGameFiles.Backgrounds)
+        {
+            pagesOnly.Remove(layout);
+        }
+
+        MenuGameFiles.AddTo(_steam, pagesOnly);
+        GameMenuBackground menu = GameMenuBackground.Read(DotaFolder);
+
+        Assert.Empty(menu.Layouts);
+        Assert.Equal(MenuGameFiles.Pages, menu.Pages);
+        Assert.False(menu.CanShowBlack);
+        Assert.False(menu.CanShowPicture);
+        Assert.Throws<InvalidOperationException>(() => menu.PackFiles(MenuBackgroundKind.Black));
+        Assert.Throws<InvalidOperationException>(() => menu.PackFiles(MenuBackgroundKind.Picture, MenuGameFiles.Png(16, 9)));
+    }
+
+    [Fact]
+    public void Default_background_that_became_a_page_takes_no_picture()
+    {
+        Dictionary<string, byte[]> files = MenuGameFiles.All();
+        files[MenuGameFiles.DefaultLayout] = MenuGameFiles.TreasureTree();
+        MenuGameFiles.AddTo(_steam, files);
+        GameMenuBackground menu = GameMenuBackground.Read(DotaFolder);
+
+        Assert.True(menu.CanShowBlack);
+        Assert.False(menu.CanShowPicture);
+        Assert.Throws<InvalidOperationException>(() => menu.PackFiles(MenuBackgroundKind.Picture, MenuGameFiles.Png(16, 9)));
+        Assert.DoesNotContain(MenuGameFiles.DefaultLayout, menu.PackFiles(MenuBackgroundKind.Black).Keys);
+    }
+
+    [Fact]
+    public void Game_whose_layouts_are_all_unreadable_is_refused()
+    {
+        Dictionary<string, byte[]> files = MenuGameFiles.All();
+        foreach (string layout in MenuGameFiles.Backgrounds.Concat(MenuGameFiles.Pages))
+        {
+            files[layout] = GameFiles.Resource();
+        }
+
+        MenuGameFiles.AddTo(_steam, files);
+        Assert.Throws<InvalidDataException>(() => GameMenuBackground.Read(DotaFolder));
+    }
+
+    public static TheoryData<string, byte[], LayoutKind> Layouts => new()
+    {
+        { "the default picture under a scene", MenuGameFiles.DefaultTree(), LayoutKind.Background },
+        { "an empty box", MenuGameFiles.Layout(MenuGameFiles.Panel("Panel", [])), LayoutKind.Background },
+        { "an advert with a button to the store", MenuGameFiles.AdvertTree(), LayoutKind.Background },
+        { "a hero debut with a hover handler and a text button", MenuGameFiles.Layout(MenuGameFiles.Panel("Panel", [("onmouseover", "Look()")], MenuGameFiles.Panel("TextButton", [("onactivate", "Go()")]))), LayoutKind.Background },
+        { "an advert with a button of its own kind", MenuGameFiles.Layout(MenuGameFiles.Panel("Panel", [], MenuGameFiles.Panel("DOTAMonsterHoard2027Button", []))), LayoutKind.Background },
+        { "the treasure preview, a panel of the game's own kind", MenuGameFiles.TreasureTree(), LayoutKind.Page },
+        {
+            "the seasonal event deep inside",
+            MenuGameFiles.Layout(MenuGameFiles.Panel(
+                "Panel", [], MenuGameFiles.Panel("Panel", [], MenuGameFiles.Panel("DOTAFrontpageSeasonalRewards", [], MenuGameFiles.Panel("DOTAEventRewardClaimButton", []))))),
+            LayoutKind.Page
+        },
+        { "a reward claim button alone", MenuGameFiles.Layout(MenuGameFiles.Panel("Panel", [], MenuGameFiles.Panel("DOTAEventRewardClaimButton", []))), LayoutKind.Page },
+        { "the map update with a carousel", MenuGameFiles.Layout(MenuGameFiles.Panel("Panel", [], MenuGameFiles.Panel("Carousel", []))), LayoutKind.Page },
+        { "a node of an unknown kind", MenuGameFiles.Layout(MenuGameFiles.Panel("Panel", [], MenuGameFiles.Node("SNIPPET_INSTANCE", "Reward", []))), LayoutKind.Page },
+        { "a panel without a kind", MenuGameFiles.Layout(MenuGameFiles.Node("PANEL", null, [])), LayoutKind.Page },
+        { "no panel at all", MenuGameFiles.Layout(MenuGameFiles.Node("SCRIPTS", null, [])), LayoutKind.Page },
+        { "no tree", GameFiles.Resource(), LayoutKind.Unreadable },
+        { "not a resource", "<root><Panel /></root>"u8.ToArray(), LayoutKind.Unreadable },
+    };
+
+    [Theory]
+    [MemberData(nameof(Layouts))]
+    public void Layout_is_a_background_only_when_made_of_background_panels(string what, byte[] layout, LayoutKind expected)
+    {
+        Assert.NotEmpty(what);
+        Assert.Equal(expected, PanoramaLayout.Kind(layout));
     }
 
     [Fact]
@@ -64,6 +143,7 @@ public sealed class MenuBackgroundTests : IDisposable
         Assert.Equal(MenuGameFiles.Backgrounds.Order(StringComparer.Ordinal), files.Keys.Order(StringComparer.Ordinal));
         Assert.All(files.Values, v => Assert.Equal(menu.EmptyLayout, v));
         Assert.Empty(menu.PackFiles(MenuBackgroundKind.Game));
+        Assert.All(MenuGameFiles.Pages, page => Assert.DoesNotContain(page, files.Keys));
     }
 
     [Fact]
@@ -81,6 +161,7 @@ public sealed class MenuBackgroundTests : IDisposable
         }
 
         Assert.False(files.ContainsKey(MenuGameFiles.DefaultLayout));
+        Assert.All(MenuGameFiles.Pages, page => Assert.DoesNotContain(page, files.Keys));
         foreach ((string image, string picture) in GameMenuBackground.PictureImages)
         {
             // The game's own image stays: the screen before loading shows it too.

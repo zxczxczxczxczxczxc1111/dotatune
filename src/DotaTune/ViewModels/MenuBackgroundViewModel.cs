@@ -304,7 +304,8 @@ public sealed partial class MenuBackgroundViewModel : ObservableObject, IActivat
     {
         try
         {
-            return GameMenuBackground.Read(dota.DotaFolder).CanShowPicture ? MenuSupport.All : MenuSupport.BlackOnly;
+            GameMenuBackground menu = GameMenuBackground.Read(dota.DotaFolder);
+            return menu.CanShowPicture ? MenuSupport.All : menu.CanShowBlack ? MenuSupport.BlackOnly : MenuSupport.None;
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or InvalidDataException)
         {

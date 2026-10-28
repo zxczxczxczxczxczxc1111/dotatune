@@ -1,6 +1,7 @@
 using System.Buffers.Binary;
 using System.Text;
 using System.Text.RegularExpressions;
+using DotaTune.Core.Effects;
 using DotaTune.Core.Game;
 using ValvePak;
 
@@ -22,16 +23,18 @@ public enum MenuBackgroundKind
 /// <summary>
 /// The menu background files of the installed game. The dashboard loads one of its background
 /// layouts by name (an event, a treasure, the default one); the pack puts another layout of the
-/// same game under every one of those names, so nothing is compiled and the files always come from
-/// the current build. Checked on build 6967: Valve's empty layout leaves a black menu with every
-/// panel working, and the card does 65 W instead of 106 W at 120 FPS.
+/// same game under every one of those names that is a scene, a picture or an advert, so nothing is
+/// compiled and the files always come from the current build. Checked on build 6967: Valve's
+/// empty layout leaves a black menu, and the card does 65 W instead of 106 W at 120 FPS.
 /// </summary>
-/// <param name="Layouts">Every background layout the dashboard can load, by its compiled name.</param>
+/// <param name="Layouts">The background layouts the pack replaces: scenes, pictures and adverts.</param>
+/// <param name="Pages">Layouts named as backgrounds that stay the game's: pages such as an event or a treasure preview, and any it cannot read.</param>
 /// <param name="EmptyLayout">Valve's empty layout: one panel and the common styles.</param>
 /// <param name="DefaultLayout">Valve's default background: a picture under a 3D scene; null when the game has none.</param>
 /// <param name="DefaultStyle">The compiled stylesheet of the default background; null when the game has none.</param>
 /// <param name="PictureTemplate">A panorama texture stored as a PNG, the model for a picture; null when the game has none.</param>
-public sealed partial record GameMenuBackground(IReadOnlyList<string> Layouts, byte[] EmptyLayout, byte[]? DefaultLayout, byte[]? DefaultStyle, byte[]? PictureTemplate)
+public sealed partial record GameMenuBackground(
+    IReadOnlyList<string> Layouts, IReadOnlyList<string> Pages, byte[] EmptyLayout, byte[]? DefaultLayout, byte[]? DefaultStyle, byte[]? PictureTemplate)
 {
     public const string EmptyLayoutPath = "panorama/layout/empty.vxml_c";
     public const string DefaultLayoutPath = "panorama/layout/dashboard_background_default.vxml_c";
@@ -52,14 +55,20 @@ public sealed partial record GameMenuBackground(IReadOnlyList<string> Layouts, b
 
     private const string TemplateFolder = "panorama/images/backgrounds/";
 
-    /// <summary>True when the game can show a picture: the default layout and style are as expected and there is a PNG texture to model on.</summary>
+    /// <summary>True when the menu can be made black: at least one layout is a background and not a page.</summary>
+    public bool CanShowBlack => Layouts.Count > 0;
+
+    /// <summary>
+    /// True when the game can show a picture: the default layout is a background and not a page, it and its
+    /// style are as expected and there is a PNG texture to model on.
+    /// </summary>
     public bool CanShowPicture =>
-        DefaultLayout is not null && PictureTemplate is not null && DefaultStyle is not null
+        Layouts.Contains(DefaultLayoutPath) && DefaultLayout is not null && PictureTemplate is not null && DefaultStyle is not null
         && PanoramaStyle.WithPicture(DefaultStyle, PictureImages, 1, 1) is not null;
 
     /// <summary>Reads game\dota\pak01_dir.vpk. Only reads.</summary>
     /// <exception cref="FileNotFoundException">The game has no pak01_dir.vpk.</exception>
-    /// <exception cref="InvalidDataException">The archive cannot be read, or has no empty layout or no background layouts: the game changed.</exception>
+    /// <exception cref="InvalidDataException">The archive cannot be read, or has no empty layout, no background layouts or none it can read: the game changed.</exception>
     public static GameMenuBackground Read(string dotaFolder)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(dotaFolder);
@@ -74,10 +83,25 @@ public sealed partial record GameMenuBackground(IReadOnlyList<string> Layouts, b
             using var package = new Package();
             package.Read(pak);
             PackageEntry empty = package.FindEntry(EmptyLayoutPath) ?? throw new InvalidDataException($"{EmptyLayoutPath} is not in {pak}");
-            List<string> layouts = [.. Entries(package, "vxml_c").Select(e => e.GetFullPath()).Where(IsBackgroundLayout).Order(StringComparer.Ordinal)];
-            if (layouts.Count == 0)
+            List<string> layouts = [];
+            List<string> pages = [];
+            int unreadable = 0;
+            foreach (PackageEntry entry in Entries(package, "vxml_c").Where(e => IsBackgroundLayout(e.GetFullPath())).OrderBy(e => e.GetFullPath(), StringComparer.Ordinal))
+            {
+                LayoutKind kind = PanoramaLayout.Kind(ReadEntry(package, entry));
+                unreadable += kind == LayoutKind.Unreadable ? 1 : 0;
+                (kind == LayoutKind.Background ? layouts : pages).Add(entry.GetFullPath());
+            }
+
+            if (layouts.Count + pages.Count == 0)
             {
                 throw new InvalidDataException($"{pak} has no menu background layouts");
+            }
+
+            // One odd file stays the game's; none readable means the compiled format changed.
+            if (unreadable == pages.Count + layouts.Count)
+            {
+                throw new InvalidDataException($"The background layouts of {pak} are in a form DotaTune cannot read");
             }
 
             byte[]? defaultLayout = package.FindEntry(DefaultLayoutPath) is { } layout ? ReadEntry(package, layout) : null;
@@ -87,7 +111,7 @@ public sealed partial record GameMenuBackground(IReadOnlyList<string> Layouts, b
                 .OrderBy(e => e.GetFullPath(), StringComparer.Ordinal)
                 .Select(e => ReadEntry(package, e))
                 .FirstOrDefault(PanoramaTexture.IsPngTexture);
-            return new GameMenuBackground(layouts, ReadEntry(package, empty), defaultLayout, defaultStyle, template);
+            return new GameMenuBackground(layouts, pages, ReadEntry(package, empty), defaultLayout, defaultStyle, template);
         }
         catch (Exception ex) when (GameArchive.IsDamage(ex))
         {
@@ -97,8 +121,8 @@ public sealed partial record GameMenuBackground(IReadOnlyList<string> Layouts, b
 
     /// <summary>
     /// A layout the background manager of the dashboard loads by name: dashboard_background_* (not the
-    /// manager itself) and the event backgrounds under events/. In build 6967 nothing else in the
-    /// game refers to them but their own styles and scripts.
+    /// manager itself) and the event backgrounds under events/. The name alone does not make it safe
+    /// to replace: on build 6969 most of them are pages, see <see cref="PanoramaLayout.Kind"/>.
     /// </summary>
     public static bool IsBackgroundLayout(string path)
     {
@@ -113,7 +137,7 @@ public sealed partial record GameMenuBackground(IReadOnlyList<string> Layouts, b
     /// the 3D scene. The game's own images stay as they are.
     /// </summary>
     /// <param name="picture">A PNG file, needed for <see cref="MenuBackgroundKind.Picture"/>.</param>
-    /// <exception cref="InvalidOperationException">A picture is asked for and the game cannot show one.</exception>
+    /// <exception cref="InvalidOperationException">The game cannot show the choice: see <see cref="CanShowBlack"/> and <see cref="CanShowPicture"/>.</exception>
     /// <exception cref="InvalidDataException">The picture is not a PNG file.</exception>
     public Dictionary<string, byte[]> PackFiles(MenuBackgroundKind kind, byte[]? picture = null)
     {
@@ -121,6 +145,11 @@ public sealed partial record GameMenuBackground(IReadOnlyList<string> Layouts, b
         switch (kind)
         {
             case MenuBackgroundKind.Black:
+                if (!CanShowBlack)
+                {
+                    throw new InvalidOperationException("Every background layout of the game is a page, the menu cannot be made black");
+                }
+
                 foreach (string layout in Layouts)
                 {
                     files[layout] = EmptyLayout;
@@ -130,7 +159,7 @@ public sealed partial record GameMenuBackground(IReadOnlyList<string> Layouts, b
             case MenuBackgroundKind.Picture:
                 ArgumentNullException.ThrowIfNull(picture);
                 (int width, int height) = PanoramaTexture.PngSize(picture) ?? throw new InvalidDataException("The picture is not a PNG file");
-                if (DefaultLayout is null || PictureTemplate is null || DefaultStyle is null
+                if (!Layouts.Contains(DefaultLayoutPath) || DefaultLayout is null || PictureTemplate is null || DefaultStyle is null
                     || PanoramaStyle.WithPicture(DefaultStyle, PictureImages, width, height) is not { } style)
                 {
                     throw new InvalidOperationException("The game's default background is not as expected, a picture cannot be shown");
@@ -170,6 +199,119 @@ public sealed partial record GameMenuBackground(IReadOnlyList<string> Layouts, b
 
     [GeneratedRegex(@"^panorama/layout/events/(?:[a-z0-9_]+/)*[a-z0-9_]*background[a-z0-9_]*\.vxml_c$", RegexOptions.CultureInvariant)]
     private static partial Regex EventBackground();
+}
+
+/// <summary>What a layout named as a background is to the pack.</summary>
+public enum LayoutKind
+{
+    /// <summary>A scene, a picture or an advert, so the pack may put another layout under its name.</summary>
+    Background,
+
+    /// <summary>A page the game needs as it is: a panel with logic of the game's own.</summary>
+    Page,
+
+    /// <summary>Its tree cannot be read; it stays the game's like a page.</summary>
+    Unreadable,
+}
+
+/// <summary>
+/// A compiled panorama layout. Its tree is binary KV3 in the LaCo block, under m_AST and m_pRoot:
+/// every node has an eType (ROOT, PANEL, PANEL_ATTRIBUTE and so on), a name, and its children in
+/// vecChildren, or in child when there is only one.
+/// </summary>
+public static class PanoramaLayout
+{
+    /// <summary>
+    /// Kinds of panel a background is made of on build 6969: boxes, pictures, texts, 3D scenes,
+    /// particles, item and team previews. Buttons come on top, all but those that claim a reward, see <see cref="IsBackgroundPanel"/>.
+    /// </summary>
+    private static readonly HashSet<string> BackgroundPanels = new(StringComparer.Ordinal)
+    {
+        "Panel", "Image", "Label", "DOTAScenePanel", "DOTAParticleScenePanel", "DOTAUIEconSetPreview", "DOTATeamImage",
+    };
+
+    /// <summary>Nodes around the panels: styles and scripts with their includes, and attributes with their values.</summary>
+    private static readonly HashSet<string> FrameNodes = new(StringComparer.Ordinal)
+    {
+        "ROOT", "STYLES", "SCRIPTS", "INCLUDE", "REFERENCE_COMPILED", "PANEL_ATTRIBUTE", "PANEL_ATTRIBUTE_VALUE",
+    };
+
+    /// <summary>The root node of the layout's tree.</summary>
+    /// <exception cref="InvalidDataException">The file is not a compiled layout with a readable tree.</exception>
+    public static Kv3Value Tree(ReadOnlySpan<byte> layout)
+    {
+        byte[] block = CompiledResource.Block(layout, "LaCo"u8) ?? throw new InvalidDataException("no LaCo block");
+        return Kv3Binary.Read(block).Root["m_AST"]?["m_pRoot"] ?? throw new InvalidDataException("no layout tree");
+    }
+
+    /// <summary>
+    /// A background when every panel passes <see cref="IsBackgroundPanel"/> and no node is of a kind
+    /// this check does not know. On build 6969 the home page shows such an advert (Monster Hoard,
+    /// its buttons lead to the store) and a picture in its place is the point of the pack. A panel
+    /// of any other kind has logic of the game's own, and the game opens the layout as a page: the
+    /// treasure preview (DOTACCBackgroundSummer2023) looks for BackgroundScene and stops the game
+    /// with a fatal error without it, the seasonal event is DOTAFrontpageSeasonalRewards, the map
+    /// update a carousel with a movie.
+    /// </summary>
+    public static LayoutKind Kind(ReadOnlySpan<byte> layout)
+    {
+        Kv3Value root;
+        try
+        {
+            root = Tree(layout);
+        }
+        catch (InvalidDataException)
+        {
+            return LayoutKind.Unreadable;
+        }
+
+        if (root["eType"]?.Text != "ROOT")
+        {
+            return LayoutKind.Unreadable;
+        }
+
+        // A stack and not recursion: the tree comes from a file.
+        bool anyPanel = false;
+        var pending = new Stack<Kv3Value>([root]);
+        while (pending.TryPop(out Kv3Value? node))
+        {
+            string? name = node["name"]?.Text;
+            switch (node["eType"]?.Text)
+            {
+                case "PANEL" when name is null || !IsBackgroundPanel(name):
+                    return LayoutKind.Page;
+                case "PANEL":
+                    anyPanel = true;
+                    break;
+                case { } type when FrameNodes.Contains(type):
+                    break;
+                default:
+                    return LayoutKind.Page;
+            }
+
+            foreach (Kv3Value child in node["vecChildren"]?.Items ?? [])
+            {
+                pending.Push(child);
+            }
+
+            if (node["child"] is { Members: not null } only)
+            {
+                pending.Push(only);
+            }
+        }
+
+        return anyPanel ? LayoutKind.Background : LayoutKind.Page;
+    }
+
+    /// <summary>
+    /// A panel a background may hold. A button only runs its handler, and every advert brings a kind
+    /// of its own (DOTACrownfallButton, DOTAInternational2025Button on build 6969); the logic of a
+    /// page sits in other panels of the game's own kind, so a page stays a page. A button that claims
+    /// a reward (DOTAEventRewardClaimButton) is such logic itself.
+    /// </summary>
+    private static bool IsBackgroundPanel(string kind) =>
+        BackgroundPanels.Contains(kind)
+        || (kind.EndsWith("Button", StringComparison.Ordinal) && !kind.Contains("Claim", StringComparison.Ordinal));
 }
 
 /// <summary>

@@ -4,6 +4,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using DotaTune.Core.Effects;
 using DotaTune.Core.Game;
+using DotaTune.Core.Menu;
 
 namespace DotaTune.Core.Mmr;
 
@@ -31,8 +32,6 @@ public static class MmrMenu
     public const string DataPath = "panorama/scripts/dotatune_mmr_data.vjs_c";
 
     private const string ResourcePrefix = "DotaTune.Mmr.";
-    private const string AstMember = "m_AST";
-    private const string RootMember = "m_pRoot";
     private const string LineMember = "sourceLineColumn";
 
     /// <summary>Paths of the files in the pack.</summary>
@@ -93,8 +92,7 @@ public static class MmrMenu
     /// <exception cref="InvalidDataException">The file is not a compiled layout with a readable tree.</exception>
     private static string Shape(ReadOnlySpan<byte> layout, bool withoutScripts)
     {
-        byte[] block = CompiledResource.Block(layout, "LaCo"u8) ?? throw new InvalidDataException("no LaCo block");
-        Kv3Value root = Kv3Binary.Read(block).Root[AstMember]?[RootMember] ?? throw new InvalidDataException("no layout tree");
+        Kv3Value root = PanoramaLayout.Tree(layout);
         var text = new StringBuilder();
         Write(root, text, withoutScripts);
         return text.ToString();

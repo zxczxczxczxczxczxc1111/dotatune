@@ -332,7 +332,7 @@ internal sealed class AppServices
                 files[path] = data;
             }
 
-            Log.Info($"Menu background {choice}: {added.Count} files over {menu.Layouts.Count} background layouts of build {dota.Build}");
+            Log.Info($"Menu background {choice}: {added.Count} files over {menu.Layouts.Count} background layouts of build {dota.Build}, {menu.Pages.Count} pages left as they are");
             return choice;
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or InvalidDataException or InvalidOperationException)

@@ -45,6 +45,7 @@ public class MenuBackgroundPageTests
         Assert.Equal(MenuPictures.BlackId, App.Services.Packs.Current!.MenuBackground);
         byte[] empty = MenuGameFiles.All()[MenuGameFiles.Empty];
         Assert.All(MenuGameFiles.Backgrounds, layout => Assert.Equal(empty, ReadFromPack(layout)));
+        Assert.All(MenuGameFiles.Pages, page => Assert.Null(ReadFromPack(page)));
 
         // Back to the game's own background: the pack has to be built again, and then holds no layout.
         page.Selected = page.Tiles[0];
