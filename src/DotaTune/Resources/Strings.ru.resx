@@ -576,6 +576,9 @@
   <data name="TransferChangedSince" xml:space="preserve">
     <value>Возвращено всё, кроме того, что поменялось после переноса: эти файлы остались как есть.</value>
   </data>
+  <data name="TransferCopiesLost" xml:space="preserve">
+    <value>Возвращено не всё: копии части файлов пропали из папки DotaTune. Эти файлы и всё, что поменялось после переноса, остались как есть.</value>
+  </data>
   <data name="TransferCloudHintFormat" xml:space="preserve">
     <value>У {0} включено облако Steam, выключать его не нужно: при следующем запуске игры Steam сам отправит эти файлы в облако. Если перед запуском он спросит, какие файлы оставить, выбери файлы этого компьютера, а не облака, иначе вернутся старые настройки.</value>
   </data>
@@ -965,6 +968,9 @@
   </data>
   <data name="ResetProblemTransferChanged" xml:space="preserve">
     <value>файлы, которые поменялись после переноса, остались как есть</value>
+  </data>
+  <data name="ResetProblemTransferCopiesLost" xml:space="preserve">
+    <value>копии части файлов пропали из папки DotaTune: эти файлы и поменявшиеся после переноса остались как есть</value>
   </data>
   <data name="ResetProblemGridsFormat" xml:space="preserve">
     <value>файл не читается и остался как есть: {0}</value>

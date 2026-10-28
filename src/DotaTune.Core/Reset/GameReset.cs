@@ -39,6 +39,9 @@ public enum ResetProblem
     /// <summary>Files or the launch line changed after a transfer stay as they are; the record is dropped.</summary>
     TransferChangedSince,
 
+    /// <summary>Files whose copies are gone stay as they are; the record is dropped.</summary>
+    TransferCopiesLost,
+
     /// <summary>An account's hero grid file is not JSON and stays; <see cref="ResetStep.Detail"/> says which.</summary>
     BrokenGrids,
 
@@ -168,12 +171,13 @@ public sealed class GameReset(PackService packs, AutoexecService autoexec, Trans
             TransferRefusal? refusal = transfers.Restore(game, account).Refusal;
             ResetProblem? problem = refusal switch
             {
-                // Nothing to copy: the copies are already gone, so there is nothing left to put back.
+                // Nothing to copy: the account has no record any more, so there is nothing left to put back.
                 null or TransferRefusal.NothingToCopy => null,
                 TransferRefusal.DotaRunning => ResetProblem.DotaRunning,
                 TransferRefusal.SteamRunning => ResetProblem.SteamRunning,
                 TransferRefusal.NoSteam => ResetProblem.NoSteam,
                 TransferRefusal.ChangedSince => ResetProblem.TransferChangedSince,
+                TransferRefusal.CopiesLost => ResetProblem.TransferCopiesLost,
                 _ => ResetProblem.Failed,
             };
             if (problem is not null)

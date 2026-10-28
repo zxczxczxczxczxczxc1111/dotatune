@@ -40,6 +40,9 @@ public enum TransferRefusal
 
     /// <summary>Put back, except the files or the launch line changed after the transfer: those stay as they are.</summary>
     ChangedSince,
+
+    /// <summary>Put back, except files whose copies are gone from transfer\&lt;id&gt;: those stay as they are.</summary>
+    CopiesLost,
 }
 
 /// <summary>An account of this computer that has started Dota.</summary>
@@ -584,8 +587,9 @@ public sealed class TransferService(TransferBackupStore store, FileLog log)
             string? copy = null;
             if (File.Exists(current))
             {
+                // Not *.bak: cleaners take it for junk, and on 27.10.2026 one deleted the copies.
                 Directory.CreateDirectory(folder);
-                copy = string.Create(CultureInfo.InvariantCulture, $"{entries.Count}.bak");
+                copy = string.Create(CultureInfo.InvariantCulture, $"{entries.Count}.copy");
                 File.Copy(current, Path.Combine(folder, copy), overwrite: true);
             }
 
@@ -617,7 +621,8 @@ public sealed class TransferService(TransferBackupStore store, FileLog log)
     /// <summary>
     /// Puts the account back as it was before the first transfer into it. A file or the launch line
     /// changed since the transfer, by the player, the game or Steam, stays as it is: putting it back
-    /// would lose that change. The record is forgotten either way, as with the launch options.
+    /// would lose that change. A file whose copy is gone stays too, there is nothing to put back.
+    /// The record is forgotten either way, as with the launch options.
     /// </summary>
     /// <exception cref="InvalidDataException">transfer.json is unreadable.</exception>
     /// <exception cref="KeyValuesException">localconfig.vdf is unreadable.</exception>
@@ -649,11 +654,18 @@ public sealed class TransferService(TransferBackupStore store, FileLog log)
         string folder = store.BackupFolder(target);
         int restored = 0;
         var kept = new List<string>();
+        var lost = new List<string>();
         foreach (TransferEntry entry in backup.Files)
         {
+            byte[]? before = entry.Backup is null ? null : ReadCopy(Path.Combine(folder, entry.Backup));
+            if (entry.Backup is not null && before is null)
+            {
+                lost.Add(entry.RelativePath);
+                continue;
+            }
+
             string file = TransferFiles.Full(into, entry.RelativePath);
             byte[]? now = File.Exists(file) ? File.ReadAllBytes(file) : null;
-            byte[]? before = entry.Backup is null ? null : File.ReadAllBytes(Path.Combine(folder, entry.Backup));
             if (now is null ? before is null : before is not null && now.AsSpan().SequenceEqual(before))
             {
                 // Already as before: created by the transfer and gone since, or put back by hand or by a put back cut short.
@@ -706,8 +718,24 @@ public sealed class TransferService(TransferBackupStore store, FileLog log)
             Directory.Delete(folder, recursive: true);
         }
 
-        log.Info($"Transfer into {target} put back: {restored} restored{(kept.Count > 0 ? $", changed since and left as they are: {string.Join(", ", kept)}" : string.Empty)}");
-        return new TransferResult(kept.Count > 0 ? TransferRefusal.ChangedSince : null, restored);
+        log.Info($"Transfer into {target} put back: {restored} restored"
+            + (kept.Count > 0 ? $", changed since and left as they are: {string.Join(", ", kept)}" : string.Empty)
+            + (lost.Count > 0 ? $", copies gone and left as they are: {string.Join(", ", lost)}" : string.Empty));
+        TransferRefusal? refusal = lost.Count > 0 ? TransferRefusal.CopiesLost : kept.Count > 0 ? TransferRefusal.ChangedSince : null;
+        return new TransferResult(refusal, restored);
+    }
+
+    /// <summary>The copy of a file from before the transfer; null when it or its folder is gone.</summary>
+    private static byte[]? ReadCopy(string file)
+    {
+        try
+        {
+            return File.ReadAllBytes(file);
+        }
+        catch (Exception ex) when (ex is FileNotFoundException or DirectoryNotFoundException)
+        {
+            return null;
+        }
     }
 
     /// <summary>Writes through a temporary file next to it, so a cut write leaves the old file whole.</summary>

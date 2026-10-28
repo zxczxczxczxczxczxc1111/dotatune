@@ -576,6 +576,9 @@
   <data name="TransferChangedSince" xml:space="preserve">
     <value>Put back, except what changed after the transfer: those files stay as they are.</value>
   </data>
+  <data name="TransferCopiesLost" xml:space="preserve">
+    <value>Not all put back: copies of some files are gone from the DotaTune folder. Those files and whatever changed after the transfer stay as they are.</value>
+  </data>
   <data name="TransferCloudHintFormat" xml:space="preserve">
     <value>Steam Cloud is on for {0}, no need to turn it off: Steam uploads these files the next time the game starts. If it asks which files to keep before the game starts, keep the ones on this computer, not the cloud ones, or the old settings come back.</value>
   </data>
@@ -965,6 +968,9 @@
   </data>
   <data name="ResetProblemTransferChanged" xml:space="preserve">
     <value>files changed after the transfer stay as they are</value>
+  </data>
+  <data name="ResetProblemTransferCopiesLost" xml:space="preserve">
+    <value>copies of some files are gone from the DotaTune folder: those files and the ones changed after the transfer stay as they are</value>
   </data>
   <data name="ResetProblemGridsFormat" xml:space="preserve">
     <value>the file does not read and stays as it is: {0}</value>

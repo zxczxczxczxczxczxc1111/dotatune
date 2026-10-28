@@ -161,6 +161,7 @@ public sealed partial class ResetViewModel : ObservableObject, IActivatedPage, I
         ResetProblem.BrokenAutoexec => Format(Strings.ResetProblemAutoexecFormat, step.Detail),
         ResetProblem.LaunchChangedInSteam => Strings.ResetProblemLaunchChanged,
         ResetProblem.TransferChangedSince => Strings.ResetProblemTransferChanged,
+        ResetProblem.TransferCopiesLost => Strings.ResetProblemTransferCopiesLost,
         ResetProblem.BrokenGrids => Format(Strings.ResetProblemGridsFormat, step.Detail),
         _ => Format(Strings.ResetProblemFailedFormat, step.Detail),
     };

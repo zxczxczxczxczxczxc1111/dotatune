@@ -177,6 +177,39 @@ public class TransferTests
     }
 
     [Fact]
+    public void Put_back_without_a_copy_leaves_that_file_and_forgets_the_record()
+    {
+        // A cleaner took the copies for junk: on 27.10.2026 the *.bak of transfer\<id> went, the record stayed.
+        using var steam = new FakeSteam();
+        steam.WriteGameFile(From, "remote/cfg/dotakeys_personal.lst", "keys from");
+        steam.WriteGameFile(From, "local/cfg/video.txt", "video from");
+        string keys = steam.WriteGameFile(Into, "remote/cfg/dotakeys_personal.lst", "keys into");
+        string video = steam.WriteGameFile(Into, "local/cfg/video.txt", "video into");
+        TransferService service = Service(steam);
+        Assert.Null(service.Apply(steam.Read(), From, Into, [TransferGroup.Hotkeys, TransferGroup.Graphics]).Refusal);
+        string folder = Path.Combine(steam.DataRoot, "transfer", Into.ToString(System.Globalization.CultureInfo.InvariantCulture));
+        string[] copies = Directory.GetFiles(folder);
+
+        // Not a name cleaners take for junk.
+        Assert.Equal(2, copies.Length);
+        Assert.All(copies, copy => Assert.DoesNotMatch(@"\.(bak|old|tmp|dmp|chk)$", copy));
+        File.Delete(copies.Single(copy => File.ReadAllText(copy) == "keys into"));
+
+        Assert.Equal(new TransferResult(TransferRefusal.CopiesLost, 1), service.Restore(steam.Read(), Into));
+        Assert.Equal("keys from", File.ReadAllText(keys));
+        Assert.Equal("video into", File.ReadAllText(video));
+        Assert.Null(service.BackupOf(Into));
+        Assert.False(Directory.Exists(folder));
+
+        // The whole folder gone: nothing is put back, the record goes all the same.
+        Assert.Null(service.Apply(steam.Read(), From, Into, [TransferGroup.Graphics]).Refusal);
+        Directory.Delete(folder, recursive: true);
+        Assert.Equal(new TransferResult(TransferRefusal.CopiesLost, 0), service.Restore(steam.Read(), Into));
+        Assert.Equal("video from", File.ReadAllText(video));
+        Assert.Null(service.BackupOf(Into));
+    }
+
+    [Fact]
     public void Launch_options_move_only_while_steam_is_closed()
     {
         using var steam = new FakeSteam();

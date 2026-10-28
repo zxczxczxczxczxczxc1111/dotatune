@@ -137,6 +137,23 @@ public class ResetTests
     }
 
     [Fact]
+    public void Copied_settings_without_their_copies_stay_and_are_reported()
+    {
+        using var folder = new CyrillicTempFolder();
+        using var steam = new FakeSteam();
+        string keys = steam.WriteGameFile(FakeSteam.AccountId, KeysPath, "keys into");
+        steam.WriteGameFile(FakeSteam.OtherAccountId, KeysPath, "keys from");
+        AppServices services = Services(folder, steam);
+        Assert.Null(services.Transfer.Apply(steam.Read(), FakeSteam.OtherAccountId, FakeSteam.AccountId, [TransferGroup.Hotkeys]).Refusal);
+        Directory.Delete(services.Paths.TransferBackupRoot, recursive: true);
+
+        Assert.Equal([new ResetStep(ResetPart.Transfers, ResetProblem.TransferCopiesLost)], services.Reset.Run(steam.Read));
+
+        Assert.Equal("keys from", File.ReadAllText(keys));
+        Assert.Empty(services.Reset.Pending(steam.Read()));
+    }
+
+    [Fact]
     public void Unreadable_localconfig_fails_the_step_instead_of_the_reset()
     {
         using var folder = new CyrillicTempFolder();

@@ -208,6 +208,7 @@ public sealed partial class TransferBlockViewModel : ObservableObject
         TransferRefusal.NothingToCopy => Strings.TransferNothing,
         TransferRefusal.GridsNotSeen => Strings.TransferGridsNotSeen,
         TransferRefusal.ChangedSince => Strings.TransferChangedSince,
+        TransferRefusal.CopiesLost => Strings.TransferCopiesLost,
         _ => null,
     };
 
