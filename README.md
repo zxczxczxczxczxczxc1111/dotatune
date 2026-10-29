@@ -8,7 +8,7 @@
 
 <a href="https://github.com/zxczxczxczxczxczxc1111/dotatune/releases/latest"><img src="assets/readme/download.svg" width="248" height="48" alt="Скачать для Windows"></a>
 
-<sub>Версия 0.4.0 для Windows 10 и 11 x64</sub>
+<sub>Версия 0.4.1 для Windows 10 и 11 x64</sub>
 
 <a href="#возможности">Возможности</a>&emsp;<a href="#экраны">Экраны</a>&emsp;<a href="#установка">Установка</a>&emsp;<a href="#справка">Справка</a>
 
