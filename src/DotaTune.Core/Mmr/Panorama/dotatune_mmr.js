@@ -29,6 +29,10 @@
 	let pages = [];
 	let ticks = 0;
 	let errors = 0;
+	// The newest ranked game of the list the profile showed with the number of the last reading.
+	let seenTop = null;
+	// The number and the newest game the profile has shown for `waited` ticks; closing it does not reset them.
+	let waitKey = null;
 	let waited = 0;
 
 	const isReading = function (r) {
@@ -194,31 +198,63 @@
 		}
 
 		calibrated = true;
+		const rows = rankedRows(page);
+		const newest = rows !== null && rows.length > 0 ? rows[0] : null;
+		const hasTop = isReading(last) && typeof last.top === 'string';
 		if (isReading(last) && last.mmr === mmr) {
+			const after = hasTop && newest !== null ? rows.indexOf(last.top) : -1;
+			if (after > 1 && steady(mmr, newest)) {
+				// Ranked games above the newest one of the reading with the number where it was, a loss and a
+				// win: they get a reading of their own, or the next change would be put on them too.
+				record(mmr, after, newest);
+			} else if (after === 1) {
+				// A scored ranked game always moves the number, so this one is in it or did not count: the reading kept a
+				// list without it. Should the number be late instead, the next reading waits and has no count.
+				last = { mmr: last.mmr, delta: last.delta, games: last.games, top: newest, at: last.at };
+			}
+
+			if (newest !== null) {
+				seenTop = newest;
+			}
+
 			showInPage(page, last);
 			return;
 		}
 
-		// The match history fills in, and takes in the new game, after the number: a reading taken from an
-		// old list would count that game again next time, so it waits and then keeps no list at all.
-		const rows = rankedRows(page);
-		const hasTop = isReading(last) && typeof last.top === 'string';
-		const stale = rows !== null && rows.length > 0 && hasTop && rows[0] === last.top;
-		if ((rows === null || rows.length === 0 || stale) && waited < ROWS_WAIT_TICKS) {
-			waited++;
+		// The profile shows the list it had and asks for a new one, so after a game the number is new
+		// before the list is. A list with the newest game of the reading, or of the list seen with the old
+		// number, leaves the new game out: a reading taken from it would count wrong, so it waits and then
+		// keeps no list at all.
+		const stale = newest === null || (hasTop && newest === last.top) || newest === seenTop;
+		if (stale && !steady(mmr, newest)) {
 			return;
 		}
 
-		waited = 0;
-		const fresh = rows !== null && rows.length > 0 && !stale;
-		const top = fresh ? rows[0] : null;
-
 		let games = null;
-		if (fresh && hasTop) {
+		if (!stale && hasTop) {
 			const at = rows.indexOf(last.top);
 			games = at >= 0 ? at : null;
 		}
 
+		seenTop = newest;
+		record(mmr, games, stale ? null : newest);
+		showInPage(page, last);
+	};
+
+	// Data the profile has just been given can still change: true once it has shown the same number
+	// and newest game for ROWS_WAIT_TICKS ticks.
+	const steady = function (mmr, newest) {
+		const key = mmr + '|' + newest;
+		if (key !== waitKey) {
+			waitKey = key;
+			waited = 0;
+		}
+
+		waited++;
+		return waited > ROWS_WAIT_TICKS;
+	};
+
+	const record = function (mmr, games, top) {
 		last = {
 			mmr: mmr,
 			delta: isReading(last) ? mmr - last.mmr : null,
@@ -227,7 +263,6 @@
 			at: Math.floor(Date.now() / 1000),
 		};
 		$.Msg(TAG + JSON.stringify({ v: 1, account: Number(account), mmr: last.mmr, delta: last.delta, games: last.games, top: last.top, at: last.at }));
-		showInPage(page, last);
 	};
 
 	const findPages = function () {
