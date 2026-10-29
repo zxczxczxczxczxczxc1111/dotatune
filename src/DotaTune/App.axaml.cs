@@ -47,9 +47,9 @@ public partial class App : Application
     /// </summary>
     internal static MainWindow CreateMainWindow(SectionKind section)
     {
-        var settings = new SettingsViewModel(Services);
-        var window = new MainWindow { DataContext = new MainViewModel(Services, settings, section) };
-        settings.LanguageChanged += code => SwitchLanguage(window, code);
+        var main = new MainViewModel(Services, section);
+        var window = new MainWindow { DataContext = main };
+        main.Settings.LanguageChanged += code => SwitchLanguage(window, code);
         return window;
     }
 

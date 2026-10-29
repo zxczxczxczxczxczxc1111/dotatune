@@ -7,14 +7,14 @@ namespace DotaTune.ViewModels;
 
 public sealed partial class MainViewModel : ObservableObject
 {
-    internal MainViewModel(AppServices services, SettingsViewModel settings, SectionKind initial)
+    internal MainViewModel(AppServices services, SectionKind initial)
     {
         ArgumentNullException.ThrowIfNull(services);
-        ArgumentNullException.ThrowIfNull(settings);
         Updates = services.Updates;
         News = services.News;
-        // The colours page shows the minimap colours of the config page's choice.
+        // The colours page shows the minimap colours of the config page's choice, the settings page its copy, transfer and presets.
         var config = new ConfigViewModel(services, Strings.NavConfig, Strings.ConfigDescription);
+        Settings = new SettingsViewModel(services, config);
         Sections =
         [
             new SectionViewModel(SectionKind.GameState, Strings.NavGameState,
@@ -35,7 +35,7 @@ public sealed partial class MainViewModel : ObservableObject
             new SectionViewModel(SectionKind.Reset, Strings.NavReset,
                 new ResetViewModel(services, Strings.NavReset, Strings.ResetDescription)),
         ];
-        SettingsSection = new SectionViewModel(SectionKind.Settings, Strings.NavSettings, settings);
+        SettingsSection = new SectionViewModel(SectionKind.Settings, Strings.NavSettings, Settings);
 
         if (initial == SectionKind.Settings)
         {
@@ -53,6 +53,8 @@ public sealed partial class MainViewModel : ObservableObject
     public IReadOnlyList<SectionViewModel> Sections { get; }
 
     public SectionViewModel SettingsSection { get; }
+
+    public SettingsViewModel Settings { get; }
 
     /// <summary>The update panel over the pages; it outlives the window, see <see cref="UpdateService"/>.</summary>
     public UpdateService Updates { get; }

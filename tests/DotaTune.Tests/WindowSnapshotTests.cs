@@ -62,6 +62,11 @@ public class WindowSnapshotTests
             PumpUntil(() => !config.IsBusy, "config page did not load in 10 s");
         }
 
+        if (((MainViewModel)window.DataContext!).Current.Page is SettingsViewModel settings)
+        {
+            PumpUntil(() => !settings.Config.IsBusy, "settings page did not load in 10 s");
+        }
+
         if (((MainViewModel)window.DataContext!).Current.Page is HeroGridViewModel grids)
         {
             PumpUntil(() => !grids.IsBusy, "hero grid page did not load in 10 s");

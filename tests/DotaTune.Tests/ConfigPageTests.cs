@@ -243,7 +243,7 @@ public class ConfigPageTests
         using var steam = new FakeSteam();
         steam.WriteGameFile(FakeSteam.OtherAccountId, "remote/cfg/dotakeys_personal.lst", "keys from");
         string keys = steam.WriteGameFile(FakeSteam.AccountId, "remote/cfg/dotakeys_personal.lst", "keys into");
-        (MainWindow window, ConfigViewModel page) = Open(folder, steam, language);
+        (MainWindow window, ConfigViewModel page) = Open(folder, steam, language, section: SectionKind.Settings);
         TransferBlockViewModel transfer = page.Transfer;
 
         Assert.True(transfer.IsAvailable);
@@ -268,7 +268,7 @@ public class ConfigPageTests
         Assert.True(transfer.CanRestoreNow);
         // Done: the button does not stay as if the transfer were still to do.
         Assert.False(transfer.CanTransferNow);
-        Snapshot(window, $"{language}-Config-transfer.png", scrollToEnd: true);
+        Snapshot(window, $"{language}-Settings-transfer.png", scrollToEnd: true);
 
         transfer.RestoreCommand.Execute(null);
         Settle(page);
@@ -295,7 +295,7 @@ public class ConfigPageTests
         using var folder = new CyrillicTempFolder();
         using var steam = new FakeSteam();
         steam.WriteGameFile(FakeSteam.AccountId, "remote/cfg/chat.cfg", "chat");
-        (MainWindow window, ConfigViewModel page) = Open(folder, steam, "ru");
+        (MainWindow window, ConfigViewModel page) = Open(folder, steam, "ru", section: SectionKind.Settings);
 
         Assert.False(page.Transfer.IsAvailable);
         Assert.Equal(Strings.TransferOneAccount, page.Transfer.Note);
@@ -304,7 +304,7 @@ public class ConfigPageTests
 
         steam.WriteGameFile(FakeSteam.OtherAccountId, "remote/cfg/chat.cfg", "chat");
         steam.Running.Add("steam");
-        (window, page) = Open(folder, steam, "ru");
+        (window, page) = Open(folder, steam, "ru", section: SectionKind.Settings);
         Assert.True(page.Transfer.CanTransferNow);
         page.Transfer.Groups.Single(g => g.Group == TransferGroup.LaunchOptions).IsChecked = true;
         Assert.Equal(Strings.TransferSteamRunning, page.Transfer.Note);
@@ -320,7 +320,7 @@ public class ConfigPageTests
         using var folder = new CyrillicTempFolder();
         using var steam = new FakeSteam();
         steam.SetLaunchOptions("-high");
-        (MainWindow window, ConfigViewModel page) = Open(folder, steam, language);
+        (MainWindow window, ConfigViewModel page) = Open(folder, steam, language, section: SectionKind.Settings);
         PresetBlockViewModel presets = page.Presets;
         string code = Core.Presets.PresetCode.Encode(new Core.Presets.PresetChoice
         {
@@ -338,7 +338,7 @@ public class ConfigPageTests
         Assert.Contains("-novid", presets.LaunchChange, StringComparison.Ordinal);
         Assert.Contains("RainOfFrogs", presets.Unknown!, StringComparison.Ordinal);
         Assert.Contains("-autoconfig", presets.Unknown!, StringComparison.Ordinal);
-        Snapshot(window, $"{language}-Config-preset.png", scrollToEnd: true);
+        Snapshot(window, $"{language}-Settings-preset.png", scrollToEnd: true);
 
         // A code carries no files: with every line switched off there is nothing to apply.
         presets.ApplyEffects = presets.ApplyConfig = presets.ApplyLaunch = false;
@@ -369,7 +369,7 @@ public class ConfigPageTests
         using var folder = new CyrillicTempFolder();
         using var steam = new FakeSteam();
         string keys = steam.WriteGameFile(FakeSteam.AccountId, "remote/cfg/dotakeys_personal.lst", "\"KeyBindings\"\n{\n\t\"Name\"\t\t\"мои\"\n}\n");
-        (MainWindow window, ConfigViewModel page) = Open(folder, steam, "ru");
+        (MainWindow window, ConfigViewModel page) = Open(folder, steam, "ru", section: SectionKind.Settings);
         PresetBlockViewModel presets = page.Presets;
         string file = Path.Combine(folder.Path, "набор.dotatune");
 
@@ -405,7 +405,7 @@ public class ConfigPageTests
         steam.SetLaunchOptions("-novid");
         string keys = steam.WriteGameFile(FakeSteam.AccountId, "remote/cfg/dotakeys_personal.lst", "keys mine");
         string video = steam.WriteGameFile(FakeSteam.AccountId, "local/cfg/video.txt", "video mine");
-        (MainWindow window, ConfigViewModel page) = Open(folder, steam, language);
+        (MainWindow window, ConfigViewModel page) = Open(folder, steam, language, section: SectionKind.Settings);
         BackupBlockViewModel backup = page.Backup;
         string file = Path.Combine(folder.Path, "копия.zip");
         Assert.False(backup.HasLastCopy);
@@ -427,7 +427,7 @@ public class ConfigPageTests
         Assert.Equal("-novid", backup.Rows[2].Description);
         Assert.Equal(Strings.BackupApply, backup.ApplyText);
         backup.Rows[0].IsChecked = false;
-        Snapshot(window, $"{language}-Config-backup.png");
+        Snapshot(window, $"{language}-Settings-backup.png");
 
         backup.ApplyCommand.Execute(null);
         Settle(page);
@@ -461,7 +461,7 @@ public class ConfigPageTests
         var client = new FakeSteamClient(steam);
         App.Services = AppServices.Create(
             new AppPaths(Path.Combine(folder.Path, "Иван"), Path.Combine(folder.Path, "work")), steam.Read, steamRestart: log => SteamRestartTests.Restart(steam, client, log));
-        (MainWindow window, ConfigViewModel page) = Open(folder, steam, "ru", keepServices: true);
+        (MainWindow window, ConfigViewModel page) = Open(folder, steam, "ru", keepServices: true, section: SectionKind.Settings);
         BackupBlockViewModel backup = page.Backup;
         string file = Path.Combine(folder.Path, "с другого.zip");
         var manifest = new Core.Presets.BackupManifest(
@@ -486,7 +486,55 @@ public class ConfigPageTests
         window.Close();
     }
 
-    private static (MainWindow, ConfigViewModel) Open(CyrillicTempFolder folder, FakeSteam steam, string language, bool keepServices = false)
+    [AvaloniaFact]
+    public void Copy_transfer_and_presets_are_on_the_settings_page_and_the_game_blocks_stay()
+    {
+        using var folder = new CyrillicTempFolder();
+        using var steam = new FakeSteam();
+        (MainWindow window, _) = Open(folder, steam, "ru");
+        // Taken after Open: it sets the language the strings come in.
+        string[] moved = [Strings.ConfigBackupGroup, Strings.ConfigTransferGroup, Strings.ConfigPresetGroup];
+        string[] kept = [Strings.ConfigCommandsGroup, Strings.ConfigLaunchGroup];
+        HashSet<string> shown = ShownTexts(window);
+        Assert.All(kept, t => Assert.Contains(t, shown));
+        Assert.All(moved, t => Assert.DoesNotContain(t, shown));
+        window.Close();
+
+        (window, ConfigViewModel page) = Open(folder, steam, "ru", section: SectionKind.Settings);
+        shown = ShownTexts(window);
+        Assert.All(moved, t => Assert.Contains(t, shown));
+        Assert.All(kept, t => Assert.DoesNotContain(t, shown));
+        Assert.Contains(Strings.LanguageLabel, shown);
+        // Without them the buttons of the blocks do nothing at all.
+        Assert.NotNull(page.Backup.PickSavePath);
+        Assert.NotNull(page.Backup.PickOpenPath);
+        Assert.NotNull(page.Presets.PickSavePath);
+        Assert.NotNull(page.Presets.PickOpenPath);
+        Assert.NotNull(page.Presets.CopyText);
+
+        // A new language rebuilds the window, so it waits while the blocks write.
+        Avalonia.Controls.ComboBox language = Avalonia.VisualTree.VisualExtensions.GetVisualDescendants(window)
+            .OfType<Avalonia.Controls.ComboBox>().Single(c => c.ItemsSource is IReadOnlyList<LanguageOption>);
+        Assert.True(language.IsEnabled);
+        page.IsBusy = true;
+        Dispatcher.UIThread.RunJobs();
+        Assert.False(language.IsEnabled);
+        page.IsBusy = false;
+        Dispatcher.UIThread.RunJobs();
+        Assert.True(language.IsEnabled);
+        window.Close();
+    }
+
+    private static HashSet<string> ShownTexts(MainWindow window)
+    {
+        Dispatcher.UIThread.RunJobs();
+        return [.. Avalonia.VisualTree.VisualExtensions.GetVisualDescendants(window).OfType<Avalonia.Controls.TextBlock>()
+            .Where(t => t.IsEffectivelyVisible && t.Text is not null).Select(t => t.Text!)];
+    }
+
+    /// <summary>Opens the window on <paramref name="section"/>; the model is the config page's, which also runs the blocks of the settings page.</summary>
+    private static (MainWindow, ConfigViewModel) Open(
+        CyrillicTempFolder folder, FakeSteam steam, string language, bool keepServices = false, SectionKind section = SectionKind.Config)
     {
         if (!keepServices)
         {
@@ -494,7 +542,7 @@ public class ConfigPageTests
         }
 
         UiLanguage.Apply(UiLanguage.Resolve(language));
-        MainWindow window = App.CreateMainWindow(SectionKind.Config);
+        MainWindow window = App.CreateMainWindow(section);
         window.Show();
         var main = (MainViewModel)window.DataContext!;
         var page = (ConfigViewModel)main.Sections.Single(s => s.Kind == SectionKind.Config).Page;

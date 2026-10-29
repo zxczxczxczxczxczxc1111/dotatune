@@ -209,7 +209,8 @@ public sealed partial class ColorRow : ObservableObject
 /// <summary>
 /// The "Config and launch" page. The minimap and command block goes into autoexec.cfg: a change
 /// is saved at once and reaches the game when it is written again. The minimap colours belong to
-/// the block but are shown on the colours page.
+/// the block but are shown on the colours page; the copy, transfer and presets blocks are shown on
+/// the settings page, so that every write of the game settings goes through one busy flag.
 /// </summary>
 public sealed partial class ConfigViewModel : ObservableObject, IActivatedPage, IWorkingPage
 {
